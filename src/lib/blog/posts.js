@@ -13,7 +13,22 @@ export function isBlogEnabled() {
 }
 
 export function isBlogPublishingEnabled() {
-  return isSupabaseConfigured();
+  return isSupabaseAdminConfigured();
+}
+
+function formatSupabaseError(error) {
+  const message = String(error?.message || error || "").trim();
+  if (/invalid schema\s*:\s*shima/i.test(message)) {
+    return "Schema shima غير مفعّل في Supabase API. أضفه داخل Settings > API > Exposed schemas ثم احفظ.";
+  }
+  if (/permission denied for table\s+blog_posts/i.test(message)) {
+    return "صلاحية النشر مرفوضة. أضف SUPABASE_SERVICE_ROLE_KEY في .env.local ثم أعد تشغيل السيرفر.";
+  }
+  return message || "حدث خطأ غير متوقع أثناء الاتصال بقاعدة البيانات.";
+}
+
+function getMissingServiceRoleMessage() {
+  return "SUPABASE_SERVICE_ROLE_KEY غير مضبوط. لوحة النشر تحتاج Service Role للنشر والتعديل والحذف.";
 }
 
 function normalizePost(row) {
@@ -49,11 +64,11 @@ function normalizeTags(tags) {
 }
 
 async function getWriteClient() {
-  return isSupabaseAdminConfigured() ? getSupabaseAdminClient() : getSupabaseClient();
+  return isSupabaseAdminConfigured() ? getSupabaseAdminClient() : null;
 }
 
 async function getAdminReadClient() {
-  return isSupabaseAdminConfigured() ? getSupabaseAdminClient() : getSupabaseClient();
+  return isSupabaseAdminConfigured() ? getSupabaseAdminClient() : null;
 }
 
 async function ensureUniqueSlug(client, baseSlug, excludeId = null) {
@@ -71,7 +86,7 @@ async function ensureUniqueSlug(client, baseSlug, excludeId = null) {
     const { data, error } = await query.maybeSingle();
 
     if (error) {
-      return { slug: candidate, error: error.message };
+      return { slug: candidate, error: formatSupabaseError(error) };
     }
 
     if (!data) {
@@ -131,7 +146,7 @@ export async function listPostsDetailed({ limit = 20, page = 1, category = null 
   if (error) {
     return {
       posts: [],
-      error: error.message,
+      error: formatSupabaseError(error),
       totalCount: 0,
       totalPages: 0,
       currentPage: safePage,
@@ -163,7 +178,7 @@ export async function listPostCategories() {
     .order("published_at", { ascending: false, nullsFirst: false })
     .limit(500);
 
-  if (error) return { categories: [], error: error.message };
+  if (error) return { categories: [], error: formatSupabaseError(error) };
 
   const categories = [...new Set((data || []).map((row) => String(row.category || "").trim()).filter(Boolean))];
   return { categories, error: null };
@@ -173,7 +188,7 @@ export async function listPostsForAdmin({ limit = 100 } = {}) {
   if (!isSupabaseConfigured()) return { posts: [], error: "Supabase غير مُعد" };
 
   const client = await getAdminReadClient();
-  if (!client) return { posts: [], error: "Supabase client غير متاح" };
+  if (!client) return { posts: [], error: getMissingServiceRoleMessage() };
 
   const { data, error } = await client
     .from(BLOG_WRITE_TABLE)
@@ -184,7 +199,7 @@ export async function listPostsForAdmin({ limit = 100 } = {}) {
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (error) return { posts: [], error: error.message };
+  if (error) return { posts: [], error: formatSupabaseError(error) };
   return { posts: (data || []).map(normalizePost), error: null };
 }
 
@@ -218,7 +233,7 @@ export async function getPostBySlugDetailed(slug) {
     .eq("status", "published")
     .maybeSingle();
 
-  if (error) return { post: null, error: error.message };
+  if (error) return { post: null, error: formatSupabaseError(error) };
   if (!data) return { post: null, error: null };
   return { post: normalizePost(data), error: null };
 }
@@ -280,7 +295,7 @@ export async function createPost(input) {
 
   const writer = await getWriteClient();
   if (!writer) {
-    return { ok: false, error: "Supabase client is not available" };
+    return { ok: false, error: getMissingServiceRoleMessage() };
   }
 
   const { slug, error: slugError } = await ensureUniqueSlug(
@@ -318,7 +333,7 @@ export async function createPost(input) {
     const message =
       error.code === "23505"
         ? "يوجد مقال آخر بنفس الرابط المختصر. غيّر العنوان أو slug ثم أعد المحاولة."
-        : error.message;
+        : formatSupabaseError(error);
 
     return { ok: false, error: message };
   }
@@ -344,7 +359,7 @@ export async function updatePost(input) {
 
   const writer = await getWriteClient();
   if (!writer) {
-    return { ok: false, error: "Supabase client is not available" };
+    return { ok: false, error: getMissingServiceRoleMessage() };
   }
 
   const { slug, error: slugError } = await ensureUniqueSlug(
@@ -381,7 +396,7 @@ export async function updatePost(input) {
     .maybeSingle();
 
   if (error) {
-    return { ok: false, error: error.message };
+    return { ok: false, error: formatSupabaseError(error) };
   }
 
   return { ok: true, slug: data?.slug || slug, id: data?.id || id };
@@ -399,7 +414,7 @@ export async function deletePost(id) {
 
   const writer = await getWriteClient();
   if (!writer) {
-    return { ok: false, error: "Supabase client is not available" };
+    return { ok: false, error: getMissingServiceRoleMessage() };
   }
 
   const { error } = await writer.from(BLOG_WRITE_TABLE).delete().eq("id", postId).eq("project_key", BLOG_PROJECT_KEY);
@@ -410,7 +425,7 @@ export async function deletePost(id) {
 
   const canFallbackToArchive = !isSupabaseAdminConfigured();
   if (!canFallbackToArchive) {
-    return { ok: false, error: error.message };
+    return { ok: false, error: formatSupabaseError(error) };
   }
 
   const { error: archiveError } = await writer
@@ -423,7 +438,7 @@ export async function deletePost(id) {
     .eq("project_key", BLOG_PROJECT_KEY);
 
   if (archiveError) {
-    return { ok: false, error: error.message };
+    return { ok: false, error: formatSupabaseError(error) };
   }
 
   return { ok: true, archived: true };
@@ -477,7 +492,7 @@ export async function listContributorsPublic({ limit = 60 } = {}) {
     .order("published_at", { ascending: false, nullsFirst: false })
     .limit(Math.max(1, Number(limit) || 60));
 
-  if (error) return { contributors: [], error: error.message };
+  if (error) return { contributors: [], error: formatSupabaseError(error) };
 
   const grouped = new Map();
 
@@ -514,7 +529,7 @@ export async function listMemberPostsForAdmin({ limit = 120 } = {}) {
   if (!isSupabaseConfigured()) return { posts: [], error: "Supabase غير مُعد" };
 
   const client = await getAdminReadClient();
-  if (!client) return { posts: [], error: "Supabase client غير متاح" };
+  if (!client) return { posts: [], error: getMissingServiceRoleMessage() };
 
   const { data, error } = await client
     .from(BLOG_WRITE_TABLE)
@@ -524,7 +539,7 @@ export async function listMemberPostsForAdmin({ limit = 120 } = {}) {
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (error) return { posts: [], error: error.message };
+  if (error) return { posts: [], error: formatSupabaseError(error) };
   return { posts: (data || []).map(normalizePost), error: null };
 }
 
@@ -532,7 +547,7 @@ export async function reviewMemberPost({ id, decision, reviewNote = "" }) {
   if (!isSupabaseConfigured()) return { ok: false, error: "Supabase is not configured" };
 
   const client = await getWriteClient();
-  if (!client) return { ok: false, error: "Supabase client is not available" };
+  if (!client) return { ok: false, error: getMissingServiceRoleMessage() };
 
   const postId = String(id || "").trim();
   if (!postId) return { ok: false, error: "معرّف المقال مطلوب للمراجعة." };
@@ -545,6 +560,7 @@ export async function reviewMemberPost({ id, decision, reviewNote = "" }) {
     published_at: normalizedDecision === "published" ? new Date().toISOString() : null,
   };
 
+<<<<<<< HEAD
   const { data, error } = await client
     .from(BLOG_WRITE_TABLE)
     .update(payload)
@@ -553,6 +569,10 @@ export async function reviewMemberPost({ id, decision, reviewNote = "" }) {
     .select("id, slug, status")
     .maybeSingle();
   if (error) return { ok: false, error: error.message };
+=======
+  const { data, error } = await client.from("blog_posts").update(payload).eq("id", postId).select("id, slug, status").maybeSingle();
+  if (error) return { ok: false, error: formatSupabaseError(error) };
+>>>>>>> 2f4cb21 (update)
 
   return {
     ok: true,
@@ -587,7 +607,7 @@ export async function getContributorPublicProfile(authorUserId, { limit = 24 } =
     .limit(Math.max(1, Number(limit) || 24));
 
   if (error) {
-    return { contributor: null, posts: [], error: error.message };
+    return { contributor: null, posts: [], error: formatSupabaseError(error) };
   }
 
   const posts = (data || []).map(normalizePost);

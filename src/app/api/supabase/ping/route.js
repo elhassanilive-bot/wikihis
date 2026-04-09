@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 function getEnv() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
   return { url, anonKey };
 }
 
@@ -53,4 +53,3 @@ export async function GET() {
     clearTimeout(timeout);
   }
 }
-

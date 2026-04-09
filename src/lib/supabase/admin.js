@@ -1,7 +1,19 @@
 let cachedAdminClient = null;
 
+function getSupabaseUrl() {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
+}
+
+function getSupabaseServiceRoleKey() {
+  return process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+}
+
+function getSupabaseSchema() {
+  return process.env.NEXT_PUBLIC_SUPABASE_DB_SCHEMA || "shima";
+}
+
 export function isSupabaseAdminConfigured() {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return Boolean(getSupabaseUrl() && getSupabaseServiceRoleKey());
 }
 
 export async function getSupabaseAdminClient() {
@@ -11,13 +23,13 @@ export async function getSupabaseAdminClient() {
   const { createClient } = await import("@supabase/supabase-js");
 
   cachedAdminClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    getSupabaseUrl(),
+    getSupabaseServiceRoleKey(),
     {
       auth: { persistSession: false },
+      db: { schema: getSupabaseSchema() },
     }
   );
 
   return cachedAdminClient;
 }
-

@@ -1,0 +1,87 @@
+
+> dribdoweb@0.1.0 dev
+> next dev --webpack
+
+▲ Next.js 16.1.6 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.231.130:3000
+- Environments: .env.local
+
+✓ Starting...
+✓ Ready in 42.3s
+○ Compiling /_not-found ...
+ GET /api/videos/3df12c3a-a70c-4d38-89f1-83d79ded8ac6/save 404 in 50s (compile: 46s, render: 3.5s)
+ GET /api/videos/9a9f2c6b-b892-46e4-b6a9-d6321cb73e16/save 404 in 49s (compile: 46s, render: 3.5s)
+ GET /api/channels/said/block 404 in 50s (compile: 46s, render: 3.5s)
+ GET /api/channels/said/block 404 in 31.2s (compile: 27.7s, render: 3.5s)
+ GET /api/videos/73dcd2b2-9c50-4d4c-b87d-f1ba7c0d03ca/save 404 in 48s (compile: 45s, render: 3.5s)
+ GET /api/videos/3c14fe36-ef3d-4947-a1aa-db29468966c5/save 404 in 48s (compile: 45s, render: 3.5s)
+ GET /api/channels/said/block 404 in 739ms (compile: 44ms, render: 695ms)
+ GET /api/channels/said/block 404 in 726ms (compile: 29ms, render: 697ms)
+ GET /api/channels/said/block 404 in 735ms (compile: 34ms, render: 701ms)
+○ Compiling / ...
+ GET / 200 in 10.4s (compile: 5.0s, render: 5.5s)
+○ Compiling /manifest.webmanifest ...
+ GET /manifest.webmanifest 200 in 3.7s (compile: 3.6s, render: 56ms)
+ GET / 200 in 4.5s (compile: 32ms, render: 4.5s)
+ GET / 200 in 5.9s (compile: 133ms, render: 5.8s)
+ GET /blog 200 in 2.7s (compile: 2.3s, render: 410ms)
+ GET / 200 in 6.4s (compile: 51ms, render: 6.3s)
+ GET / 200 in 4.7s (compile: 51ms, render: 4.6s)
+ GET / 200 in 3.3s (compile: 15ms, render: 3.3s)
+ GET / 200 in 5.3s (compile: 999ms, render: 4.3s)
+○ Compiling /blog/[slug] ...
+ GET /blog/post-20260405060819 200 in 9.1s (compile: 6.5s, render: 2.7s)
+ GET /blog/post-20260405060819 200 in 1158ms (compile: 122ms, render: 1036ms)
+ GET /blog/post-20260405060819 200 in 4.2s (compile: 60ms, render: 4.1s)
+ GET /blog/post-20260405060819 200 in 2.4s (compile: 17ms, render: 2.4s)
+  Reload env: .env.local
+ GET / 200 in 1971ms (compile: 878ms, render: 1093ms)
+ GET / 200 in 587ms (compile: 87ms, render: 500ms)
+○ Compiling /manifest.webmanifest ...
+ GET /manifest.webmanifest 200 in 9.3s (compile: 9.2s, render: 145ms)
+ GET / 200 in 1088ms (compile: 182ms, render: 906ms)
+ GET / 200 in 1096ms (compile: 152ms, render: 944ms)
+ GET /manifest.webmanifest 200 in 69ms (compile: 26ms, render: 43ms)
+ GET / 200 in 614ms (compile: 16ms, render: 598ms)
+ GET / 200 in 1904ms (compile: 791ms, render: 1113ms)
+ GET / 200 in 801ms (compile: 13ms, render: 788ms)
+  Reload env: .env.local
+ GET / 200 in 4.7s (compile: 1037ms, render: 3.6s)
+○ Compiling /manifest.webmanifest ...
+ GET /manifest.webmanifest 200 in 12.6s (compile: 12.5s, render: 123ms)
+○ Compiling /admin/blog ...
+ GET /manifest.webmanifest 200 in 179ms (compile: 140ms, render: 39ms)
+ GET /admin/blog 200 in 11.4s (compile: 9.9s, render: 1473ms)
+ GET /admin/blog 200 in 1725ms (compile: 578ms, render: 1147ms)
+ GET /manifest.webmanifest 200 in 1954ms (compile: 1845ms, render: 109ms)
+ GET /admin/blog 200 in 2.2s (compile: 755ms, render: 1408ms)
+ GET /admin/blog 200 in 1080ms (compile: 20ms, render: 1060ms)
+ GET /manifest.webmanifest 200 in 57ms (compile: 14ms, render: 43ms)
+ GET /admin/blog 200 in 1366ms (compile: 14ms, render: 1352ms)
+ GET /manifest.webmanifest 200 in 44ms (compile: 9ms, render: 35ms)
+ GET /admin/blog 200 in 828ms (compile: 20ms, render: 807ms)
+ GET /manifest.webmanifest 200 in 72ms (compile: 9ms, render: 63ms)
+ GET /admin/blog 200 in 722ms (compile: 15ms, render: 707ms)
+ GET /manifest.webmanifest 200 in 45ms (compile: 12ms, render: 33ms)
+ GET /admin/blog 200 in 599ms (compile: 25ms, render: 574ms)
+ GET /manifest.webmanifest 200 in 32ms (compile: 13ms, render: 19ms)
+ GET /admin/blog 200 in 707ms (compile: 10ms, render: 696ms)
+ GET /manifest.webmanifest 200 in 40ms (compile: 11ms, render: 30ms)
+ GET /admin/blog 200 in 1113ms (compile: 24ms, render: 1089ms)
+ GET /manifest.webmanifest 200 in 39ms (compile: 8ms, render: 30ms)
+ GET /manifest.webmanifest 200 in 153ms (compile: 124ms, render: 30ms)
+ GET /admin/blog 200 in 2.5s (compile: 63ms, render: 2.4s)
+ GET / 200 in 1219ms (compile: 88ms, render: 1130ms)
+ GET /admin/blog 200 in 1587ms (compile: 83ms, render: 1504ms)
+ POST /admin/blog 200 in 1497ms (compile: 13ms, render: 1483ms)
+ GET /admin/blog 200 in 364ms (compile: 23ms, render: 341ms)
+  Reload env: .env.local
+ POST /admin/blog 200 in 6.4s (compile: 5.5s, render: 869ms)
+  Reload env: .env.local
+ POST /admin/blog 200 in 2.9s (compile: 244ms, render: 2.6s)
+ GET /admin/blog 200 in 558ms (compile: 11ms, render: 547ms)
+ GET / 200 in 1737ms (compile: 258ms, render: 1479ms)
+ GET / 200 in 3.0s (compile: 47ms, render: 3.0s)
+○ Compiling /manifest.webmanifest ...
+ GET /manifest.webmanifest 200 in 6.7s (compile: 6.5s, render: 164ms)
