@@ -13,7 +13,7 @@ export const metadata = {
     template: `%s | ${site.name}`,
   },
   description: site.description,
-  themeColor: "#111111",
+  themeColor: "#7a560b",
   appleWebApp: {
     capable: true,
     title: site.nameEn,
@@ -21,12 +21,12 @@ export const metadata = {
   },
   icons: {
     icon: [
-      { url: "/icon.png?v=20260402b", type: "image/png", sizes: "32x32" },
-      { url: "/icon.png?v=20260402b", type: "image/png", sizes: "192x192" },
-      { url: "/icon.png?v=20260402b", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.ico?v=20260411a", type: "image/png", sizes: "32x32" },
+      { url: "/icon.png?v=20260411a", type: "image/png", sizes: "192x192" },
+      { url: "/icon.png?v=20260411a", type: "image/png", sizes: "512x512" },
     ],
-    apple: [{ url: "/apple-touch-icon.png?v=20260402b", sizes: "180x180", type: "image/png" }],
-    shortcut: ["/icon.png?v=20260402b"],
+    apple: [{ url: "/apple-touch-icon.png?v=20260411a", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/favicon.ico?v=20260411a"],
   },
   alternates: {
     canonical: "/",
