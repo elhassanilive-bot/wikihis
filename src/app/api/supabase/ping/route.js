@@ -2,9 +2,13 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
+const DEFAULT_SUPABASE_URL = "https://tjbwezoyvsddvphrdouk.supabase.co";
+const DEFAULT_SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqYndlem95dnNkZHZwaHJkb3VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MTk4ODEsImV4cCI6MjA5NDE5NTg4MX0.hS9IvIaAHuldJeTt5sI5QhDclV2WPcFZsSCBL-gbRSw";
+
 function getEnv() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
   return { url, anonKey };
 }
 

@@ -1,7 +1,9 @@
 let cachedAdminClient = null;
 
+const DEFAULT_SUPABASE_URL = "https://tjbwezoyvsddvphrdouk.supabase.co";
+
 function getSupabaseUrl() {
-  return process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
+  return process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
 }
 
 function getSupabaseServiceRoleKey() {

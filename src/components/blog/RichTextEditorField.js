@@ -16,7 +16,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { Extension, Node, mergeAttributes } from "@tiptap/core";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
-const BLOG_MEDIA_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET || "blog-media";
+const BLOG_MEDIA_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET || "shima-blog-media";
 const FONT_FAMILIES = [
   { label: "الافتراضي", value: "" },
   { label: "Cairo", value: "rt-font-cairo" },
