@@ -8,7 +8,6 @@ import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 const AVATAR_BUCKET = "avatars";
 const POSTS_PER_PAGE = 10;
-const BLOG_PROJECT_KEY = "wikihes";
 
 function AccountStatusPill({ status }) {
   const toneMap = {
@@ -124,7 +123,6 @@ export default function AccountSettingsShell() {
     const { data, error: memberPostsError, count } = await supabase
       .from("blog_posts")
       .select("id, slug, title, excerpt, status, created_at, review_note", { count: "exact" })
-      .eq("project_key", BLOG_PROJECT_KEY)
       .eq("author_user_id", currentUserId)
       .order("created_at", { ascending: false })
       .range(from, to);
