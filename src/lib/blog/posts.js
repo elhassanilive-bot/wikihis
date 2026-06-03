@@ -4,9 +4,9 @@ import { createSlugCandidate } from "@/lib/blog/slug";
 
 const POST_LIST_COLUMNS =
   "id,slug,title,excerpt,content,cover_image_url,category,category_parent,category_slug,tags,published_at,created_at,updated_at,status,author_user_id,author_display_name,author_avatar_url,reviewed_at,review_note";
-const BLOG_PROJECT_KEY = "wikihes";
 const BLOG_PUBLIC_TABLE = "wikihes_blog_posts";
 const BLOG_WRITE_TABLE = "blog_posts";
+const PROJECT_KEY_COLUMN_MISSING_RE = /column\s+blog_posts\.project_key\s+does\s+not\s+exist/i;
 
 export function isBlogEnabled() {
   return isSupabaseConfigured();
@@ -20,6 +20,9 @@ function formatSupabaseError(error) {
   const message = String(error?.message || error || "").trim();
   if (/invalid schema\s*:\s*shima/i.test(message)) {
     return "Vercel ما زال يرسل NEXT_PUBLIC_SUPABASE_DB_SCHEMA=shima. احذفه أو غيّره إلى public من Environment Variables ثم أعد النشر.";
+  }
+  if (PROJECT_KEY_COLUMN_MISSING_RE.test(message)) {
+    return "جدول blog_posts في Supabase قديم ولا يحتوي project_key. شغّل supabase/004_wikihes_project_isolation.sql أو استخدم قاعدة بيانات المشروع الجديدة.";
   }
   if (/permission denied for table\s+blog_posts/i.test(message)) {
     return "صلاحية النشر مرفوضة. أضف SUPABASE_SERVICE_ROLE_KEY في .env.local ثم أعد تشغيل السيرفر.";
@@ -77,7 +80,7 @@ async function ensureUniqueSlug(client, baseSlug, excludeId = null) {
 
   while (attempt < 100) {
     const candidate = attempt === 0 ? fallbackBase : `${fallbackBase}-${attempt + 1}`;
-    let query = client.from(BLOG_WRITE_TABLE).select("id, slug").eq("slug", candidate).eq("project_key", BLOG_PROJECT_KEY);
+    let query = client.from(BLOG_WRITE_TABLE).select("id, slug").eq("slug", candidate);
 
     if (excludeId) {
       query = query.neq("id", excludeId);
@@ -193,7 +196,6 @@ export async function listPostsForAdmin({ limit = 100 } = {}) {
   const { data, error } = await client
     .from(BLOG_WRITE_TABLE)
     .select(POST_LIST_COLUMNS)
-    .eq("project_key", BLOG_PROJECT_KEY)
     .neq("status", "archived")
     .order("published_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false })
@@ -310,7 +312,6 @@ export async function createPost(input) {
   const { data, error } = await writer
     .from(BLOG_WRITE_TABLE)
     .insert({
-      project_key: BLOG_PROJECT_KEY,
       slug,
       title: normalized.title,
       excerpt: normalized.excerpt,
@@ -391,7 +392,6 @@ export async function updatePost(input) {
       published_at: new Date().toISOString(),
     })
     .eq("id", id)
-    .eq("project_key", BLOG_PROJECT_KEY)
     .select("id, slug")
     .maybeSingle();
 
@@ -417,7 +417,7 @@ export async function deletePost(id) {
     return { ok: false, error: getMissingServiceRoleMessage() };
   }
 
-  const { error } = await writer.from(BLOG_WRITE_TABLE).delete().eq("id", postId).eq("project_key", BLOG_PROJECT_KEY);
+  const { error } = await writer.from(BLOG_WRITE_TABLE).delete().eq("id", postId);
 
   if (!error) {
     return { ok: true, deleted: true };
@@ -434,8 +434,7 @@ export async function deletePost(id) {
       status: "archived",
       published_at: null,
     })
-    .eq("id", postId)
-    .eq("project_key", BLOG_PROJECT_KEY);
+    .eq("id", postId);
 
   if (archiveError) {
     return { ok: false, error: formatSupabaseError(error) };
@@ -534,7 +533,6 @@ export async function listMemberPostsForAdmin({ limit = 120 } = {}) {
   const { data, error } = await client
     .from(BLOG_WRITE_TABLE)
     .select(POST_LIST_COLUMNS)
-    .eq("project_key", BLOG_PROJECT_KEY)
     .not("author_user_id", "is", null)
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -564,7 +562,6 @@ export async function reviewMemberPost({ id, decision, reviewNote = "" }) {
     .from(BLOG_WRITE_TABLE)
     .update(payload)
     .eq("id", postId)
-    .eq("project_key", BLOG_PROJECT_KEY)
     .select("id, slug, status")
     .maybeSingle();
   if (error) return { ok: false, error: formatSupabaseError(error) };
