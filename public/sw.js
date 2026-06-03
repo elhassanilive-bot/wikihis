@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = "wikihis-pwa-v1";
+﻿const CACHE_NAME = "wikihis-pwa-v2";
 const OFFLINE_FALLBACK_URL = "/";
 const PRECACHE_URLS = [
   "/",
@@ -70,3 +70,4 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
