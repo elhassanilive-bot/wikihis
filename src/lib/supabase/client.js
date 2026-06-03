@@ -13,7 +13,8 @@ function getSupabaseAnonKey() {
 }
 
 function getSupabaseSchema() {
-  return process.env.NEXT_PUBLIC_SUPABASE_DB_SCHEMA || "public";
+  const schema = String(process.env.NEXT_PUBLIC_SUPABASE_DB_SCHEMA || "public").trim();
+  return schema === "shima" ? "public" : schema;
 }
 
 export function isSupabaseConfigured() {

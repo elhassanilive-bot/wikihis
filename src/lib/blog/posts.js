@@ -19,7 +19,7 @@ export function isBlogPublishingEnabled() {
 function formatSupabaseError(error) {
   const message = String(error?.message || error || "").trim();
   if (/invalid schema\s*:\s*shima/i.test(message)) {
-    return "Schema shima غير مفعّل في Supabase API. أضفه داخل Settings > API > Exposed schemas ثم احفظ.";
+    return "Vercel ما زال يرسل NEXT_PUBLIC_SUPABASE_DB_SCHEMA=shima. احذفه أو غيّره إلى public من Environment Variables ثم أعد النشر.";
   }
   if (/permission denied for table\s+blog_posts/i.test(message)) {
     return "صلاحية النشر مرفوضة. أضف SUPABASE_SERVICE_ROLE_KEY في .env.local ثم أعد تشغيل السيرفر.";
