@@ -560,7 +560,6 @@ export async function reviewMemberPost({ id, decision, reviewNote = "" }) {
     published_at: normalizedDecision === "published" ? new Date().toISOString() : null,
   };
 
-<<<<<<< HEAD
   const { data, error } = await client
     .from(BLOG_WRITE_TABLE)
     .update(payload)
@@ -568,11 +567,7 @@ export async function reviewMemberPost({ id, decision, reviewNote = "" }) {
     .eq("project_key", BLOG_PROJECT_KEY)
     .select("id, slug, status")
     .maybeSingle();
-  if (error) return { ok: false, error: error.message };
-=======
-  const { data, error } = await client.from("blog_posts").update(payload).eq("id", postId).select("id, slug, status").maybeSingle();
   if (error) return { ok: false, error: formatSupabaseError(error) };
->>>>>>> 2f4cb21 (update)
 
   return {
     ok: true,
