@@ -4,7 +4,7 @@ import { createSlugCandidate } from "@/lib/blog/slug";
 
 const POST_LIST_COLUMNS =
   "id,slug,title,excerpt,content,cover_image_url,category,category_parent,category_slug,tags,published_at,created_at,updated_at,status,author_user_id,author_display_name,author_avatar_url,reviewed_at,review_note";
-const BLOG_PUBLIC_TABLE = "wikihes_blog_posts";
+const BLOG_PUBLIC_TABLE = "blog_posts";
 const BLOG_WRITE_TABLE = "blog_posts";
 const PROJECT_KEY_COLUMN_MISSING_RE = /column\s+blog_posts\.project_key\s+does\s+not\s+exist/i;
 
