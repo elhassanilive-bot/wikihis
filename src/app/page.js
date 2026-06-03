@@ -4,7 +4,7 @@ import ContributorsSpotlight from "@/components/blog/ContributorsSpotlight";
 import NewsTickerClient from "@/components/blog/NewsTickerClient";
 import HomeTabsPanel from "@/components/blog/HomeTabsPanel";
 import PostCardBookmarkButton from "@/components/blog/PostCardBookmarkButton";
-import { isBlogEnabled, listContributorsPublic, listPostCategories, listPostsDetailed } from "@/lib/blog/posts";
+import { listContributorsPublic, listPostCategories, listPostsDetailed } from "@/lib/blog/posts";
 import { estimateReadingTime, formatArabicDate } from "@/lib/blog/render";
 
 export const dynamic = "force-dynamic";
@@ -804,7 +804,6 @@ export default async function HomePage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const currentPage = normalizePage(resolvedSearchParams?.page);
   const currentCategory = String(resolvedSearchParams?.category || "").trim();
-  const enabled = isBlogEnabled();
 
   const [{ posts, error, totalPages }, { categories }, { posts: showcasePosts }, { contributors }] = await Promise.all([
     listPostsDetailed({ limit: POSTS_PER_PAGE, page: currentPage, category: currentCategory || null }),
@@ -821,14 +820,7 @@ export default async function HomePage({ searchParams }) {
     <div className="min-h-screen bg-[#f7f5ef] text-slate-950">
       <section className="bg-[#222] pt-6">
         <div className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
-          {!enabled ? (
-            <EmptyState
-              title="المدونة جاهزة لكن الربط لم يكتمل بعد"
-              description="أضف إعدادات Supabase الخاصة بالمدونة، وبعدها ستظهر المقالات تلقائيًا في الصفحة الرئيسية."
-              href="/admin/blog"
-              label="فتح لوحة النشر"
-            />
-          ) : error ? (
+          {error ? (
             <EmptyState
               title="تعذر تحميل المقالات"
               description={`حدثت مشكلة أثناء قراءة مقالات المدونة من قاعدة البيانات. الرسالة: ${error}`}
