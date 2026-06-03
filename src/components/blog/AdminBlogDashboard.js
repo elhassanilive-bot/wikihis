@@ -11,7 +11,10 @@ import { prepareBlogContentForEditor } from "@/lib/blog/content";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 const EMPTY_CONTENT = "<p></p>";
-const BLOG_MEDIA_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET || "shima-blog-media";
+const BLOG_MEDIA_BUCKET =
+  process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET === "shima-blog-media"
+    ? "blog-media"
+    : process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET || "blog-media";
 const INITIAL_VISIBLE_POSTS = 10;
 
 function createEmptyForm() {

@@ -11,7 +11,10 @@ import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { formatArabicDate } from "@/lib/blog/render";
 
 const EMPTY_CONTENT = "<p></p>";
-const BLOG_MEDIA_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET || "shima-blog-media";
+const BLOG_MEDIA_BUCKET =
+  process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET === "shima-blog-media"
+    ? "blog-media"
+    : process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET || "blog-media";
 const POSTS_PER_PAGE = 10;
 const DRAFT_STORAGE_PREFIX = "WIKIHIS:contrib_draft:";
 const CONTRIBUTOR_PRIMARY_CATEGORIES = [
