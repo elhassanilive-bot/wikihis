@@ -856,7 +856,7 @@ export default async function HomePage({ searchParams }) {
         </div>
       </section>
 
-      {enabled && !error && posts.length > 0 ? (
+      {!error && posts.length > 0 ? (
         <>
           <EditorialPanel posts={editorialPosts} />
 
