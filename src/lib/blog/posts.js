@@ -57,6 +57,7 @@ function normalizePost(row) {
     authorAvatarUrl: row.author_avatar_url,
     reviewedAt: row.reviewed_at,
     reviewNote: row.review_note,
+    viewCount: Number(row.view_count) || 0,
   };
 }
 
@@ -117,6 +118,47 @@ export async function listPosts({ limit = 20 } = {}) {
 
   if (error) return [];
   return (data || []).map(normalizePost);
+}
+
+export async function listPopularPosts({ limit = 6, category = null } = {}) {
+  if (!isSupabaseConfigured()) return { posts: [], error: null };
+
+  const supabase = await getSupabaseClient();
+  if (!supabase) return { posts: [], error: null };
+
+  const safeLimit = Math.max(1, Math.min(Number(limit) || 6, 12));
+  const normalizedCategory = String(category || "").trim();
+
+  let query = supabase
+    .from(BLOG_PUBLIC_TABLE)
+    .select(`${POST_LIST_COLUMNS},view_count`)
+    .eq("status", "published")
+    .order("view_count", { ascending: false, nullsFirst: false })
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .limit(safeLimit);
+
+  if (normalizedCategory) {
+    const escapedCategory = normalizedCategory.replaceAll('"', '\\"');
+    query = query.or(`category.eq."${escapedCategory}",category_parent.eq."${escapedCategory}"`);
+  }
+
+  const { data, error } = await query;
+
+  if (!error) {
+    return {
+      posts: (data || []).map((row) => ({
+        ...normalizePost(row),
+        viewCount: Number(row.view_count) || 0,
+      })),
+      error: null,
+    };
+  }
+
+  const fallback = await listPostsDetailed({ limit: safeLimit, category: normalizedCategory || null });
+  return {
+    posts: fallback.posts.map((post) => ({ ...post, viewCount: 0 })),
+    error: formatSupabaseError(error),
+  };
 }
 
 export async function listPostsForSitemap({ limit = 5000 } = {}) {
@@ -253,13 +295,26 @@ export async function listPostsForAdmin({ limit = 100 } = {}) {
   const client = await getAdminReadClient();
   if (!client) return { posts: [], error: getMissingServiceRoleMessage() };
 
-  const { data, error } = await client
+  let { data, error } = await client
     .from(BLOG_WRITE_TABLE)
-    .select(POST_LIST_COLUMNS)
+    .select(`${POST_LIST_COLUMNS},view_count`)
     .neq("status", "archived")
     .order("published_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false })
     .limit(limit);
+
+  if (error && /view_count/i.test(String(error.message || ""))) {
+    const fallback = await client
+      .from(BLOG_WRITE_TABLE)
+      .select(POST_LIST_COLUMNS)
+      .neq("status", "archived")
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    data = fallback.data;
+    error = fallback.error;
+  }
 
   if (error) return { posts: [], error: formatSupabaseError(error) };
   return { posts: (data || []).map(normalizePost), error: null };

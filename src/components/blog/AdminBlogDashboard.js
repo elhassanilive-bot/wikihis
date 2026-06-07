@@ -17,6 +17,38 @@ const BLOG_MEDIA_BUCKET =
     : process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET || "blog-media";
 const INITIAL_VISIBLE_POSTS = 10;
 
+function stripHtmlToText(value) {
+  return String(value || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getWordCount(value) {
+  return stripHtmlToText(value).split(/\s+/).filter(Boolean).length;
+}
+
+function getPostQualityScore(post) {
+  const titleLength = String(post?.title || "").trim().length;
+  const excerptLength = String(post?.excerpt || "").trim().length;
+  const wordCount = getWordCount(post?.content);
+  const checks = [
+    titleLength >= 35 && titleLength <= 70,
+    excerptLength >= 90 && excerptLength <= 160,
+    Boolean(String(post?.coverImageUrl || "").trim()),
+    Boolean(post?.category),
+    Array.isArray(post?.tags) && post.tags.length >= 2,
+    wordCount >= 300,
+  ];
+
+  return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+}
+
+function formatNumber(value) {
+  return new Intl.NumberFormat("ar").format(Number(value) || 0);
+}
+
 function createEmptyForm() {
   return {
     id: "",
@@ -291,6 +323,74 @@ export default function AdminBlogDashboard({
     tagsPreview.length,
     visibleSlug,
   ]);
+  const contentReview = useMemo(() => {
+    const plainContent = stripHtmlToText(form.content);
+    const contentWords = plainContent.split(/\s+/).filter(Boolean).length;
+    const title = form.title.trim().toLowerCase();
+    const excerpt = form.excerpt.trim().toLowerCase();
+    const hasHeadings = /<h[2-3][^>]*>/i.test(String(form.content || ""));
+    const hasInternalLinks = /href=["']\/blog\//i.test(String(form.content || ""));
+    const duplicateTitle = title
+      ? posts.some((post) => post.id !== form.id && String(post.title || "").trim().toLowerCase() === title)
+      : false;
+    const duplicateExcerpt = excerpt
+      ? posts.some((post) => post.id !== form.id && String(post.excerpt || "").trim().toLowerCase() === excerpt)
+      : false;
+
+    return [
+      { label: "العنوان غير مكرر داخل الموقع", passed: !duplicateTitle },
+      { label: "الوصف غير مكرر داخل الموقع", passed: !duplicateExcerpt },
+      { label: "المقال لا يقل عن 300 كلمة", passed: contentWords >= 300 },
+      { label: "يحتوي على عناوين فرعية H2/H3", passed: hasHeadings },
+      { label: "يحتوي على روابط داخلية لمقالات ويكيهيس", passed: hasInternalLinks },
+    ];
+  }, [form.content, form.excerpt, form.id, form.title, posts]);
+  const internalLinkSuggestions = useMemo(() => {
+    const tokens = [
+      ...form.title.split(/\s+/),
+      ...form.excerpt.split(/\s+/),
+      form.category,
+      form.categoryParent,
+      ...tagsPreview,
+    ]
+      .map((item) => String(item || "").trim().toLowerCase())
+      .filter((item) => item.length > 3);
+
+    return posts
+      .filter((post) => post.id !== form.id && post.slug)
+      .map((post) => {
+        const haystack = [post.title, post.excerpt, post.category, post.categoryParent, ...(post.tags || [])].join(" ").toLowerCase();
+        const score =
+          (post.category && (post.category === form.category || post.category === form.categoryParent) ? 4 : 0) +
+          tokens.reduce((sum, token) => sum + (haystack.includes(token) ? 1 : 0), 0);
+
+        return { post, score };
+      })
+      .filter((item) => item.score > 0)
+      .sort((first, second) => second.score - first.score)
+      .slice(0, 5)
+      .map((item) => item.post);
+  }, [form.category, form.categoryParent, form.excerpt, form.id, form.title, posts, tagsPreview]);
+  const analyticsSummary = useMemo(() => {
+    const publishedPosts = posts.filter((post) => post.status === "published");
+    const totalViews = posts.reduce((sum, post) => sum + (Number(post.viewCount) || 0), 0);
+    const topPosts = [...posts]
+      .sort((first, second) => (Number(second.viewCount) || 0) - (Number(first.viewCount) || 0))
+      .slice(0, 5);
+    const averageQuality = posts.length
+      ? Math.round(posts.reduce((sum, post) => sum + getPostQualityScore(post), 0) / posts.length)
+      : 0;
+    const engagementRate = publishedPosts.length ? Math.round(totalViews / publishedPosts.length) : 0;
+
+    return {
+      totalPosts: posts.length,
+      publishedCount: publishedPosts.length,
+      totalViews,
+      engagementRate,
+      averageQuality,
+      topPosts,
+    };
+  }, [posts]);
 
   function updateField(key, value) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -550,6 +650,49 @@ export default function AdminBlogDashboard({
           </div>
         </div>
       </section>
+
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        {[
+          { label: "إجمالي المقالات", value: formatNumber(analyticsSummary.totalPosts), note: "كل الحالات" },
+          { label: "المنشور", value: formatNumber(analyticsSummary.publishedCount), note: "ظاهر للقراء" },
+          { label: "المشاهدات", value: formatNumber(analyticsSummary.totalViews), note: "حسب view_count" },
+          { label: "متوسط التفاعل", value: formatNumber(analyticsSummary.engagementRate), note: "مشاهدات لكل مقال" },
+          { label: "جودة المحتوى", value: `${formatNumber(analyticsSummary.averageQuality)}%`, note: "متوسط SEO والتحرير" },
+        ].map((metric) => (
+          <div key={metric.label} className="rounded-[1.5rem] border border-slate-200 bg-white px-5 py-4 shadow-[0_20px_55px_-48px_rgba(15,23,42,0.45)]">
+            <div className="text-xs font-bold text-slate-500">{metric.label}</div>
+            <div className="mt-2 text-2xl font-black text-slate-950">{metric.value}</div>
+            <div className="mt-1 text-xs text-slate-500">{metric.note}</div>
+          </div>
+        ))}
+      </section>
+
+      {analyticsSummary.topPosts.length ? (
+        <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_20px_55px_-45px_rgba(15,23,42,0.35)]">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="text-sm font-semibold text-slate-500">الأكثر قراءة</div>
+              <h2 className="mt-1 text-xl font-black text-slate-950">مقالات تقود التفاعل</h2>
+            </div>
+            <div className="rounded-full bg-red-50 px-4 py-2 text-xs font-black text-red-700">تحليلات مباشرة</div>
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            {analyticsSummary.topPosts.map((post, index) => (
+              <Link
+                key={post.id || post.slug}
+                href={`/blog/${post.slug}`}
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-right transition hover:border-red-200 hover:bg-white"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="rounded-full bg-slate-950 px-2 py-1 text-xs font-black text-white">#{index + 1}</span>
+                  <span className="text-xs font-bold text-slate-500">{formatNumber(post.viewCount)} مشاهدة</span>
+                </div>
+                <div className="mt-3 line-clamp-2 text-sm font-black leading-6 text-slate-950">{post.title}</div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {!publishingEnabled ? (
         <div className="rounded-[2rem] border border-amber-200 bg-amber-50 px-6 py-5 text-amber-950">
@@ -866,6 +1009,51 @@ export default function AdminBlogDashboard({
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_55px_-45px_rgba(15,23,42,0.5)]">
+            <div className="text-sm font-semibold text-slate-500">مراجعة المحتوى</div>
+            <div className="mt-4 space-y-3">
+              {contentReview.map((item) => (
+                <div key={item.label} className="flex items-start gap-3 text-right">
+                  <span className={item.passed ? "mt-1 font-black text-emerald-600" : "mt-1 font-black text-red-500"}>
+                    {item.passed ? "✓" : "!"}
+                  </span>
+                  <span className={item.passed ? "text-sm font-semibold text-slate-800" : "text-sm font-semibold text-red-700"}>
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_55px_-45px_rgba(15,23,42,0.5)]">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="text-sm font-semibold text-slate-500">روابط داخلية مقترحة</div>
+                <div className="mt-1 text-xs text-slate-500">أضفها داخل المقال لتقوية SEO والتنقل.</div>
+              </div>
+              <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-black text-red-700">{internalLinkSuggestions.length}</span>
+            </div>
+            <div className="mt-4 space-y-3">
+              {internalLinkSuggestions.length ? (
+                internalLinkSuggestions.map((post) => (
+                  <div key={post.id || post.slug} className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-right">
+                    <div className="line-clamp-2 text-sm font-black leading-6 text-slate-950">{post.title}</div>
+                    <div className="mt-2 flex items-center justify-between gap-2 text-xs">
+                      <Link href={`/blog/${post.slug}`} className="font-bold text-red-700 hover:underline">
+                        فتح
+                      </Link>
+                      <code className="rounded-full bg-white px-2 py-1 text-slate-500" dir="ltr">/blog/{post.slug}</code>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-2xl bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-500">
+                  اكتب عنواناً وملخصاً أو اختر تصنيفاً لتظهر اقتراحات مرتبطة تلقائياً.
+                </div>
+              )}
             </div>
           </div>
 

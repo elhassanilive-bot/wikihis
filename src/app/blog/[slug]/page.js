@@ -1,15 +1,14 @@
 ﻿import Link from "next/link";
-import { getPostBySlugDetailed, listPostCategories, listPostsDetailed } from "@/lib/blog/posts";
+import { getPostBySlugDetailed, listPopularPosts, listPostCategories, listPostsDetailed } from "@/lib/blog/posts";
 import { estimateReadingTime, formatArabicDate } from "@/lib/blog/render";
 import { renderStoredBlogContent } from "@/lib/blog/content";
 import BlogImage from "@/components/blog/BlogImage";
 import ArticleComments from "@/components/blog/ArticleComments";
 import ArticleEngagementBar from "@/components/blog/ArticleEngagementBar";
+import NewsletterSignup from "@/components/blog/NewsletterSignup";
 import { site } from "@/config/site";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
+export const revalidate = 60;
 
 function stripHtml(value) {
   return String(value || "")
@@ -79,6 +78,8 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const ogImage = `${site.url}/api/og?title=${encodeURIComponent(post.title)}&category=${encodeURIComponent(post.category || "مقال")}`;
+
   return {
     title: post.title,
     description: post.excerpt,
@@ -88,7 +89,7 @@ export async function generateMetadata({ params }) {
       title: post.title,
       description: post.excerpt,
       url: `/blog/${post.slug}`,
-      images: post.coverImageUrl ? [{ url: post.coverImageUrl }] : undefined,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }],
       publishedTime: post.publishedAt || post.createdAt,
       modifiedTime: post.updatedAt || post.publishedAt || post.createdAt,
       authors: post.authorDisplayName ? [post.authorDisplayName] : [site.name],
@@ -98,7 +99,7 @@ export async function generateMetadata({ params }) {
       card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
-      images: post.coverImageUrl ? [post.coverImageUrl] : undefined,
+      images: [ogImage],
     },
   };
 }
@@ -282,6 +283,33 @@ function CompactSuggestedCard({ post }) {
   );
 }
 
+function EditorialTrustBox({ post }) {
+  const sensitiveCategory = /صحة|طب|مال|استثمار|اقتصاد|قانون/i.test(`${post.category || ""} ${post.categoryParent || ""}`);
+
+  return (
+    <div className="border border-red-100 bg-white p-6 text-right shadow-[0_20px_55px_-45px_rgba(127,29,29,0.35)]">
+      <div className="text-xs font-extrabold tracking-[0.18em] text-red-700">ثقة ويكيهيس</div>
+      <h2 className="mt-2 text-xl font-black text-slate-950">شفافية تحريرية</h2>
+      <div className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
+        <p>نراجع المقالات قبل نشرها، ونوضح تاريخ النشر والتحديث ومصدر الكاتب عندما يكون متاحاً.</p>
+        {sensitiveCategory ? (
+          <p className="border-r-4 border-red-600 bg-red-50 px-3 py-2 text-red-900">
+            هذا التصنيف يحتاج قراءة واعية؛ المحتوى معلوماتي ولا يغني عن رأي مختص.
+          </p>
+        ) : null}
+      </div>
+      <div className="mt-5 grid gap-2 text-sm font-bold">
+        <Link href="/editorial-policy" className="border border-slate-200 px-4 py-3 text-slate-700 transition hover:border-red-200 hover:text-red-700">
+          سياسة التحرير
+        </Link>
+        <Link href="/contact" className="border border-slate-200 px-4 py-3 text-slate-700 transition hover:border-red-200 hover:text-red-700">
+          مراسلة التحرير
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 function TocLink({ item }) {
   return (
     <a
@@ -326,9 +354,10 @@ export default async function BlogPostPage({ params }) {
     return <NotFoundState error={error} />;
   }
 
-  const [{ posts: sameCategoryPosts }, { posts: latestPosts }, { categories }] = await Promise.all([
+  const [{ posts: sameCategoryPosts }, { posts: latestPosts }, { posts: popularPosts }, { categories }] = await Promise.all([
     listPostsDetailed({ limit: 4, category: post.category || null }),
     listPostsDetailed({ limit: 6 }),
+    listPopularPosts({ limit: 5, category: post.category || null }),
     listPostCategories(),
   ]);
 
@@ -337,6 +366,7 @@ export default async function BlogPostPage({ params }) {
     .filter((item, index, array) => array.findIndex((entry) => entry.slug === item.slug) === index)
     .slice(0, 4);
   const compactSuggestions = latestPosts.filter((item) => item && item.slug !== post.slug).slice(0, 3);
+  const popularSuggestions = popularPosts.filter((item) => item && item.slug !== post.slug).slice(0, 4);
 
   const html = renderStoredBlogContent(post.content);
   const { htmlWithAnchors, headings } = buildArticleToc(html);
@@ -440,6 +470,21 @@ export default async function BlogPostPage({ params }) {
                 <InfoBox label="وقت القراءة" value={`${readingTime} دقائق`} />
               </div>
             </div>
+
+            <EditorialTrustBox post={post} />
+
+            <NewsletterSignup categories={categories} defaultCategory={post.category || ""} compact />
+
+            {popularSuggestions.length ? (
+              <div className="border border-slate-200 bg-white p-6 shadow-[0_20px_55px_-45px_rgba(15,23,42,0.45)]">
+                <div className="text-sm font-semibold text-slate-500">الأكثر قراءة</div>
+                <div className="mt-4 space-y-3">
+                  {popularSuggestions.map((popularPost) => (
+                    <CompactSuggestedCard key={`popular-${popularPost.slug}`} post={popularPost} />
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
             {(post.tags || []).length ? (
               <div className="border border-slate-200 bg-white p-6 shadow-[0_20px_55px_-45px_rgba(15,23,42,0.45)]">

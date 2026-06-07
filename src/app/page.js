@@ -7,9 +7,7 @@ import PostCardBookmarkButton from "@/components/blog/PostCardBookmarkButton";
 import { listContributorsPublic, listPostCategories, listPostsDetailed } from "@/lib/blog/posts";
 import { estimateReadingTime, formatArabicDate } from "@/lib/blog/render";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
+export const revalidate = 60;
 
 export const metadata = {
   title: "ويكيهيس | Wikihis",
