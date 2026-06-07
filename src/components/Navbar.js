@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getSupabaseClient, isSupabaseConfigured } from '@/lib/supabase/client';
+import { getCategoryHref } from '@/lib/blog/categoryRoutes';
 
 const sectionLinks = [
   {
@@ -210,7 +211,7 @@ const VIEWPORT_PADDING = 16;
 function buildCategoryHref(value, fallbackHref) {
   const category = String(value || '').trim();
   if (!category) return fallbackHref;
-  return `/?category=${encodeURIComponent(category)}`;
+  return getCategoryHref(category);
 }
 
 function SectionIcon({ label }) {
@@ -505,6 +506,18 @@ export default function Navbar() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 3.13a4 4 0 0 1 0 7.75" />
                   </svg>
                   <span>المساهمون</span>
+                </Link>
+                <Link
+                  href="/search"
+                  aria-label="البحث"
+                  title="البحث"
+                  className="inline-flex h-8 items-center gap-1.5 px-1 text-[13px] font-bold text-slate-900 transition hover:text-[var(--gold-700)]"
+                >
+                  <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m20 20-3.5-3.5" />
+                  </svg>
+                  <span>البحث</span>
                 </Link>
                 {authUser ? (
                   <Link

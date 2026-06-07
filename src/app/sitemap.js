@@ -1,10 +1,12 @@
 import { site } from "@/config/site";
 import { listPostsForSitemap } from "@/lib/blog/posts";
+import { getCategoryHref } from "@/lib/blog/categoryRoutes";
 
 const staticRoutes = [
   "",
   "/about",
   "/sections",
+  "/search",
   "/contributors",
   "/contact",
   "/contribute",
@@ -48,7 +50,7 @@ export default async function sitemap() {
       priority: route ? 0.7 : 1,
     })),
     ...categories.map((category) => ({
-      url: absoluteUrl(`/?category=${encodeURIComponent(category)}`),
+      url: absoluteUrl(getCategoryHref(category)),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.75,

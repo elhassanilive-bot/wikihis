@@ -137,7 +137,7 @@ export async function listPostsForSitemap({ limit = 5000 } = {}) {
   return data || [];
 }
 
-export async function listPostsDetailed({ limit = 20, page = 1, category = null } = {}) {
+export async function listPostsDetailed({ limit = 20, page = 1, category = null, search = "" } = {}) {
   if (!isSupabaseConfigured()) return { posts: [], error: "Supabase غير مُعد", totalCount: 0, totalPages: 0, currentPage: 1 };
 
   const supabase = await getSupabaseClient();
@@ -148,6 +148,7 @@ export async function listPostsDetailed({ limit = 20, page = 1, category = null 
   const from = (safePage - 1) * safeLimit;
   const to = from + safeLimit - 1;
   const normalizedCategory = String(category || "").trim();
+  const normalizedSearch = String(search || "").trim();
 
   let query = supabase
     .from(BLOG_PUBLIC_TABLE)
@@ -157,6 +158,13 @@ export async function listPostsDetailed({ limit = 20, page = 1, category = null 
   if (normalizedCategory) {
     const escapedCategory = normalizedCategory.replaceAll('"', '\\"');
     query = query.or(`category.eq."${escapedCategory}",category_parent.eq."${escapedCategory}"`);
+  }
+
+  if (normalizedSearch) {
+    const escapedSearch = normalizedSearch.replaceAll("%", "\\%").replaceAll("_", "\\_").replaceAll(",", " ");
+    query = query.or(
+      `title.ilike.%${escapedSearch}%,excerpt.ilike.%${escapedSearch}%,content.ilike.%${escapedSearch}%,category.ilike.%${escapedSearch}%`
+    );
   }
 
   const { data, error, count } = await query
