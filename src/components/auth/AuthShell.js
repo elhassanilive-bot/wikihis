@@ -276,7 +276,7 @@ export default function AuthShell({ initialMode = "signin" }) {
             </div>
           </div>
           <p className="mt-4 max-w-xl text-sm leading-7 text-slate-500">
-            حسابك يمنحك تجربة شخصية داخل الموقع: تعليقات، حفظ مقالات، ومتابعة نشاطك بدون ازدحام أو خطوات معقدة.
+            حسابك يمنحك تجربة شخصية داخل الموقع: تعليقات، حفظ مقالات، ومتابعة نشاطك من مكان واحد.
           </p>
 
           <div className="mt-8 space-y-5">
