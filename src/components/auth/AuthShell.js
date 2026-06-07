@@ -60,8 +60,13 @@ function FieldIcon({ name }) {
   );
 }
 
+function normalizeAuthMode(value) {
+  const mode = String(value || "").trim();
+  return ["signin", "signup", "forgot", "reset"].includes(mode) ? mode : "signin";
+}
+
 export default function AuthShell({ initialMode = "signin" }) {
-  const [mode, setMode] = useState(initialMode);
+  const [mode, setMode] = useState(() => normalizeAuthMode(initialMode));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -73,6 +78,33 @@ export default function AuthShell({ initialMode = "signin" }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  function switchMode(nextMode, { replace = false } = {}) {
+    const normalizedMode = normalizeAuthMode(nextMode);
+    setMode(normalizedMode);
+    setMessage("");
+    setError("");
+
+    if (typeof window === "undefined") return;
+
+    const url = new URL(window.location.href);
+    if (normalizedMode === "signin") {
+      url.searchParams.delete("mode");
+    } else {
+      url.searchParams.set("mode", normalizedMode);
+    }
+
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    if (replace) {
+      window.history.replaceState({}, "", nextUrl);
+    } else {
+      window.history.pushState({}, "", nextUrl);
+    }
+  }
+
+  useEffect(() => {
+    switchMode(initialMode, { replace: true });
+  }, [initialMode]);
+
   useEffect(() => {
     let active = true;
 
@@ -83,14 +115,14 @@ export default function AuthShell({ initialMode = "signin" }) {
       const { data } = supabase.auth.onAuthStateChange((event) => {
         if (!active) return;
         if (event === "PASSWORD_RECOVERY") {
-          setMode("reset");
+          switchMode("reset", { replace: true });
           setRecoveryReady(true);
         }
       });
 
       const hash = typeof window !== "undefined" ? window.location.hash : "";
       if (hash.includes("type=recovery")) {
-        setMode("reset");
+        switchMode("reset", { replace: true });
         setRecoveryReady(true);
       }
 
@@ -211,7 +243,7 @@ export default function AuthShell({ initialMode = "signin" }) {
         if (updateError) throw updateError;
         setMessage("تم تحديث كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول بها.");
         setRecoveryReady(false);
-        setMode("signin");
+        switchMode("signin", { replace: true });
       }
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "تعذر تنفيذ العملية المطلوبة.");
@@ -280,13 +312,13 @@ export default function AuthShell({ initialMode = "signin" }) {
           </div>
 
           <div className="mb-6 grid grid-cols-3 rounded-full bg-slate-100 p-1">
-            <AuthTabButton active={mode === "signin"} onClick={() => setMode("signin")}>
+            <AuthTabButton active={mode === "signin"} onClick={() => switchMode("signin")}>
               دخول
             </AuthTabButton>
-            <AuthTabButton active={mode === "signup"} onClick={() => setMode("signup")}>
+            <AuthTabButton active={mode === "signup"} onClick={() => switchMode("signup")}>
               حساب جديد
             </AuthTabButton>
-            <AuthTabButton active={mode === "forgot" || mode === "reset"} onClick={() => setMode("forgot")}>
+            <AuthTabButton active={mode === "forgot" || mode === "reset"} onClick={() => switchMode("forgot")}>
               نسيت؟
             </AuthTabButton>
           </div>
@@ -408,7 +440,7 @@ export default function AuthShell({ initialMode = "signin" }) {
             {mode === "signin" ? "ليس لديك حساب؟ " : "لديك حساب بالفعل؟ "}
             <button
               type="button"
-              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+              onClick={() => switchMode(mode === "signin" ? "signup" : "signin")}
               className="font-black text-red-700 underline-offset-4 hover:underline"
             >
               {mode === "signin" ? "أنشئ حساباً" : "تسجيل الدخول"}
