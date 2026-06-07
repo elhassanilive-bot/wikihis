@@ -496,26 +496,28 @@ export default function Navbar() {
                   href="/contributors"
                   aria-label="المساهمون"
                   title="المساهمون"
-                  className="inline-flex h-9 w-9 items-center justify-center text-slate-950 transition hover:text-[var(--gold-700)]"
+                  className="inline-flex h-8 items-center gap-1.5 px-1 text-[13px] font-bold text-slate-900 transition hover:text-[var(--gold-700)]"
                 >
-                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M22 21v-2a4 4 0 0 0-3-3.87" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 3.13a4 4 0 0 1 0 7.75" />
                   </svg>
+                  <span>المساهمون</span>
                 </Link>
                 {authUser ? (
                   <Link
                     href="/account"
                     aria-label="حسابي"
                     title="حسابي"
-                    className="inline-flex h-9 w-9 items-center justify-center text-slate-950 transition hover:text-[var(--gold-700)]"
+                    className="inline-flex h-8 items-center gap-1.5 px-1 text-[13px] font-bold text-slate-900 transition hover:text-[var(--gold-700)]"
                   >
-                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                       <circle cx="12" cy="8" r="4" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M20 21a8 8 0 0 0-16 0" />
                     </svg>
+                    <span>حسابي</span>
                   </Link>
                 ) : (
                   <>
