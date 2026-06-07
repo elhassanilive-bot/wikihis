@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import wikihisIcon from "../../../assets/wikihis.png";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
@@ -12,10 +11,10 @@ function AuthTabButton({ active, onClick, children }) {
       type="button"
       onClick={onClick}
       className={[
-        "relative rounded-full px-2.5 py-2 text-xs font-black transition sm:px-4 sm:text-sm",
+        "relative rounded-full px-3 py-2 text-xs font-black transition sm:px-4 sm:text-sm",
         active
-          ? "bg-slate-950 text-white shadow-[0_16px_35px_-22px_rgba(15,23,42,0.9)]"
-          : "text-slate-500 hover:bg-white hover:text-red-700",
+          ? "bg-red-700 text-white shadow-[0_12px_28px_-20px_rgba(185,28,28,0.9)]"
+          : "text-slate-500 hover:bg-red-50 hover:text-red-700",
       ].join(" ")}
     >
       {children}
@@ -232,57 +231,82 @@ export default function AuthShell({ initialMode = "signin" }) {
   }
 
   return (
-    <section dir="rtl" className="relative overflow-hidden px-3 py-6 sm:px-6 sm:py-10 lg:px-8">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_12%,rgba(185,28,28,0.18),transparent_34%),radial-gradient(circle_at_12%_88%,rgba(15,23,42,0.12),transparent_32%),linear-gradient(180deg,#fff7ed_0%,#fff_45%,#f8fafc_100%)]" />
-      <div className="pointer-events-none absolute right-[-8rem] top-12 -z-10 h-72 w-72 rounded-full bg-red-700/10 blur-3xl" />
-      <div className="mx-auto max-w-[620px]">
-        <div className="rounded-[1.65rem] border border-white/70 bg-white/88 p-2.5 shadow-[0_28px_80px_-52px_rgba(15,23,42,0.55)] backdrop-blur-xl sm:rounded-[2rem] sm:p-4">
-          <div className="rounded-[1.35rem] border border-slate-200/80 bg-white p-4 text-right sm:rounded-[1.7rem] sm:p-7">
-            <div className="flex flex-col gap-4">
-              <div>
-                <div className="flex items-center gap-3">
-                  <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-2xl border border-red-100 bg-red-50 p-1.5 sm:h-12 sm:w-12">
-                    <Image src={wikihisIcon} alt="Wikihis" fill sizes="48px" className="object-contain p-1" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-black tracking-[0.18em] text-red-700">حساب WIKIHIS</div>
-                    <h2 className="mt-1 text-2xl font-black text-slate-950 sm:text-3xl">{pageTitle}</h2>
-                  </div>
-                </div>
-                <p className="mt-3 text-xs leading-6 text-slate-500 sm:text-sm sm:leading-7">
-                  اختر العملية التي تريدها، وسنتكفل بالباقي بأبسط تجربة ممكنة.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-3 rounded-full border border-slate-200 bg-slate-100 p-1">
-                <AuthTabButton active={mode === "signin"} onClick={() => setMode("signin")}>
-                  دخول
-                </AuthTabButton>
-                <AuthTabButton active={mode === "signup"} onClick={() => setMode("signup")}>
-                  حساب جديد
-                </AuthTabButton>
-                <AuthTabButton active={mode === "forgot" || mode === "reset"} onClick={() => setMode("forgot")}>
-                  نسيت؟
-                </AuthTabButton>
-              </div>
+    <section dir="rtl" className="bg-white px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1fr] lg:gap-16">
+        <aside className="order-2 text-right lg:order-1">
+          <div className="flex items-center gap-3">
+            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-red-50 p-1.5">
+              <Image src={wikihisIcon} alt="Wikihis" fill sizes="48px" className="object-contain p-1" />
             </div>
+            <div>
+              <div className="text-xs font-black tracking-[0.18em] text-red-700">WIKIHIS</div>
+              <h1 className="mt-1 text-2xl font-black text-slate-950">تواصل وتفاعل مع Wikihis</h1>
+            </div>
+          </div>
+          <p className="mt-4 max-w-xl text-sm leading-7 text-slate-500">
+            حسابك يمنحك تجربة شخصية داخل الموقع: تعليقات، حفظ مقالات، ومتابعة نشاطك بدون ازدحام أو خطوات معقدة.
+          </p>
 
-            {message ? (
-              <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-semibold leading-6 text-emerald-900 sm:text-sm sm:leading-7">
-                {message}
+          <div className="mt-8 space-y-5">
+            {[
+              ["حساب واحد", "ادخل مرة واحدة واستعمل الحساب للتعليق والحفظ وإدارة نشاطك."],
+              ["محتوى مخصص", "احفظ المقالات المهمة وارجع إليها من صفحة الحساب في أي وقت."],
+              ["التعليق على المقالات", "شارك رأيك بوضوح وتابع تفاعلاتك داخل المقالات."],
+              ["نشر كمساهم", "أنشئ مقالاتك وأرسلها للمراجعة لتظهر في Wikihis."],
+              ["استعادة سهلة", "أعد تعيين كلمة المرور عبر بريدك الإلكتروني عند الحاجة."],
+            ].map(([title, description]) => (
+              <div key={title} className="flex items-start gap-4">
+                <span className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center text-red-700">
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20 6 9 17l-5-5" />
+                  </svg>
+                </span>
+                <div>
+                  <div className="text-base font-black text-slate-950">{title}</div>
+                  <p className="mt-1 text-sm leading-7 text-slate-500">{description}</p>
+                </div>
               </div>
-            ) : null}
-            {error ? (
-              <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold leading-6 text-red-900 sm:text-sm sm:leading-7">
-                {error}
-              </div>
-            ) : null}
+            ))}
+          </div>
+        </aside>
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-3.5 sm:space-y-4">
+        <div className="order-1 mx-auto w-full max-w-[430px] text-right lg:order-2">
+          <div className="mb-7">
+            <div className="text-xs font-black tracking-[0.2em] text-red-700">حساب WIKIHIS</div>
+            <h2 className="mt-3 text-3xl font-black leading-tight text-slate-950 sm:text-4xl">{pageTitle}</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-500">
+              املأ البيانات بالأسفل للمتابعة. لا توجد أزرار تواصل اجتماعي، فقط بريدك وكلمة المرور.
+            </p>
+          </div>
+
+          <div className="mb-6 grid grid-cols-3 rounded-full bg-slate-100 p-1">
+            <AuthTabButton active={mode === "signin"} onClick={() => setMode("signin")}>
+              دخول
+            </AuthTabButton>
+            <AuthTabButton active={mode === "signup"} onClick={() => setMode("signup")}>
+              حساب جديد
+            </AuthTabButton>
+            <AuthTabButton active={mode === "forgot" || mode === "reset"} onClick={() => setMode("forgot")}>
+              نسيت؟
+            </AuthTabButton>
+          </div>
+
+          {message ? (
+            <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-semibold leading-6 text-emerald-900 sm:text-sm sm:leading-7">
+              {message}
+            </div>
+          ) : null}
+          {error ? (
+            <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold leading-6 text-red-900 sm:text-sm sm:leading-7">
+              {error}
+            </div>
+          ) : null}
+
+          <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
               {mode === "signup" ? (
                 <label className="block">
                   <span className="mb-1.5 block text-xs font-black text-slate-900 sm:text-sm">الاسم الظاهر</span>
-                  <div className="flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100 sm:gap-3 sm:px-4">
+                  <div className="flex items-center gap-2.5 rounded-xl border border-slate-300 bg-white px-3.5 transition focus-within:border-red-400 focus-within:ring-4 focus-within:ring-red-50 sm:gap-3 sm:px-4">
                     <FieldIcon name="user" />
                     <input
                       value={displayName}
@@ -298,7 +322,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               {mode !== "reset" ? (
                 <label className="block">
                   <span className="mb-1.5 block text-xs font-black text-slate-900 sm:text-sm">البريد الإلكتروني</span>
-                  <div className="flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100 sm:gap-3 sm:px-4">
+                  <div className="flex items-center gap-2.5 rounded-xl border border-slate-300 bg-white px-3.5 transition focus-within:border-red-400 focus-within:ring-4 focus-within:ring-red-50 sm:gap-3 sm:px-4">
                     <FieldIcon name="mail" />
                     <input
                       type="email"
@@ -315,7 +339,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               {mode !== "forgot" ? (
                 <label className="block">
                   <span className="mb-1.5 block text-xs font-black text-slate-900 sm:text-sm">{mode === "reset" ? "كلمة المرور الجديدة" : "كلمة المرور"}</span>
-                  <div className="flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100 sm:gap-3 sm:px-4">
+                  <div className="flex items-center gap-2.5 rounded-xl border border-slate-300 bg-white px-3.5 transition focus-within:border-red-400 focus-within:ring-4 focus-within:ring-red-50 sm:gap-3 sm:px-4">
                     <FieldIcon name="lock" />
                     <input
                       type={showPassword ? "text" : "password"}
@@ -340,7 +364,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               {mode === "signup" || mode === "reset" ? (
                 <label className="block">
                   <span className="mb-1.5 block text-xs font-black text-slate-900 sm:text-sm">تأكيد كلمة المرور</span>
-                  <div className="flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100 sm:gap-3 sm:px-4">
+                  <div className="flex items-center gap-2.5 rounded-xl border border-slate-300 bg-white px-3.5 transition focus-within:border-red-400 focus-within:ring-4 focus-within:ring-red-50 sm:gap-3 sm:px-4">
                     <FieldIcon name="lock" />
                     <input
                       type={showConfirmPassword ? "text" : "password"}
@@ -371,7 +395,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               <button
                 type="submit"
                 disabled={pending || (mode === "reset" && !recoveryReady)}
-                className="group mt-2 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(135deg,#991b1b_0%,#dc2626_50%,#7f1d1d_100%)] px-5 py-2.5 text-sm font-black text-white shadow-[0_22px_45px_-28px_rgba(185,28,28,0.95)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100 sm:min-h-14 sm:px-6 sm:py-3"
+                className="group mt-2 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-red-700 px-5 py-2.5 text-sm font-black text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-70 sm:min-h-14 sm:px-6 sm:py-3"
               >
                 <span>{pending ? "جارٍ التنفيذ..." : pageTitle}</span>
                 <svg viewBox="0 0 24 24" className="h-4 w-4 transition group-hover:-translate-x-1" fill="none" stroke="currentColor" strokeWidth="2">
@@ -380,14 +404,15 @@ export default function AuthShell({ initialMode = "signin" }) {
               </button>
             </form>
 
-            <div className="mt-5 flex flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs leading-6 text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:rounded-3xl sm:p-4 sm:text-sm sm:leading-7">
-              <span>
-                بعد الدخول يمكنك إدارة حسابك، منشوراتك، وتعليقاتك من لوحة الحساب.
-              </span>
-              <Link href="/account" className="shrink-0 font-black text-red-700 transition hover:text-red-900">
-                فتح صفحة الحساب
-              </Link>
-            </div>
+          <div className="mt-6 text-center text-sm text-slate-600">
+            {mode === "signin" ? "ليس لديك حساب؟ " : "لديك حساب بالفعل؟ "}
+            <button
+              type="button"
+              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+              className="font-black text-red-700 underline-offset-4 hover:underline"
+            >
+              {mode === "signin" ? "أنشئ حساباً" : "تسجيل الدخول"}
+            </button>
           </div>
         </div>
       </div>
