@@ -5,6 +5,7 @@ import { renderStoredBlogContent } from "@/lib/blog/content";
 import BlogImage from "@/components/blog/BlogImage";
 import ArticleComments from "@/components/blog/ArticleComments";
 import ArticleEngagementBar from "@/components/blog/ArticleEngagementBar";
+import { site } from "@/config/site";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -83,10 +84,85 @@ export async function generateMetadata({ params }) {
     description: post.excerpt,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
+      type: "article",
       title: post.title,
       description: post.excerpt,
+      url: `/blog/${post.slug}`,
       images: post.coverImageUrl ? [{ url: post.coverImageUrl }] : undefined,
+      publishedTime: post.publishedAt || post.createdAt,
+      modifiedTime: post.updatedAt || post.publishedAt || post.createdAt,
+      authors: post.authorDisplayName ? [post.authorDisplayName] : [site.name],
+      section: post.category || undefined,
     },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images: post.coverImageUrl ? [post.coverImageUrl] : undefined,
+    },
+  };
+}
+
+function buildPostJsonLd({ post, plainText, readingTime }) {
+  const postUrl = `${site.url}/blog/${post.slug}`;
+  const image = post.coverImageUrl || `${site.url}/icon.png`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${postUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "الرئيسية",
+            item: site.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: post.category || "المقالات",
+            item: `${site.url}/?category=${encodeURIComponent(post.category || "المقالات")}`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: post.title,
+            item: postUrl,
+          },
+        ],
+      },
+      {
+        "@type": "Article",
+        "@id": `${postUrl}#article`,
+        mainEntityOfPage: postUrl,
+        headline: post.title,
+        description: post.excerpt,
+        image,
+        inLanguage: "ar",
+        articleSection: post.category || undefined,
+        keywords: Array.isArray(post.tags) ? post.tags.join(", ") : undefined,
+        wordCount: plainText ? plainText.split(/\s+/).filter(Boolean).length : undefined,
+        timeRequired: `PT${Math.max(1, Number(readingTime) || 1)}M`,
+        datePublished: post.publishedAt || post.createdAt,
+        dateModified: post.updatedAt || post.publishedAt || post.createdAt,
+        author: {
+          "@type": "Person",
+          name: post.authorDisplayName || site.name,
+        },
+        publisher: {
+          "@type": "Organization",
+          name: site.name,
+          alternateName: site.nameEn,
+          logo: {
+            "@type": "ImageObject",
+            url: `${site.url}/icon.png`,
+          },
+        },
+      },
+    ],
   };
 }
 
@@ -264,8 +340,10 @@ export default async function BlogPostPage({ params }) {
 
   const html = renderStoredBlogContent(post.content);
   const { htmlWithAnchors, headings } = buildArticleToc(html);
+  const plainText = stripHtml(html);
   const tocTree = buildTocTree(headings);
   const readingTime = estimateReadingTime(post.content);
+  const jsonLd = buildPostJsonLd({ post, plainText, readingTime });
   const quickCategories = [post.category, ...categories]
     .filter(Boolean)
     .filter((item, index, array) => array.findIndex((entry) => entry === item) === index)
@@ -273,6 +351,10 @@ export default async function BlogPostPage({ params }) {
 
   return (
     <div className="w-full bg-[linear-gradient(180deg,#f5f5f1_0%,#ffffff_24%,#f7f8fa_100%)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <nav className="flex flex-wrap items-center gap-3 text-sm text-slate-500">

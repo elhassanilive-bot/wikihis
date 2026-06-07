@@ -1,12 +1,12 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
 export const metadata = {
-  title: "المدونة",
-  description: "تم نقل أرشيف المدونة إلى الصفحة الرئيسية للموقع.",
+  title: "مدونة ويكيهيس",
+  description: "أرشيف مقالات ويكيهيس متاح من الصفحة الرئيسية مع أحدث المقالات والتصنيفات.",
   alternates: { canonical: "/" },
 };
 
@@ -25,3 +25,4 @@ export default async function BlogIndexRedirect({ searchParams }) {
   const query = params.toString();
   redirect(query ? `/?${query}` : "/");
 }
+

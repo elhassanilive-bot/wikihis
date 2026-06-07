@@ -1,16 +1,13 @@
-﻿export const site = {
-  name: 'ويكيهيس',
-  nameEn: 'Wikihis',
+export const site = {
+  name: "ويكيهيس",
+  nameEn: "Wikihis",
   description:
-    'ويكيهيس منصة محتوى عربية تعرض الأخبار والمقالات والتحليلات عبر تصنيفات متعددة، مع مساحة للمساهمين وصفحات دعم وسياسات تحريرية واضحة.',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@wikihis.com',
+    "ويكيهيس هي جريدة إلكترونية عربية متعددة التخصصات تهتم بتقديم كل أنواع المجالات، وتوفر إمكانية نشر المقالات للمساهمين مما يجعلها بارزة من بين المواقع الأخرى.",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@wikihis.com",
   socials: {
-    x: process.env.NEXT_PUBLIC_SOCIAL_X_URL || '',
-    instagram: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM_URL || '',
-    youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_URL || '',
+    x: process.env.NEXT_PUBLIC_SOCIAL_X_URL || "",
+    instagram: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM_URL || "",
+    youtube: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_URL || "",
   },
 };
-
-
-

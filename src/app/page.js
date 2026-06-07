@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import BlogImage from "@/components/blog/BlogImage";
 import ContributorsSpotlight from "@/components/blog/ContributorsSpotlight";
 import NewsTickerClient from "@/components/blog/NewsTickerClient";
@@ -12,8 +12,8 @@ export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
 export const metadata = {
-  title: "ويكيهيس",
-  description: "الصفحة الرئيسية لويكيهيس تعرض أحدث المقالات والتصنيفات بصيغة إخبارية احترافية.",
+  title: "ويكيهيس | Wikihis",
+  description: "ويكيهيس هي جريدة إلكترونية عربية متعددة التخصصات تقدم المقالات والأخبار والتحليلات، وتتيح للمساهمين نشر مقالاتهم في مجالات متنوعة.",
   alternates: { canonical: "/" },
 };
 
@@ -22,14 +22,21 @@ const SUBCATEGORY_SECTION_COUNT = 4;
 const SUBCATEGORY_POST_FETCH_LIMIT = 80;
 const SUBCATEGORY_SIDE_POST_COUNT = 5;
 const PRIORITY_CATEGORIES = [
-  "التكنولوجيا",
+  "تكنولوجيا",
+  "الأخبار",
+  "الصحة واللياقة",
+  "البيت والأسرة",
+  "قضايا المرأة",
+  "المجتمع",
+  "عالم الحيوانات",
+  "تفسير الأحلام",
+  "منوعات",
   "التاريخ",
   "الاستثمار",
   "الرياضة",
   "السفر",
   "السياسة",
   "الفنون",
-  "الحيوانات",
   "البيئة",
   "تطوير الذات",
   "اقتصاد",
@@ -37,10 +44,10 @@ const PRIORITY_CATEGORIES = [
   "المرأة",
 ];
 const CATEGORY_CHILDREN = {
-  المرأة: ["حقوق المرأة", "اهتمامات المرأة", "إعدادات المرأة", "صحة الأم"],
-  الصحة: ["الصحة النفسية", "النوم والراحة", "الوجبات والتغذية"],
-  الرياضة: ["الرياضة البدنية", "اليوجا"],
-  الطبخ: ["الوجبات والتغذية"],
+  "قضايا المرأة": ["حقوق المرأة", "اهتمامات المرأة", "صحة الجهاز التناسلي", "الحمل والولادة"],
+  "الصحة واللياقة": ["الصحة النفسية", "النوم الصحي", "الأكل الصحي اليومي", "تمارين منزلية"],
+  "الرياضة": ["الرياضة البدنية", "اليوجا"],
+  "البيت والأسرة": ["تنظيم البيت", "تربية الأطفال", "أكلات سريعة", "العلاقة الزوجية"],
 };
 
 function hasRealCoverImage(post) {
@@ -181,7 +188,7 @@ function buildSubcategoryShowcase(posts) {
 }
 
 function EmptyState({ title, description, href, label }) {
-  const shouldRenderAction = href && label && label !== "إضافة أول مقال";
+  const shouldRenderAction = href && label && label !== "Ø¥Ø¶Ø§ÙØ© Ø£ÙˆÙ„ Ù…Ù‚Ø§Ù„";
 
   return (
     <div className="rounded-[1.6rem] border border-slate-200 bg-white px-6 py-12 text-center shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]">
@@ -223,7 +230,7 @@ function LivePostVisual({ post, className = "", priority = false, compact = fals
       ].join(" ")}
     >
       <div className="flex items-center justify-between text-[10px] font-bold text-white/75">
-        <span className="rounded-full bg-white/12 px-2 py-1">{post.category || "مقال"}</span>
+        <span className="rounded-full bg-white/12 px-2 py-1">{post.category || "Ù…Ù‚Ø§Ù„"}</span>
         <span>{formatArabicDate(post.publishedAt || post.createdAt)}</span>
       </div>
       <div className="space-y-3 text-right">
@@ -236,7 +243,7 @@ function LivePostVisual({ post, className = "", priority = false, compact = fals
       </div>
       <div className="flex justify-start">
         <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-bold text-white/90">
-          محتوى المقال
+          Ù…Ø­ØªÙˆÙ‰ Ø§Ù„Ù…Ù‚Ø§Ù„
         </span>
       </div>
     </div>
@@ -252,9 +259,9 @@ function HeroLead({ post }) {
         <div className="flex flex-col justify-between border-l border-white/10 p-5 text-white sm:p-6">
           <div>
             <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold text-white/70">
-              <span className="inline-flex items-center bg-red-700 px-2 py-1 text-white">{post.category || "عام"}</span>
+              <span className="inline-flex items-center bg-red-700 px-2 py-1 text-white">{post.category || "Ø¹Ø§Ù…"}</span>
               <span>{formatArabicDate(post.publishedAt || post.createdAt)}</span>
-              <span>{readingTime} دقائق</span>
+              <span>{readingTime} Ø¯Ù‚Ø§Ø¦Ù‚</span>
             </div>
             <h1 className="mt-4 line-clamp-3 text-2xl font-black leading-[1.65] text-white sm:text-3xl lg:text-[2.15rem]">
               {post.title}
@@ -282,7 +289,7 @@ function SideHeadline({ post }) {
     <article className="border-b border-white/10 last:border-b-0">
       <Link href={`/blog/${post.slug}`} className="grid grid-cols-[1fr_84px] gap-3 p-3 transition hover:bg-white/5">
         <div className="text-right">
-          <div className="inline-flex bg-red-700 px-2 py-0.5 text-[10px] font-bold text-white">{post.category || "عام"}</div>
+          <div className="inline-flex bg-red-700 px-2 py-0.5 text-[10px] font-bold text-white">{post.category || "Ø¹Ø§Ù…"}</div>
           <h2 className="mt-2 line-clamp-3 text-[13px] font-extrabold leading-6 text-white">{post.title}</h2>
         </div>
         <div className="relative h-16 overflow-hidden bg-slate-700">
@@ -305,7 +312,7 @@ function EditorialCard({ post, tone = "light" }) {
       ].join(" ")}
     >
       <Link href={`/blog/${post.slug}`} className="block">
-        <div className={`text-[11px] font-extrabold ${dark ? "text-red-300" : "text-red-700"}`}>{post.category || "ملف"}</div>
+        <div className={`text-[11px] font-extrabold ${dark ? "text-red-300" : "text-red-700"}`}>{post.category || "Ù…Ù„Ù"}</div>
         <h3 className={`mt-2 line-clamp-2 text-lg font-black leading-8 ${dark ? "text-white" : "text-slate-950"}`}>{post.title}</h3>
         <p className={`mt-3 line-clamp-3 text-sm leading-7 ${dark ? "text-white/75" : "text-slate-600"}`}>{post.excerpt}</p>
         <div className={`mt-4 text-xs font-bold ${dark ? "text-white/65" : "text-slate-500"}`}>
@@ -336,7 +343,7 @@ function CategoryIcon({ category }) {
   const value = String(category || "");
   const common = "h-5 w-5";
 
-  if (/صحة الأم/.test(value)) {
+  if (/ØµØ­Ø© Ø§Ù„Ø£Ù…/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="8" r="3" />
@@ -345,7 +352,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/الوجبات|التغذية/.test(value)) {
+  if (/Ø§Ù„ÙˆØ¬Ø¨Ø§Øª|Ø§Ù„ØªØºØ°ÙŠØ©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M8 4v8M6 4v8M6 8h2M14 4v16M18 4c0 3-2 4-2 6v10" />
@@ -353,7 +360,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/الطبخ/.test(value)) {
+  if (/Ø§Ù„Ø·Ø¨Ø®/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 11h12a2 2 0 0 1 2 2v3H7a2 2 0 0 1-2-2v-3Z" />
@@ -362,7 +369,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/اليوجا/.test(value)) {
+  if (/Ø§Ù„ÙŠÙˆØ¬Ø§/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="6.5" r="2.5" />
@@ -371,7 +378,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/النوم|الراحة/.test(value)) {
+  if (/Ø§Ù„Ù†ÙˆÙ…|Ø§Ù„Ø±Ø§Ø­Ø©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M18 15a6 6 0 1 1-6-9 5 5 0 0 0 6 9Z" />
@@ -380,7 +387,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/حقوق المرأة/.test(value)) {
+  if (/Ø­Ù‚ÙˆÙ‚ Ø§Ù„Ù…Ø±Ø£Ø©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 5 5 8v4c0 4 3 6.5 7 7 4-.5 7-3 7-7V8l-7-3Z" />
@@ -389,7 +396,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/إعدادات المرأة/.test(value)) {
+  if (/Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…Ø±Ø£Ø©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="3" />
@@ -398,7 +405,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/الرياضة البدنية/.test(value)) {
+  if (/Ø§Ù„Ø±ÙŠØ§Ø¶Ø© Ø§Ù„Ø¨Ø¯Ù†ÙŠØ©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 9h3v6H6m9-6h3v6h-3M9 12h6" />
@@ -406,7 +413,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/التكنولوجيا|تقنية|الذكاء/.test(value)) {
+  if (/Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§|ØªÙ‚Ù†ÙŠØ©|Ø§Ù„Ø°ÙƒØ§Ø¡/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="4" y="5" width="16" height="11" rx="2" />
@@ -415,7 +422,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/التاريخ/.test(value)) {
+  if (/Ø§Ù„ØªØ§Ø±ÙŠØ®/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="8" />
@@ -424,7 +431,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/الاستثمار/.test(value)) {
+  if (/Ø§Ù„Ø§Ø³ØªØ«Ù…Ø§Ø±/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 17l4-4 3 3 7-7" />
@@ -433,7 +440,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/الرياضة/.test(value)) {
+  if (/Ø§Ù„Ø±ÙŠØ§Ø¶Ø©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="7" />
@@ -442,7 +449,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/السفر/.test(value)) {
+  if (/Ø§Ù„Ø³ÙØ±/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 11h18M6 15l3-8 3 4 3-2 3 6" />
@@ -450,7 +457,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/السياسة/.test(value)) {
+  if (/Ø§Ù„Ø³ÙŠØ§Ø³Ø©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M4 20h16M6 17V8l6-3 6 3v9" />
@@ -459,7 +466,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/الفنون/.test(value)) {
+  if (/Ø§Ù„ÙÙ†ÙˆÙ†/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4c4.4 0 8 2.9 8 6.5S16.4 17 12 17h-1a2 2 0 0 0-2 2v1" />
@@ -470,7 +477,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/الحيوانات/.test(value)) {
+  if (/Ø§Ù„Ø­ÙŠÙˆØ§Ù†Ø§Øª/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M7 14c0-2 2-4 5-4s5 2 5 4-2 4-5 4-5-2-5-4Z" />
@@ -479,7 +486,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/البيئة/.test(value)) {
+  if (/Ø§Ù„Ø¨ÙŠØ¦Ø©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 20c4-3 6-6.5 6-10a9 9 0 0 0-12 0c0 3.5 2 7 6 10Z" />
@@ -488,7 +495,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/تطوير الذات/.test(value)) {
+  if (/ØªØ·ÙˆÙŠØ± Ø§Ù„Ø°Ø§Øª/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16M5 11l7-7 7 7" />
@@ -496,7 +503,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/اقتصاد|مال|أعمال/.test(value)) {
+  if (/Ø§Ù‚ØªØµØ§Ø¯|Ù…Ø§Ù„|Ø£Ø¹Ù…Ø§Ù„/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 19V9m7 10V5m7 14v-7" />
@@ -504,7 +511,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/الصحة النفسية/.test(value)) {
+  if (/Ø§Ù„ØµØ­Ø© Ø§Ù„Ù†ÙØ³ÙŠØ©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 20c-4.5-3.2-7-6.1-7-9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7 3.5c0 3.4-2.5 6.3-7 9.5Z" />
@@ -513,7 +520,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/صحة|طب/.test(value)) {
+  if (/ØµØ­Ø©|Ø·Ø¨/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
@@ -521,7 +528,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/المرأة/.test(value)) {
+  if (/Ø§Ù„Ù…Ø±Ø£Ø©/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="9" r="4" />
@@ -530,7 +537,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/سياسة|عالم|شرق/.test(value)) {
+  if (/Ø³ÙŠØ§Ø³Ø©|Ø¹Ø§Ù„Ù…|Ø´Ø±Ù‚/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="8" />
@@ -539,7 +546,7 @@ function CategoryIcon({ category }) {
     );
   }
 
-  if (/مرأة|أسرة|مجتمع/.test(value)) {
+  if (/Ù…Ø±Ø£Ø©|Ø£Ø³Ø±Ø©|Ù…Ø¬ØªÙ…Ø¹/.test(value)) {
     return (
       <svg viewBox="0 0 24 24" className={common} fill="none" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 14a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
@@ -590,8 +597,8 @@ function CategoriesSidebar({ categories, currentCategory }) {
     <aside className="self-start border border-slate-200 bg-white p-4 shadow-[0_20px_55px_-45px_rgba(15,23,42,0.35)] lg:sticky lg:top-24">
       <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="text-right">
-          <div className="text-xs font-extrabold tracking-[0.18em] text-red-700">التصفح</div>
-          <h2 className="mt-1 text-2xl font-black text-slate-950">استعرض التصنيفات</h2>
+          <div className="text-xs font-extrabold tracking-[0.18em] text-red-700">Ø§Ù„ØªØµÙØ­</div>
+          <h2 className="mt-1 text-2xl font-black text-slate-950">Ø§Ø³ØªØ¹Ø±Ø¶ Ø§Ù„ØªØµÙ†ÙŠÙØ§Øª</h2>
         </div>
         <span className="h-8 w-1 bg-red-700" />
       </div>
@@ -608,9 +615,9 @@ function CategoriesSidebar({ categories, currentCategory }) {
         >
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center text-slate-950">
-              <CategoryIcon category="عام" />
+              <CategoryIcon category="Ø¹Ø§Ù…" />
             </div>
-            <span className="line-clamp-1 text-sm font-bold text-slate-900">كل التصنيفات</span>
+            <span className="line-clamp-1 text-sm font-bold text-slate-900">ÙƒÙ„ Ø§Ù„ØªØµÙ†ÙŠÙØ§Øª</span>
           </div>
           <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-slate-500 transition group-hover:text-red-700" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" />
@@ -636,7 +643,7 @@ function CategoriesSidebar({ categories, currentCategory }) {
         {remaining.length ? (
           <details className="group rounded-xl border border-slate-200 bg-white">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-3 text-right">
-              <span className="text-sm font-bold text-slate-900">عرض المزيد</span>
+              <span className="text-sm font-bold text-slate-900">Ø¹Ø±Ø¶ Ø§Ù„Ù…Ø²ÙŠØ¯</span>
               <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-slate-500 transition group-open:rotate-90" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" />
               </svg>
@@ -668,7 +675,7 @@ function PostGridCard({ post, index }) {
           />
           <PostCardBookmarkButton postId={post.id} slug={post.slug} />
           <div className="absolute left-3 top-3 bg-[#163d7a] px-2 py-1 text-[10px] font-bold text-white">
-            {post.category || "خبر"}
+            {post.category || "Ø®Ø¨Ø±"}
           </div>
         </div>
         <div className="p-4 text-right">
@@ -676,7 +683,7 @@ function PostGridCard({ post, index }) {
           <p className="mt-2 line-clamp-2 text-[12px] leading-6 text-slate-500">{post.excerpt}</p>
           <div className="mt-3 flex items-center justify-between gap-3 text-[11px] font-bold text-slate-400">
             <span>{formatArabicDate(post.publishedAt || post.createdAt)}</span>
-            <span>{estimateReadingTime(post.content)} دقائق</span>
+            <span>{estimateReadingTime(post.content)} Ø¯Ù‚Ø§Ø¦Ù‚</span>
           </div>
         </div>
       </Link>
@@ -705,7 +712,7 @@ function SubcategoryShowcaseCard({ section }) {
     <section className="border border-slate-200 bg-white p-3 shadow-[0_20px_55px_-45px_rgba(15,23,42,0.35)] sm:p-4">
       <div className="mb-3 flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="text-right">
-          <div className="text-[11px] font-extrabold tracking-[0.16em] text-red-700">ملفات فرعية</div>
+          <div className="text-[11px] font-extrabold tracking-[0.16em] text-red-700">Ù…Ù„ÙØ§Øª ÙØ±Ø¹ÙŠØ©</div>
           <Link href={section.href} className="mt-1 block text-right text-lg font-black text-slate-950 transition hover:text-red-700">
             {section.title}
           </Link>
@@ -747,7 +754,7 @@ function Pagination({ currentPage, totalPages, currentCategory }) {
   const pages = getPaginationRange(currentPage, totalPages);
 
   return (
-    <nav className="flex flex-wrap items-center justify-center gap-2" aria-label="ترقيم صفحات المقالات">
+    <nav className="flex flex-wrap items-center justify-center gap-2" aria-label="ØªØ±Ù‚ÙŠÙ… ØµÙØ­Ø§Øª Ø§Ù„Ù…Ù‚Ø§Ù„Ø§Øª">
       <Link
         href={buildPageHref({ page: Math.max(1, currentPage - 1), category: currentCategory })}
         aria-disabled={currentPage === 1}
@@ -758,7 +765,7 @@ function Pagination({ currentPage, totalPages, currentCategory }) {
             : "border-slate-300 bg-white text-slate-800 hover:border-red-700 hover:text-red-700",
         ].join(" ")}
       >
-        السابق
+        Ø§Ù„Ø³Ø§Ø¨Ù‚
       </Link>
 
       {pages.map((page, index) => {
@@ -794,7 +801,7 @@ function Pagination({ currentPage, totalPages, currentCategory }) {
             : "border-slate-300 bg-white text-slate-800 hover:border-red-700 hover:text-red-700",
         ].join(" ")}
       >
-        التالي
+        Ø§Ù„ØªØ§Ù„ÙŠ
       </Link>
     </nav>
   );
@@ -822,22 +829,22 @@ export default async function HomePage({ searchParams }) {
         <div className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
           {error ? (
             <EmptyState
-              title="تعذر تحميل المقالات"
-              description={`حدثت مشكلة أثناء قراءة مقالات المدونة من قاعدة البيانات. الرسالة: ${error}`}
+              title="ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ù‚Ø§Ù„Ø§Øª"
+              description={`Ø­Ø¯Ø«Øª Ù…Ø´ÙƒÙ„Ø© Ø£Ø«Ù†Ø§Ø¡ Ù‚Ø±Ø§Ø¡Ø© Ù…Ù‚Ø§Ù„Ø§Øª Ø§Ù„Ù…Ø¯ÙˆÙ†Ø© Ù…Ù† Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª. Ø§Ù„Ø±Ø³Ø§Ù„Ø©: ${error}`}
               href="/admin/blog"
-              label="مراجعة الإعدادات"
+              label="Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª"
             />
           ) : posts.length === 0 ? (
             <EmptyState
-              title="لا توجد مقالات منشورة بعد"
-              description="بمجرد نشر المقالات من لوحة الإدارة ستظهر هنا مباشرة في الصفحة الرئيسية."
+              title="Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù‚Ø§Ù„Ø§Øª Ù…Ù†Ø´ÙˆØ±Ø© Ø¨Ø¹Ø¯"
+              description="Ø¨Ù…Ø¬Ø±Ø¯ Ù†Ø´Ø± Ø§Ù„Ù…Ù‚Ø§Ù„Ø§Øª Ù…Ù† Ù„ÙˆØ­Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø³ØªØ¸Ù‡Ø± Ù‡Ù†Ø§ Ù…Ø¨Ø§Ø´Ø±Ø© ÙÙŠ Ø§Ù„ØµÙØ­Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©."
               href="/admin/blog"
-              label="إضافة أول مقال"
+              label="Ø¥Ø¶Ø§ÙØ© Ø£ÙˆÙ„ Ù…Ù‚Ø§Ù„"
             />
           ) : (
             <div className="overflow-hidden border border-white/10">
               <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 text-white">
-                <h2 className="text-right text-xl font-black">ويكيهيس</h2>
+                <h2 className="text-right text-xl font-black">ÙˆÙŠÙƒÙŠÙ‡ÙŠØ³</h2>
                 <div className="mx-4 hidden min-w-0 flex-1 lg:block">
                   <NewsTickerClient />
                 </div>
@@ -864,7 +871,7 @@ export default async function HomePage({ searchParams }) {
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div>
                 <div className="mb-5 flex items-center justify-between border-b border-slate-200 pb-3">
-                  <h2 className="text-right text-2xl font-black text-slate-950">أحدث المنشورات</h2>
+                  <h2 className="text-right text-2xl font-black text-slate-950">Ø£Ø­Ø¯Ø« Ø§Ù„Ù…Ù†Ø´ÙˆØ±Ø§Øª</h2>
                   <span className="h-6 w-1 shrink-0 bg-red-700" />
                 </div>
                 <div className="grid items-start gap-5 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
@@ -886,8 +893,8 @@ export default async function HomePage({ searchParams }) {
           <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
             <ContributorsSpotlight
               contributors={contributors}
-              title="الناشرون البارزون"
-              description="الترتيب هنا يعتمد على عدد المقالات المنشورة والمقبولة لكل مساهم."
+              title="Ø§Ù„Ù†Ø§Ø´Ø±ÙˆÙ† Ø§Ù„Ø¨Ø§Ø±Ø²ÙˆÙ†"
+              description="Ø§Ù„ØªØ±ØªÙŠØ¨ Ù‡Ù†Ø§ ÙŠØ¹ØªÙ…Ø¯ Ø¹Ù„Ù‰ Ø¹Ø¯Ø¯ Ø§Ù„Ù…Ù‚Ø§Ù„Ø§Øª Ø§Ù„Ù…Ù†Ø´ÙˆØ±Ø© ÙˆØ§Ù„Ù…Ù‚Ø¨ÙˆÙ„Ø© Ù„ÙƒÙ„ Ù…Ø³Ø§Ù‡Ù…."
               limit={6}
             />
           </section>
@@ -899,7 +906,7 @@ export default async function HomePage({ searchParams }) {
           {subcategorySections.length ? (
             <section className="mx-auto max-w-7xl px-4 pb-18 sm:px-6 lg:px-8">
               <div className="mb-5 flex items-center justify-between border-b border-slate-200 pb-3">
-                <h2 className="text-right text-2xl font-black text-slate-950">التصنيفات الفرعية</h2>
+                <h2 className="text-right text-2xl font-black text-slate-950">Ø§Ù„ØªØµÙ†ÙŠÙØ§Øª Ø§Ù„ÙØ±Ø¹ÙŠØ©</h2>
                 <span className="h-6 w-1 shrink-0 bg-red-700" />
               </div>
               <div className="grid gap-6 xl:grid-cols-2">
@@ -914,3 +921,4 @@ export default async function HomePage({ searchParams }) {
     </div>
   );
 }
+

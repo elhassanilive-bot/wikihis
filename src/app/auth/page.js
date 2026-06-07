@@ -1,4 +1,4 @@
-import AuthShell from "@/components/auth/AuthShell";
+﻿import AuthShell from "@/components/auth/AuthShell";
 
 export const metadata = {
   title: "تسجيل الدخول والحساب",
@@ -12,4 +12,5 @@ export default async function AuthPage({ searchParams }) {
 
   return <AuthShell initialMode={mode} />;
 }
+
 

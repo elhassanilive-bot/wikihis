@@ -13,7 +13,6 @@ export const metadata = {
     template: `%s | ${site.name}`,
   },
   description: site.description,
-  themeColor: "#7a560b",
   appleWebApp: {
     capable: true,
     title: site.nameEn,
@@ -45,10 +44,43 @@ export const metadata = {
   },
 };
 
+export const viewport = {
+  themeColor: "#b91c1c",
+};
+
 export default function RootLayout({ children }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${site.url}/#organization`,
+        name: site.name,
+        alternateName: site.nameEn,
+        url: site.url,
+        logo: `${site.url}/icon.png`,
+        email: site.supportEmail,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${site.url}/#website`,
+        name: site.name,
+        alternateName: site.nameEn,
+        url: site.url,
+        description: site.description,
+        inLanguage: "ar",
+        publisher: { "@id": `${site.url}/#organization` },
+      },
+    ],
+  };
+
   return (
     <html lang="ar" dir="rtl">
       <body className="min-h-screen bg-background text-foreground font-sans">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <PwaRegistration />
         <Navbar />
         <main className="min-h-screen pt-16">{children}</main>

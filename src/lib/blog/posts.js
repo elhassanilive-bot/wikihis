@@ -119,6 +119,24 @@ export async function listPosts({ limit = 20 } = {}) {
   return (data || []).map(normalizePost);
 }
 
+export async function listPostsForSitemap({ limit = 5000 } = {}) {
+  if (!isSupabaseConfigured()) return [];
+
+  const supabase = await getSupabaseClient();
+  if (!supabase) return [];
+
+  const safeLimit = Math.max(1, Math.min(Number(limit) || 5000, 5000));
+  const { data, error } = await supabase
+    .from(BLOG_PUBLIC_TABLE)
+    .select("slug,updated_at,published_at,created_at,category,category_parent")
+    .eq("status", "published")
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .limit(safeLimit);
+
+  if (error) return [];
+  return data || [];
+}
+
 export async function listPostsDetailed({ limit = 20, page = 1, category = null } = {}) {
   if (!isSupabaseConfigured()) return { posts: [], error: "Supabase غير مُعد", totalCount: 0, totalPages: 0, currentPage: 1 };
 
