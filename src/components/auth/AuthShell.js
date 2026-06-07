@@ -1,7 +1,9 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import wikihisIcon from "../../../assets/wikihis.png";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 function BenefitIcon({ name, className = "" }) {
@@ -61,8 +63,10 @@ function AuthTabButton({ active, onClick, children }) {
       type="button"
       onClick={onClick}
       className={[
-        "rounded-full border px-4 py-2 text-sm font-bold transition",
-        active ? "border-red-700 bg-red-700 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-red-200 hover:text-red-700",
+        "relative rounded-full px-4 py-2 text-sm font-black transition",
+        active
+          ? "bg-slate-950 text-white shadow-[0_16px_35px_-22px_rgba(15,23,42,0.9)]"
+          : "text-slate-500 hover:bg-white hover:text-red-700",
       ].join(" ")}
     >
       {children}
@@ -70,15 +74,56 @@ function AuthTabButton({ active, onClick, children }) {
   );
 }
 
+function FieldIcon({ name }) {
+  const props = {
+    viewBox: "0 0 24 24",
+    className: "h-5 w-5",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    "aria-hidden": "true",
+  };
+
+  if (name === "user") {
+    return (
+      <svg {...props}>
+        <circle cx="12" cy="8" r="4" />
+        <path d="M20 21a8 8 0 0 0-16 0" />
+      </svg>
+    );
+  }
+
+  if (name === "lock") {
+    return (
+      <svg {...props}>
+        <rect x="4" y="10" width="16" height="11" rx="2" />
+        <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...props}>
+      <path d="M4 6h16v12H4z" />
+      <path d="m4 7 8 6 8-6" />
+    </svg>
+  );
+}
+
 export default function AuthShell({ initialMode = "signin" }) {
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [recoveryReady, setRecoveryReady] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -147,6 +192,10 @@ export default function AuthShell({ initialMode = "signin" }) {
     try {
       const supabase = await getSupabaseClient();
       if (!supabase) throw new Error("ربط Supabase غير متاح حاليا.");
+
+      if ((mode === "signup" || mode === "reset") && password !== confirmPassword) {
+        throw new Error("كلمتا المرور غير متطابقتين.");
+      }
 
       if (mode === "signin") {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
@@ -257,132 +306,200 @@ export default function AuthShell({ initialMode = "signin" }) {
   ];
 
   return (
-    <section dir="rtl" className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="grid overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_35px_90px_-45px_rgba(15,23,42,0.35)] lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="bg-[linear-gradient(160deg,#111827_0%,#1f2937_42%,#7f1d1d_100%)] p-8 text-right text-white sm:p-10">
-          <div className="text-xs font-extrabold tracking-[0.22em] text-red-300">WIKIHIS ACCOUNT</div>
-          <h1 className="mt-5 text-4xl font-black leading-[1.4]">جريدة الكترونية متعددة المجالات بكل الأنواع</h1>
-          <p className="mt-5 text-base leading-8 text-white/80">
-            أنشئ حسابك أو سجل الدخول ثم علّق باسمك وصورتك، واحفظ المقالات وتابع نشاطك من صفحة الحساب.
-          </p>
-          <div className="mt-8 space-y-3 text-sm text-white/82">
-            <div>بريد إلكتروني آمن</div>
-            <div>اسم ظاهر وصورة ملف شخصي</div>
-            <div>إدارة كلمة المرور والبريد من صفحة الحساب</div>
-          </div>
-        </div>
+    <section dir="rtl" className="relative overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_12%,rgba(185,28,28,0.18),transparent_34%),radial-gradient(circle_at_12%_88%,rgba(15,23,42,0.12),transparent_32%),linear-gradient(180deg,#fff7ed_0%,#fff_45%,#f8fafc_100%)]" />
+      <div className="pointer-events-none absolute right-[-8rem] top-12 -z-10 h-72 w-72 rounded-full bg-red-700/10 blur-3xl" />
+      <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <aside className="relative overflow-hidden rounded-[2.2rem] bg-[linear-gradient(145deg,#09090b_0%,#111827_38%,#7f1d1d_100%)] p-6 text-white shadow-[0_35px_100px_-45px_rgba(127,29,29,0.9)] sm:p-8 lg:min-h-[680px]">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-l from-red-500 via-rose-300 to-red-900" />
+          <div className="absolute -left-24 top-20 h-56 w-56 rounded-full bg-red-500/20 blur-3xl" />
+          <div className="absolute bottom-[-7rem] right-[-7rem] h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
-        <div className="p-6 text-right sm:p-10">
-          <div className="flex flex-wrap gap-2">
-            <AuthTabButton active={mode === "signin"} onClick={() => setMode("signin")}>
-              تسجيل الدخول
-            </AuthTabButton>
-            <AuthTabButton active={mode === "signup"} onClick={() => setMode("signup")}>
-              إنشاء حساب
-            </AuthTabButton>
-            <AuthTabButton active={mode === "forgot"} onClick={() => setMode("forgot")}>
-              استعادة كلمة المرور
-            </AuthTabButton>
+          <div className="relative flex items-center justify-between gap-4">
+            <div>
+              <div className="text-xs font-black tracking-[0.26em] text-red-200">WIKIHIS ID</div>
+              <div className="mt-2 text-sm font-semibold text-white/65">بوابة العضوية الذكية</div>
+            </div>
+            <div className="relative h-16 w-16 overflow-hidden rounded-3xl border border-white/15 bg-white p-2 shadow-2xl">
+              <Image src={wikihisIcon} alt="Wikihis" fill sizes="64px" className="object-contain p-1" />
+            </div>
           </div>
 
-          <div className="mt-8">
-            <div className="text-sm font-semibold text-slate-500">بوابة المستخدم</div>
-            <h2 className="mt-2 text-3xl font-black text-slate-950">{pageTitle}</h2>
+          <div className="relative mt-14 max-w-xl text-right">
+            <div className="inline-flex rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-bold text-red-100 backdrop-blur">
+              تجربة تسجيل مصممة بثقة الشركات الكبيرة
+            </div>
+            <h1 className="mt-6 text-4xl font-black leading-[1.35] sm:text-5xl">
+              حساب واحد يفتح لك التفاعل، الحفظ، والنشر داخل Wikihis.
+            </h1>
+            <p className="mt-5 text-base leading-8 text-white/72">
+              واجهة آمنة وواضحة: سجّل دخولك، أنشئ حسابك، أو استعد كلمة المرور بخطوات قليلة وبتصميم مريح.
+            </p>
           </div>
 
-          {message ? <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">{message}</div> : null}
-          {error ? <div className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-900">{error}</div> : null}
+          <div className="relative mt-10 grid gap-3 sm:grid-cols-2">
+            {signupBenefits.map((item) => (
+              <div key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.07] p-4 backdrop-blur">
+                <BenefitIcon name={item.icon} className="h-6 w-6 text-red-200" />
+                <div className="mt-4 text-sm font-black">{item.title}</div>
+                <p className="mt-2 text-xs leading-6 text-white/62">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </aside>
 
-          {mode === "signup" ? (
-            <div className="mt-6 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
-              <div className="flex items-center justify-between gap-3">
-                <div className="text-right">
-                  <div className="text-[11px] font-extrabold tracking-[0.16em] text-red-700">مزايا الحساب</div>
-                  <div className="mt-1 text-lg font-black text-slate-950">أنشئ حسابك لتحصل على</div>
+        <div className="rounded-[2.2rem] border border-white/70 bg-white/85 p-4 shadow-[0_35px_100px_-50px_rgba(15,23,42,0.45)] backdrop-blur-xl sm:p-6">
+          <div className="rounded-[1.8rem] border border-slate-200/80 bg-white p-5 text-right sm:p-8">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <div className="flex items-center gap-3">
+                  <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-red-100 bg-red-50 p-1.5">
+                    <Image src={wikihisIcon} alt="Wikihis" fill sizes="48px" className="object-contain p-1" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-black tracking-[0.18em] text-red-700">حساب WIKIHIS</div>
+                    <h2 className="mt-1 text-3xl font-black text-slate-950">{pageTitle}</h2>
+                  </div>
                 </div>
-                <span className="h-5 w-1 shrink-0 bg-red-700" />
+                <p className="mt-4 max-w-xl text-sm leading-7 text-slate-500">
+                  اختر العملية التي تريدها، وسنتكفل بالباقي بأبسط تجربة ممكنة.
+                </p>
               </div>
 
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {signupBenefits.map((item) => (
-                  <div key={item.title} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-right">
-                    <div className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white">
-                      <BenefitIcon name={item.icon} className="h-5 w-5" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-sm font-extrabold text-slate-950">{item.title}</div>
-                      <div className="mt-1 text-xs leading-6 text-slate-600">{item.description}</div>
-                    </div>
-                  </div>
-                ))}
+              <div className="inline-flex rounded-full border border-slate-200 bg-slate-100 p-1">
+                <AuthTabButton active={mode === "signin"} onClick={() => setMode("signin")}>
+                  دخول
+                </AuthTabButton>
+                <AuthTabButton active={mode === "signup"} onClick={() => setMode("signup")}>
+                  حساب جديد
+                </AuthTabButton>
+                <AuthTabButton active={mode === "forgot" || mode === "reset"} onClick={() => setMode("forgot")}>
+                  نسيت؟
+                </AuthTabButton>
               </div>
             </div>
-          ) : null}
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-            {mode === "signup" ? (
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-slate-900">الاسم الظاهر</span>
-                <input
-                  value={displayName}
-                  onChange={(event) => setDisplayName(event.target.value)}
-                  required
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-red-300 focus:bg-white"
-                  placeholder="الاسم الذي سيظهر في التعليقات"
-                />
-              </label>
+            {message ? (
+              <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold leading-7 text-emerald-900">
+                {message}
+              </div>
             ) : null}
-
-            {mode !== "reset" ? (
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-slate-900">البريد الإلكتروني</span>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  required
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-red-300 focus:bg-white"
-                  placeholder="name@example.com"
-                />
-              </label>
-            ) : null}
-
-            {mode !== "forgot" ? (
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-slate-900">{mode === "reset" ? "كلمة المرور الجديدة" : "كلمة المرور"}</span>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  required
-                  minLength={6}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-red-300 focus:bg-white"
-                  placeholder="••••••••"
-                />
-              </label>
-            ) : null}
-
-            {mode === "reset" && !recoveryReady ? (
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-7 text-amber-950">
-                افتح رابط الاستعادة من بريدك الإلكتروني أولا، وبعدها ستظهر هنا خانة تعيين كلمة المرور الجديدة.
+            {error ? (
+              <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-semibold leading-7 text-red-900">
+                {error}
               </div>
             ) : null}
 
-            <button
-              type="submit"
-              disabled={pending || (mode === "reset" && !recoveryReady)}
-              className="inline-flex min-w-40 items-center justify-center rounded-full bg-red-700 px-6 py-3 text-sm font-bold text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {pending ? "جارٍ التنفيذ..." : pageTitle}
-            </button>
-          </form>
+            <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+              {mode === "signup" ? (
+                <label className="block">
+                  <span className="mb-2 block text-sm font-black text-slate-900">الاسم الظاهر</span>
+                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100">
+                    <FieldIcon name="user" />
+                    <input
+                      value={displayName}
+                      onChange={(event) => setDisplayName(event.target.value)}
+                      required
+                      className="min-h-14 w-full bg-transparent text-slate-950 outline-none placeholder:text-slate-400"
+                      placeholder="الاسم الذي سيظهر في المقالات والتعليقات"
+                    />
+                  </div>
+                </label>
+              ) : null}
 
-          <div className="mt-6 text-sm text-slate-500">
-            بعد تسجيل الدخول يمكنك إدارة حسابك من{" "}
-            <Link href="/account" className="font-semibold text-red-700">
-              صفحة الحساب
-            </Link>
-            .
+              {mode !== "reset" ? (
+                <label className="block">
+                  <span className="mb-2 block text-sm font-black text-slate-900">البريد الإلكتروني</span>
+                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100">
+                    <FieldIcon name="mail" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      required
+                      className="min-h-14 w-full bg-transparent text-left text-slate-950 outline-none placeholder:text-slate-400"
+                      placeholder="name@example.com"
+                    />
+                  </div>
+                </label>
+              ) : null}
+
+              {mode !== "forgot" ? (
+                <label className="block">
+                  <span className="mb-2 block text-sm font-black text-slate-900">{mode === "reset" ? "كلمة المرور الجديدة" : "كلمة المرور"}</span>
+                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100">
+                    <FieldIcon name="lock" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      required
+                      minLength={6}
+                      className="min-h-14 w-full bg-transparent text-slate-950 outline-none placeholder:text-slate-400"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((current) => !current)}
+                      className="shrink-0 text-xs font-black text-slate-500 transition hover:text-red-700"
+                    >
+                      {showPassword ? "إخفاء" : "إظهار"}
+                    </button>
+                  </div>
+                </label>
+              ) : null}
+
+              {mode === "signup" || mode === "reset" ? (
+                <label className="block">
+                  <span className="mb-2 block text-sm font-black text-slate-900">تأكيد كلمة المرور</span>
+                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100">
+                    <FieldIcon name="lock" />
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(event) => setConfirmPassword(event.target.value)}
+                      required
+                      minLength={6}
+                      className="min-h-14 w-full bg-transparent text-slate-950 outline-none placeholder:text-slate-400"
+                      placeholder="أعد كتابة كلمة المرور"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((current) => !current)}
+                      className="shrink-0 text-xs font-black text-slate-500 transition hover:text-red-700"
+                    >
+                      {showConfirmPassword ? "إخفاء" : "إظهار"}
+                    </button>
+                  </div>
+                </label>
+              ) : null}
+
+              {mode === "reset" && !recoveryReady ? (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-semibold leading-7 text-amber-950">
+                  افتح رابط الاستعادة من بريدك الإلكتروني أولاً، وبعدها ستظهر هنا خانة تعيين كلمة المرور الجديدة.
+                </div>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={pending || (mode === "reset" && !recoveryReady)}
+                className="group mt-2 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(135deg,#991b1b_0%,#dc2626_50%,#7f1d1d_100%)] px-6 py-3 text-sm font-black text-white shadow-[0_22px_45px_-28px_rgba(185,28,28,0.95)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+              >
+                <span>{pending ? "جارٍ التنفيذ..." : pageTitle}</span>
+                <svg viewBox="0 0 24 24" className="h-4 w-4 transition group-hover:-translate-x-1" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" />
+                </svg>
+              </button>
+            </form>
+
+            <div className="mt-6 flex flex-col gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+              <span>
+                بعد الدخول يمكنك إدارة حسابك، منشوراتك، وتعليقاتك من لوحة الحساب.
+              </span>
+              <Link href="/account" className="shrink-0 font-black text-red-700 transition hover:text-red-900">
+                فتح صفحة الحساب
+              </Link>
+            </div>
           </div>
         </div>
       </div>
