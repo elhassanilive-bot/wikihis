@@ -262,6 +262,35 @@ export default function AdminBlogDashboard({
   const allFilteredSelected = allFilteredIds.length > 0 && allFilteredIds.every((id) => selectedPostIds.includes(id));
 
   const titleWords = useMemo(() => form.title.trim().split(/\s+/).filter(Boolean).length, [form.title]);
+  const seoChecklist = useMemo(() => {
+    const plainContent = String(form.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    const titleLength = form.title.trim().length;
+    const excerptLength = form.excerpt.trim().length;
+    const checks = [
+      { label: "عنوان واضح بين 35 و70 حرفاً", passed: titleLength >= 35 && titleLength <= 70 },
+      { label: "وصف مختصر بين 90 و160 حرفاً", passed: excerptLength >= 90 && excerptLength <= 160 },
+      { label: "رابط slug قابل للقراءة", passed: Boolean(visibleSlug && visibleSlug.length >= 5) },
+      { label: "صورة غلاف للمقال", passed: Boolean(String(form.coverImageUrl || "").trim()) },
+      {
+        label: "تصنيف ووسومان على الأقل",
+        passed: Boolean(form.category || form.newCategory || form.categoryParent || form.newCategoryParent) && tagsPreview.length >= 2,
+      },
+      { label: "محتوى غني لا يقل عن 300 كلمة", passed: plainContent.split(/\s+/).filter(Boolean).length >= 300 },
+    ];
+    const passedCount = checks.filter((item) => item.passed).length;
+    return { checks, score: Math.round((passedCount / checks.length) * 100) };
+  }, [
+    form.category,
+    form.categoryParent,
+    form.content,
+    form.coverImageUrl,
+    form.excerpt,
+    form.newCategory,
+    form.newCategoryParent,
+    form.title,
+    tagsPreview.length,
+    visibleSlug,
+  ]);
 
   function updateField(key, value) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -808,6 +837,35 @@ export default function AdminBlogDashboard({
             </div>
             <div className="mt-6 rounded-3xl bg-slate-950 px-5 py-4 text-sm text-slate-300" dir="ltr">
               /blog/{visibleSlug || "your-story-slug"}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_55px_-45px_rgba(15,23,42,0.5)]">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="text-sm font-semibold text-slate-500">SEO Score</div>
+                <div className="mt-1 text-2xl font-black text-slate-950">{seoChecklist.score}%</div>
+              </div>
+              <div
+                className={[
+                  "flex h-14 w-14 items-center justify-center rounded-full text-xs font-black text-white",
+                  seoChecklist.score >= 80 ? "bg-emerald-600" : seoChecklist.score >= 50 ? "bg-amber-600" : "bg-red-700",
+                ].join(" ")}
+              >
+                SEO
+              </div>
+            </div>
+            <div className="mt-5 space-y-3">
+              {seoChecklist.checks.map((item) => (
+                <div key={item.label} className="flex items-start gap-3 text-right">
+                  <span className={item.passed ? "mt-1 font-black text-emerald-600" : "mt-1 font-black text-slate-400"}>
+                    {item.passed ? "✓" : "○"}
+                  </span>
+                  <span className={item.passed ? "text-sm font-semibold text-slate-800" : "text-sm text-slate-500"}>
+                    {item.label}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
