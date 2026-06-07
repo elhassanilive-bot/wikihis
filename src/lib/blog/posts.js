@@ -193,6 +193,40 @@ export async function listPostsDetailed({ limit = 20, page = 1, category = null,
   };
 }
 
+export async function listSearchSuggestions({ search = "", limit = 6 } = {}) {
+  const normalizedSearch = String(search || "").trim();
+  if (!normalizedSearch || normalizedSearch.length < 2 || !isSupabaseConfigured()) {
+    return { suggestions: [], error: null };
+  }
+
+  const supabase = await getSupabaseClient();
+  if (!supabase) return { suggestions: [], error: "Supabase client غير متاح" };
+
+  const safeLimit = Math.max(1, Math.min(Number(limit) || 6, 10));
+  const escapedSearch = normalizedSearch.replaceAll("%", "\\%").replaceAll("_", "\\_").replaceAll(",", " ");
+  const { data, error } = await supabase
+    .from(BLOG_PUBLIC_TABLE)
+    .select("slug,title,excerpt,category,cover_image_url,published_at,created_at")
+    .eq("status", "published")
+    .or(`title.ilike.%${escapedSearch}%,excerpt.ilike.%${escapedSearch}%,category.ilike.%${escapedSearch}%`)
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .limit(safeLimit);
+
+  if (error) return { suggestions: [], error: formatSupabaseError(error) };
+
+  return {
+    suggestions: (data || []).map((row) => ({
+      slug: row.slug,
+      title: row.title,
+      excerpt: row.excerpt,
+      category: row.category,
+      coverImageUrl: row.cover_image_url,
+      publishedAt: row.published_at || row.created_at,
+    })),
+    error: null,
+  };
+}
+
 export async function listPostCategories() {
   if (!isSupabaseConfigured()) return { categories: [], error: "Supabase غير مُعد" };
 

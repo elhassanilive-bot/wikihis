@@ -1,4 +1,5 @@
 import PostGridCard from "@/components/blog/PostGridCard";
+import SearchBoxWithSuggestions from "@/components/blog/SearchBoxWithSuggestions";
 import { site } from "@/config/site";
 import { listPostsDetailed } from "@/lib/blog/posts";
 
@@ -38,20 +39,9 @@ export default async function SearchPage({ searchParams }) {
           <div className="text-xs font-black tracking-[0.2em] text-red-700">بحث ويكيهيس</div>
           <h1 className="mt-3 text-4xl font-black text-slate-950">ابحث في المقالات</h1>
           <p className="mt-4 text-base leading-8 text-slate-600">
-            اكتب كلمة أو عبارة للبحث في عناوين ومحتوى وتصنيفات المقالات.
+            اكتب كلمة أو عبارة وستظهر اقتراحات تلقائية من المقالات المنشورة.
           </p>
-          <form action="/search" className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <input
-              type="search"
-              name="q"
-              defaultValue={query}
-              placeholder="مثال: الصحة، التكنولوجيا، السفر..."
-              className="min-h-13 flex-1 rounded-full border border-slate-300 px-5 text-right outline-none transition focus:border-red-400 focus:ring-4 focus:ring-red-50"
-            />
-            <button className="wikihis-red-primary min-h-13 rounded-full border px-7 text-sm font-black">
-              بحث
-            </button>
-          </form>
+          <SearchBoxWithSuggestions initialQuery={query} />
         </div>
 
         {query ? (
