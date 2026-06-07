@@ -207,6 +207,18 @@ const sectionLinks = [
 const MEGA_MENU_MAX_WIDTH = 980;
 const VIEWPORT_PADDING = 16;
 
+const sectionIcons = {
+  'الصحة واللياقة': '✚',
+  الأخبار: '◈',
+  'البيت والأسرة': '⌂',
+  'قضايا المرأة': '◐',
+  المجتمع: '◆',
+  'عالم الحيوانات': '♧',
+  تكنولوجيا: '⌘',
+  'تفسير الأحلام': '☾',
+  منوعات: '✦',
+};
+
 function buildCategoryHref(value, fallbackHref) {
   const category = String(value || '').trim();
   if (!category) return fallbackHref;
@@ -219,6 +231,7 @@ export default function Navbar() {
   const [authUser, setAuthUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileExpandedSection, setMobileExpandedSection] = useState(null);
+  const [currentCategory, setCurrentCategory] = useState('');
   const navRef = useRef(null);
   const triggerRefs = useRef({});
   const closeTimerRef = useRef(null);
@@ -227,6 +240,11 @@ export default function Navbar() {
     () => sectionLinks.find((link) => link.label === activeMega) || null,
     [activeMega]
   );
+  function syncCurrentCategoryFromUrl() {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    setCurrentCategory(String(params.get('category') || '').trim());
+  }
 
   function updateMegaPosition(label) {
     if (typeof window === 'undefined') return;
@@ -302,6 +320,12 @@ export default function Navbar() {
   }, [mobileMenuOpen]);
 
   useEffect(() => {
+    syncCurrentCategoryFromUrl();
+    window.addEventListener('popstate', syncCurrentCategoryFromUrl);
+    return () => window.removeEventListener('popstate', syncCurrentCategoryFromUrl);
+  }, []);
+
+  useEffect(() => {
     if (typeof window === 'undefined') return undefined;
     function handleResize() {
       if (window.innerWidth >= 768) {
@@ -350,7 +374,7 @@ export default function Navbar() {
     <nav ref={navRef} className="fixed inset-x-0 top-0 z-50 border-b border-black/10 bg-white/95 backdrop-blur">
       <div className="bg-[#fbfbfb]" onMouseEnter={clearCloseTimer} onMouseLeave={scheduleMegaClose}>
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-3 px-3 py-3 md:hidden">
+          <div className="flex items-center justify-between gap-3 px-3 py-2 md:hidden">
             <Link href="/" className="text-sm font-black text-slate-900">
               WIKIHIS
             </Link>
@@ -372,19 +396,19 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="hidden overflow-x-auto md:block">
-            <div className="flex min-w-max items-center justify-between gap-4 px-3 py-3 sm:px-0">
+          <div className="category-nav-scroll hidden overflow-x-auto md:block">
+            <div className="flex min-h-[52px] min-w-max items-center justify-between gap-2 px-3 py-1.5 sm:px-0">
               <div className="flex shrink-0 items-center gap-2">
                 <Link
                   href="/contributors"
-                  className="inline-flex items-center rounded-full border border-slate-200 px-4 py-2 text-sm font-extrabold text-slate-800 transition hover:border-red-200 hover:text-red-700"
+                  className="inline-flex h-9 items-center rounded-full border border-slate-200 bg-white px-4 text-sm font-extrabold text-slate-800 transition hover:border-amber-200 hover:text-[var(--gold-700)]"
                 >
                   المساهمون
                 </Link>
                 {authUser ? (
                   <Link
                     href="/account"
-                    className="inline-flex items-center rounded-full border border-slate-200 px-4 py-2 text-sm font-extrabold text-slate-800 transition hover:border-red-200 hover:text-red-700"
+                    className="inline-flex h-9 items-center rounded-full border border-slate-200 bg-white px-4 text-sm font-extrabold text-slate-800 transition hover:border-amber-200 hover:text-[var(--gold-700)]"
                   >
                     حسابي
                   </Link>
@@ -392,13 +416,13 @@ export default function Navbar() {
                   <>
                     <Link
                       href="/auth"
-                      className="inline-flex items-center rounded-full border border-slate-200 px-4 py-2 text-sm font-extrabold text-slate-800 transition hover:border-red-200 hover:text-red-700"
+                      className="inline-flex h-9 items-center rounded-full border border-slate-200 bg-white px-4 text-sm font-extrabold text-slate-800 transition hover:border-amber-200 hover:text-[var(--gold-700)]"
                     >
                       تسجيل الدخول
                     </Link>
                     <Link
                       href="/auth?mode=signup"
-                      className="inline-flex items-center rounded-full bg-red-700 px-4 py-2 text-sm font-extrabold text-white transition hover:bg-red-800"
+                      className="inline-flex h-9 items-center rounded-full bg-[var(--gold-700)] px-4 text-sm font-extrabold text-white transition hover:bg-[var(--gold-800)]"
                     >
                       إنشاء حساب
                     </Link>
@@ -410,10 +434,26 @@ export default function Navbar() {
                 <SectionLink
                   key={link.label}
                   link={link}
+                  active={currentCategory ? currentCategory === link.label : Boolean(link.active)}
                   setTriggerRef={(node) => {
                     triggerRefs.current[link.label] = node;
                   }}
                   onOpen={() => openMega(link.label)}
+                  onSelect={() => setCurrentCategory(link.label)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="category-nav-scroll overflow-x-auto border-t border-slate-100 px-3 pb-2 md:hidden">
+            <div className="flex min-h-[52px] min-w-max items-center gap-2">
+              {sectionLinks.map((link) => (
+                <SectionLink
+                  key={`mobile-chip-${link.label}`}
+                  link={link}
+                  active={currentCategory ? currentCategory === link.label : Boolean(link.active)}
+                  compact
+                  onSelect={() => setCurrentCategory(link.label)}
                 />
               ))}
             </div>
@@ -568,23 +608,40 @@ export default function Navbar() {
   );
 }
 
-function SectionLink({ link, setTriggerRef, onOpen }) {
+function SectionLink({ link, active = false, compact = false, setTriggerRef, onOpen, onSelect }) {
+  const icon = sectionIcons[link.label] || '•';
+
   return (
     <div className="shrink-0">
       <Link
         ref={setTriggerRef}
         href={link.href}
-        onMouseEnter={link.groups ? onOpen : undefined}
-        onFocus={link.groups ? onOpen : undefined}
+        onClick={onSelect}
+        onMouseEnter={!compact && link.groups ? onOpen : undefined}
+        onFocus={!compact && link.groups ? onOpen : undefined}
         className={[
-          'inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-1.5 text-base font-extrabold text-slate-800 transition hover:text-red-700',
-          link.active ? 'text-slate-950' : '',
+          'group inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-full border px-3.5 text-sm font-extrabold shadow-sm transition',
+          active
+            ? 'border-[var(--gold-700)] bg-[var(--gold-700)] text-white shadow-[0_12px_30px_-22px_rgba(122,86,11,0.9)]'
+            : 'border-slate-200 bg-white/90 text-slate-800 hover:border-amber-200 hover:bg-amber-50 hover:text-[var(--gold-800)]',
+          compact ? 'h-8 px-3 text-[13px]' : '',
         ].join(' ')}
       >
+        <span
+          className={[
+            'inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] leading-none',
+            active ? 'bg-white/20 text-white' : 'bg-slate-100 text-[var(--gold-700)] group-hover:bg-white',
+          ].join(' ')}
+          aria-hidden="true"
+        >
+          {icon}
+        </span>
         <span>{link.label}</span>
-        <svg viewBox="0 0 24 24" className="ml-0.5 h-4 w-4 text-slate-500 transition hover:text-red-700" fill="none" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" />
-        </svg>
+        {!compact && link.groups ? (
+          <svg viewBox="0 0 24 24" className={active ? 'h-3.5 w-3.5 text-white/80' : 'h-3.5 w-3.5 text-slate-400 transition group-hover:text-[var(--gold-700)]'} fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" />
+          </svg>
+        ) : null}
       </Link>
     </div>
   );

@@ -68,6 +68,15 @@ body {
   display: none;
 }
 
+.category-nav-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 .news-alert-marquee {
   display: inline-block;
   animation: newsAlertSlide 8s ease-in-out infinite alternate;
