@@ -1,5 +1,6 @@
 ﻿import Link from "next/link";
 import BlogImage from "@/components/blog/BlogImage";
+import { site } from "@/config/site";
 import { estimateReadingTime, formatArabicDate } from "@/lib/blog/render";
 import { getContributorPublicProfile } from "@/lib/blog/posts";
 
@@ -59,6 +60,12 @@ export async function generateMetadata({ params }) {
     title: contributor.displayName,
     description: `صفحة ${contributor.displayName} مع المقالات المنشورة في ويكيهيس.`,
     alternates: { canonical: `/contributors/${contributor.id}` },
+    openGraph: {
+      title: contributor.displayName,
+      description: `مقالات ${contributor.displayName} المنشورة في ${site.name}.`,
+      url: `/contributors/${contributor.id}`,
+      images: contributor.avatarUrl ? [{ url: contributor.avatarUrl }] : undefined,
+    },
   };
 }
 
@@ -85,8 +92,28 @@ export default async function ContributorProfilePage({ params }) {
     );
   }
 
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${site.url}/contributors/${contributor.id}#person`,
+    name: contributor.displayName,
+    image: contributor.avatarUrl || undefined,
+    url: `${site.url}/contributors/${contributor.id}`,
+    worksFor: {
+      "@type": "Organization",
+      name: site.name,
+      alternateName: site.nameEn,
+      url: site.url,
+    },
+    mainEntityOfPage: `${site.url}/contributors/${contributor.id}`,
+  };
+
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#ffffff_26%,#f5f5f1_100%)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       <section className="bg-[linear-gradient(155deg,#111827_0%,#1f2937_48%,#7f1d1d_100%)]">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex flex-col items-end gap-6 text-right text-white">
