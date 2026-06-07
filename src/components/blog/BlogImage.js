@@ -7,6 +7,15 @@ function isLocalImage(src) {
   return String(src || "").startsWith("/");
 }
 
+function isOptimizableRemoteImage(src) {
+  try {
+    const url = new URL(String(src || ""));
+    return ["upload.wikimedia.org", "img.icons8.com", "tjbwezoyvsddvphrdouk.supabase.co"].includes(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
 export default function BlogImage({
   src,
   alt,
@@ -18,7 +27,7 @@ export default function BlogImage({
   const [failed, setFailed] = useState(false);
   const source = !failed && String(src || "").trim() ? String(src).trim() : "/screenshots/feed.svg";
 
-  if (isLocalImage(source)) {
+  if (isLocalImage(source) || isOptimizableRemoteImage(source)) {
     return (
       <Image
         src={source}
