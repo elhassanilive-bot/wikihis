@@ -6,64 +6,13 @@ import Link from "next/link";
 import wikihisIcon from "../../../assets/wikihis.png";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
-function BenefitIcon({ name, className = "" }) {
-  if (name === "bookmark") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-        <path
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          d="M6 3h12a2 2 0 0 1 2 2v17l-8-4-8 4V5a2 2 0 0 1 2-2z"
-        />
-      </svg>
-    );
-  }
-
-  if (name === "heart") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-        <path
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          d="M12.1 21.2l-.1.1-.1-.1C7 16.9 4 14.1 4 10.8 4 8.6 5.6 7 7.8 7c1.4 0 2.8.7 3.6 1.8.8-1.1 2.2-1.8 3.6-1.8 2.2 0 3.8 1.6 3.8 3.8 0 3.3-3 6.1-7.8 10.4z"
-        />
-      </svg>
-    );
-  }
-
-  if (name === "comment") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-        <path fill="none" stroke="currentColor" strokeWidth="2" d="M4 5h16v11H8l-4 4V5z" />
-      </svg>
-    );
-  }
-
-  if (name === "publish") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-        <path fill="none" stroke="currentColor" strokeWidth="2" d="M4 20h16" />
-        <path fill="none" stroke="currentColor" strokeWidth="2" d="M14 4l6 6-10 10H4v-6L14 4z" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path fill="none" stroke="currentColor" strokeWidth="2" d="M12 2l8 4v6c0 5-3.5 9.4-8 10-4.5-.6-8-5-8-10V6l8-4z" />
-    </svg>
-  );
-}
-
 function AuthTabButton({ active, onClick, children }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={[
-        "relative rounded-full px-4 py-2 text-sm font-black transition",
+        "relative rounded-full px-2.5 py-2 text-xs font-black transition sm:px-4 sm:text-sm",
         active
           ? "bg-slate-950 text-white shadow-[0_16px_35px_-22px_rgba(15,23,42,0.9)]"
           : "text-slate-500 hover:bg-white hover:text-red-700",
@@ -282,91 +231,30 @@ export default function AuthShell({ initialMode = "signin" }) {
     );
   }
 
-  const signupBenefits = [
-    {
-      icon: "bookmark",
-      title: "حفظ المقالات للقراءة لاحقا",
-      description: "احفظ ما يعجبك في قائمة خاصة داخل حسابك مع تنظيم بسيط.",
-    },
-    {
-      icon: "heart",
-      title: "الإعجاب والتفاعل",
-      description: "تفاعل مع المقالات بنقرة واحدة واطّلع الجميع على عدد الإعجابات.",
-    },
-    {
-      icon: "comment",
-      title: "التعليقات والردود",
-      description: "شارك رأيك وناقش الآخرين، مع إمكانية تعديل وحذف تعليقك.",
-    },
-    {
-      icon: "publish",
-      title: "نشر مقالات كمساهم",
-      description: "ارسِل مقالاتك للمراجعة، وبعد القبول تظهر مباشرة في الموقع.",
-    },
-  ];
-
   return (
-    <section dir="rtl" className="relative overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
+    <section dir="rtl" className="relative overflow-hidden px-3 py-6 sm:px-6 sm:py-10 lg:px-8">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_12%,rgba(185,28,28,0.18),transparent_34%),radial-gradient(circle_at_12%_88%,rgba(15,23,42,0.12),transparent_32%),linear-gradient(180deg,#fff7ed_0%,#fff_45%,#f8fafc_100%)]" />
       <div className="pointer-events-none absolute right-[-8rem] top-12 -z-10 h-72 w-72 rounded-full bg-red-700/10 blur-3xl" />
-      <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-        <aside className="relative overflow-hidden rounded-[2.2rem] bg-[linear-gradient(145deg,#09090b_0%,#111827_38%,#7f1d1d_100%)] p-6 text-white shadow-[0_35px_100px_-45px_rgba(127,29,29,0.9)] sm:p-8 lg:min-h-[680px]">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-l from-red-500 via-rose-300 to-red-900" />
-          <div className="absolute -left-24 top-20 h-56 w-56 rounded-full bg-red-500/20 blur-3xl" />
-          <div className="absolute bottom-[-7rem] right-[-7rem] h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-
-          <div className="relative flex items-center justify-between gap-4">
-            <div>
-              <div className="text-xs font-black tracking-[0.26em] text-red-200">WIKIHIS ID</div>
-              <div className="mt-2 text-sm font-semibold text-white/65">بوابة العضوية الذكية</div>
-            </div>
-            <div className="relative h-16 w-16 overflow-hidden rounded-3xl border border-white/15 bg-white p-2 shadow-2xl">
-              <Image src={wikihisIcon} alt="Wikihis" fill sizes="64px" className="object-contain p-1" />
-            </div>
-          </div>
-
-          <div className="relative mt-14 max-w-xl text-right">
-            <div className="inline-flex rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-bold text-red-100 backdrop-blur">
-              تجربة تسجيل مصممة بثقة الشركات الكبيرة
-            </div>
-            <h1 className="mt-6 text-4xl font-black leading-[1.35] sm:text-5xl">
-              حساب واحد يفتح لك التفاعل، الحفظ، والنشر داخل Wikihis.
-            </h1>
-            <p className="mt-5 text-base leading-8 text-white/72">
-              واجهة آمنة وواضحة: سجّل دخولك، أنشئ حسابك، أو استعد كلمة المرور بخطوات قليلة وبتصميم مريح.
-            </p>
-          </div>
-
-          <div className="relative mt-10 grid gap-3 sm:grid-cols-2">
-            {signupBenefits.map((item) => (
-              <div key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.07] p-4 backdrop-blur">
-                <BenefitIcon name={item.icon} className="h-6 w-6 text-red-200" />
-                <div className="mt-4 text-sm font-black">{item.title}</div>
-                <p className="mt-2 text-xs leading-6 text-white/62">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </aside>
-
-        <div className="rounded-[2.2rem] border border-white/70 bg-white/85 p-4 shadow-[0_35px_100px_-50px_rgba(15,23,42,0.45)] backdrop-blur-xl sm:p-6">
-          <div className="rounded-[1.8rem] border border-slate-200/80 bg-white p-5 text-right sm:p-8">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mx-auto max-w-[620px]">
+        <div className="rounded-[1.65rem] border border-white/70 bg-white/88 p-2.5 shadow-[0_28px_80px_-52px_rgba(15,23,42,0.55)] backdrop-blur-xl sm:rounded-[2rem] sm:p-4">
+          <div className="rounded-[1.35rem] border border-slate-200/80 bg-white p-4 text-right sm:rounded-[1.7rem] sm:p-7">
+            <div className="flex flex-col gap-4">
               <div>
                 <div className="flex items-center gap-3">
-                  <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-red-100 bg-red-50 p-1.5">
+                  <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-2xl border border-red-100 bg-red-50 p-1.5 sm:h-12 sm:w-12">
                     <Image src={wikihisIcon} alt="Wikihis" fill sizes="48px" className="object-contain p-1" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-xs font-black tracking-[0.18em] text-red-700">حساب WIKIHIS</div>
-                    <h2 className="mt-1 text-3xl font-black text-slate-950">{pageTitle}</h2>
+                    <h2 className="mt-1 text-2xl font-black text-slate-950 sm:text-3xl">{pageTitle}</h2>
                   </div>
                 </div>
-                <p className="mt-4 max-w-xl text-sm leading-7 text-slate-500">
+                <p className="mt-3 text-xs leading-6 text-slate-500 sm:text-sm sm:leading-7">
                   اختر العملية التي تريدها، وسنتكفل بالباقي بأبسط تجربة ممكنة.
                 </p>
               </div>
 
-              <div className="inline-flex rounded-full border border-slate-200 bg-slate-100 p-1">
+              <div className="grid grid-cols-3 rounded-full border border-slate-200 bg-slate-100 p-1">
                 <AuthTabButton active={mode === "signin"} onClick={() => setMode("signin")}>
                   دخول
                 </AuthTabButton>
@@ -380,27 +268,27 @@ export default function AuthShell({ initialMode = "signin" }) {
             </div>
 
             {message ? (
-              <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold leading-7 text-emerald-900">
+              <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-semibold leading-6 text-emerald-900 sm:text-sm sm:leading-7">
                 {message}
               </div>
             ) : null}
             {error ? (
-              <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-semibold leading-7 text-red-900">
+              <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold leading-6 text-red-900 sm:text-sm sm:leading-7">
                 {error}
               </div>
             ) : null}
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-6 space-y-3.5 sm:space-y-4">
               {mode === "signup" ? (
                 <label className="block">
-                  <span className="mb-2 block text-sm font-black text-slate-900">الاسم الظاهر</span>
-                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100">
+                  <span className="mb-1.5 block text-xs font-black text-slate-900 sm:text-sm">الاسم الظاهر</span>
+                  <div className="flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100 sm:gap-3 sm:px-4">
                     <FieldIcon name="user" />
                     <input
                       value={displayName}
                       onChange={(event) => setDisplayName(event.target.value)}
                       required
-                      className="min-h-14 w-full bg-transparent text-slate-950 outline-none placeholder:text-slate-400"
+                      className="min-h-12 w-full bg-transparent text-sm text-slate-950 outline-none placeholder:text-slate-400 sm:min-h-14 sm:text-base"
                       placeholder="الاسم الذي سيظهر في المقالات والتعليقات"
                     />
                   </div>
@@ -409,15 +297,15 @@ export default function AuthShell({ initialMode = "signin" }) {
 
               {mode !== "reset" ? (
                 <label className="block">
-                  <span className="mb-2 block text-sm font-black text-slate-900">البريد الإلكتروني</span>
-                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100">
+                  <span className="mb-1.5 block text-xs font-black text-slate-900 sm:text-sm">البريد الإلكتروني</span>
+                  <div className="flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100 sm:gap-3 sm:px-4">
                     <FieldIcon name="mail" />
                     <input
                       type="email"
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
                       required
-                      className="min-h-14 w-full bg-transparent text-left text-slate-950 outline-none placeholder:text-slate-400"
+                      className="min-h-12 w-full bg-transparent text-left text-sm text-slate-950 outline-none placeholder:text-slate-400 sm:min-h-14 sm:text-base"
                       placeholder="name@example.com"
                     />
                   </div>
@@ -426,8 +314,8 @@ export default function AuthShell({ initialMode = "signin" }) {
 
               {mode !== "forgot" ? (
                 <label className="block">
-                  <span className="mb-2 block text-sm font-black text-slate-900">{mode === "reset" ? "كلمة المرور الجديدة" : "كلمة المرور"}</span>
-                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100">
+                  <span className="mb-1.5 block text-xs font-black text-slate-900 sm:text-sm">{mode === "reset" ? "كلمة المرور الجديدة" : "كلمة المرور"}</span>
+                  <div className="flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100 sm:gap-3 sm:px-4">
                     <FieldIcon name="lock" />
                     <input
                       type={showPassword ? "text" : "password"}
@@ -435,7 +323,7 @@ export default function AuthShell({ initialMode = "signin" }) {
                       onChange={(event) => setPassword(event.target.value)}
                       required
                       minLength={6}
-                      className="min-h-14 w-full bg-transparent text-slate-950 outline-none placeholder:text-slate-400"
+                      className="min-h-12 w-full bg-transparent text-sm text-slate-950 outline-none placeholder:text-slate-400 sm:min-h-14 sm:text-base"
                       placeholder="••••••••"
                     />
                     <button
@@ -451,8 +339,8 @@ export default function AuthShell({ initialMode = "signin" }) {
 
               {mode === "signup" || mode === "reset" ? (
                 <label className="block">
-                  <span className="mb-2 block text-sm font-black text-slate-900">تأكيد كلمة المرور</span>
-                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100">
+                  <span className="mb-1.5 block text-xs font-black text-slate-900 sm:text-sm">تأكيد كلمة المرور</span>
+                  <div className="flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-slate-50 px-3.5 transition focus-within:border-red-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-100 sm:gap-3 sm:px-4">
                     <FieldIcon name="lock" />
                     <input
                       type={showConfirmPassword ? "text" : "password"}
@@ -460,7 +348,7 @@ export default function AuthShell({ initialMode = "signin" }) {
                       onChange={(event) => setConfirmPassword(event.target.value)}
                       required
                       minLength={6}
-                      className="min-h-14 w-full bg-transparent text-slate-950 outline-none placeholder:text-slate-400"
+                      className="min-h-12 w-full bg-transparent text-sm text-slate-950 outline-none placeholder:text-slate-400 sm:min-h-14 sm:text-base"
                       placeholder="أعد كتابة كلمة المرور"
                     />
                     <button
@@ -475,7 +363,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               ) : null}
 
               {mode === "reset" && !recoveryReady ? (
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-semibold leading-7 text-amber-950">
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-semibold leading-6 text-amber-950 sm:text-sm sm:leading-7">
                   افتح رابط الاستعادة من بريدك الإلكتروني أولاً، وبعدها ستظهر هنا خانة تعيين كلمة المرور الجديدة.
                 </div>
               ) : null}
@@ -483,7 +371,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               <button
                 type="submit"
                 disabled={pending || (mode === "reset" && !recoveryReady)}
-                className="group mt-2 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(135deg,#991b1b_0%,#dc2626_50%,#7f1d1d_100%)] px-6 py-3 text-sm font-black text-white shadow-[0_22px_45px_-28px_rgba(185,28,28,0.95)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+                className="group mt-2 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(135deg,#991b1b_0%,#dc2626_50%,#7f1d1d_100%)] px-5 py-2.5 text-sm font-black text-white shadow-[0_22px_45px_-28px_rgba(185,28,28,0.95)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100 sm:min-h-14 sm:px-6 sm:py-3"
               >
                 <span>{pending ? "جارٍ التنفيذ..." : pageTitle}</span>
                 <svg viewBox="0 0 24 24" className="h-4 w-4 transition group-hover:-translate-x-1" fill="none" stroke="currentColor" strokeWidth="2">
@@ -492,7 +380,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               </button>
             </form>
 
-            <div className="mt-6 flex flex-col gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-5 flex flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs leading-6 text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:rounded-3xl sm:p-4 sm:text-sm sm:leading-7">
               <span>
                 بعد الدخول يمكنك إدارة حسابك، منشوراتك، وتعليقاتك من لوحة الحساب.
               </span>
