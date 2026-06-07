@@ -13,7 +13,7 @@ function AuthTabButton({ active, onClick, children }) {
       className={[
         "relative rounded-full px-3 py-2 text-xs font-black transition sm:px-4 sm:text-sm",
         active
-          ? "bg-red-700 text-white shadow-[0_12px_28px_-20px_rgba(185,28,28,0.9)]"
+          ? "wikihis-red-primary"
           : "text-slate-500 hover:bg-red-50 hover:text-red-700",
       ].join(" ")}
     >
@@ -395,7 +395,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               <button
                 type="submit"
                 disabled={pending || (mode === "reset" && !recoveryReady)}
-                className="group mt-2 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-red-700 px-5 py-2.5 text-sm font-black text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-70 sm:min-h-14 sm:px-6 sm:py-3"
+                className="wikihis-red-primary group mt-2 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full border px-5 py-2.5 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-70 sm:min-h-14 sm:px-6 sm:py-3"
               >
                 <span>{pending ? "جارٍ التنفيذ..." : pageTitle}</span>
                 <svg viewBox="0 0 24 24" className="h-4 w-4 transition group-hover:-translate-x-1" fill="none" stroke="currentColor" strokeWidth="2">

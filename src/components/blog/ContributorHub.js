@@ -560,8 +560,8 @@ export default function ContributorHub({ contributors = [], categoryTree = [] })
             <div className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700">تم تسجيل الدخول كمساهم</div>
           ) : (
             <div className="flex flex-wrap gap-3">
-              <Link href="/auth" className="rounded-full border border-slate-200 px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700">تسجيل الدخول</Link>
-              <Link href="/auth?mode=signup" className="rounded-full bg-red-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-800">إنشاء حساب</Link>
+              <Link href="/auth" className="wikihis-red-secondary rounded-full border px-4 py-2 text-sm font-bold transition">تسجيل الدخول</Link>
+              <Link href="/auth?mode=signup" className="wikihis-red-primary rounded-full border px-4 py-2 text-sm font-bold transition">إنشاء حساب</Link>
             </div>
           )}
         </div>

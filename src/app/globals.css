@@ -825,3 +825,27 @@ body {
 .shadow-red-500\/20 {
   --tw-shadow-color: rgba(122, 86, 11, 0.28) !important;
 }
+
+.wikihis-red-primary {
+  background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 48%, #991b1b 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(220, 38, 38, 0.72) !important;
+  box-shadow: 0 18px 36px -24px rgba(185, 28, 28, 0.95) !important;
+}
+
+.wikihis-red-primary:hover {
+  background: linear-gradient(135deg, #991b1b 0%, #ef4444 48%, #7f1d1d 100%) !important;
+  color: #ffffff !important;
+}
+
+.wikihis-red-secondary {
+  background: #ffffff !important;
+  color: #991b1b !important;
+  border-color: rgba(220, 38, 38, 0.34) !important;
+}
+
+.wikihis-red-secondary:hover {
+  background: #fef2f2 !important;
+  color: #7f1d1d !important;
+  border-color: rgba(185, 28, 28, 0.58) !important;
+}

@@ -523,13 +523,13 @@ export default function Navbar() {
                   <>
                     <Link
                       href="/auth"
-                      className="inline-flex h-9 items-center rounded-full border border-slate-200 bg-white px-4 text-sm font-extrabold text-slate-800 transition hover:border-amber-200 hover:text-[var(--gold-700)]"
+                      className="wikihis-red-secondary inline-flex h-9 items-center rounded-full border px-4 text-sm font-extrabold transition"
                     >
                       تسجيل الدخول
                     </Link>
                     <Link
                       href="/auth?mode=signup"
-                      className="inline-flex h-9 items-center rounded-full bg-[var(--gold-700)] px-4 text-sm font-extrabold text-white transition hover:bg-[var(--gold-800)]"
+                      className="wikihis-red-primary inline-flex h-9 items-center rounded-full border px-4 text-sm font-extrabold transition"
                     >
                       إنشاء حساب
                     </Link>
@@ -595,7 +595,7 @@ export default function Navbar() {
               <Link
                 href="/auth"
                 onClick={() => setMobileMenuOpen(false)}
-                className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-800"
+                className="wikihis-red-secondary inline-flex items-center justify-center rounded-xl border px-3 py-2 text-sm font-bold transition"
               >
                 تسجيل الدخول
               </Link>

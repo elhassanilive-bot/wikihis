@@ -592,7 +592,7 @@ export default function AccountSettingsShell() {
           <h1 className="text-3xl font-black text-slate-950">الدخول إلى الحساب مطلوب</h1>
           <p className="mt-4 text-base leading-8 text-slate-600">سجل الدخول أولًا حتى تتمكن من إدارة بريدك الإلكتروني وكلمة المرور والاسم والصورة الشخصية.</p>
           <div className="mt-6 flex flex-wrap justify-end gap-3">
-            <Link href="/auth" className="rounded-full bg-red-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-800">
+            <Link href="/auth" className="wikihis-red-primary rounded-full border px-5 py-3 text-sm font-bold transition">
               تسجيل الدخول
             </Link>
             <Link href="/" className="rounded-full border border-slate-200 px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700">

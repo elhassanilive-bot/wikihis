@@ -599,10 +599,10 @@ export default function ArticleComments({ postId }) {
           <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-5 py-6 text-right">
             <div className="text-base font-semibold text-slate-900">يجب إنشاء حساب أو تسجيل الدخول قبل التعليق أو التفاعل.</div>
             <div className="mt-4 flex flex-wrap justify-end gap-3">
-              <Link href="/auth" className="rounded-full bg-red-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-800">
+              <Link href="/auth" className="wikihis-red-secondary rounded-full border px-5 py-3 text-sm font-bold transition">
                 تسجيل الدخول
               </Link>
-              <Link href="/auth?mode=signup" className="rounded-full border border-slate-200 px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700">
+              <Link href="/auth?mode=signup" className="wikihis-red-primary rounded-full border px-5 py-3 text-sm font-bold transition">
                 إنشاء حساب
               </Link>
             </div>
