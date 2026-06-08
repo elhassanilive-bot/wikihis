@@ -756,14 +756,14 @@ function SectionLink({ link, active = false, compact = false, setTriggerRef, onO
       >
         <span
           className={[
-            'inline-flex h-[18px] w-[18px] shrink-0 translate-y-[2px] items-center justify-center leading-none transition',
+            'inline-flex h-[18px] w-[18px] shrink-0 translate-y-[1px] items-center justify-center leading-none transition',
             active ? 'text-[var(--gold-700)]' : 'text-slate-500 group-hover:text-[var(--gold-700)]',
           ].join(' ')}
           aria-hidden="true"
         >
           <SectionIcon label={link.label} />
         </span>
-        <span className="inline-flex h-[18px] items-center leading-none translate-y-[2px]">
+        <span className="inline-flex h-[18px] items-center leading-none translate-y-[1px]">
           {link.label}
         </span>
         {!compact && link.groups ? (
