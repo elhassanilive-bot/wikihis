@@ -549,21 +549,55 @@ export default function ContributorHub({ contributors = [], categoryTree = [] })
 
   return (
     <div className="space-y-8">
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.35)] sm:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
-          <div className="text-right">
-            <div className="text-xs font-extrabold tracking-[0.2em] text-red-700">WIKIHIS CONTRIBUTORS</div>
-            <h1 className="mt-2 text-3xl font-black text-slate-950">المساهمون</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-8 text-slate-600">يعرض هذا القسم جميع الناشرين في الموقع، ومع تسجيل الدخول يمكن لأي مساهم إرسال مقاله للمراجعة قبل النشر العام.</p>
-          </div>
-          {session?.user ? (
-            <div className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700">تم تسجيل الدخول كمساهم</div>
-          ) : (
-            <div className="flex flex-wrap gap-3">
-              <Link href="/auth" className="wikihis-red-secondary rounded-full border px-4 py-2 text-sm font-bold transition">تسجيل الدخول</Link>
-              <Link href="/auth?mode=signup" className="wikihis-red-primary rounded-full border px-4 py-2 text-sm font-bold transition">إنشاء حساب</Link>
+      <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_30px_80px_-55px_rgba(15,23,42,0.45)]">
+        <div className="relative border-b border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#fff7f7_55%,#fff8e8_100%)] px-5 py-7 sm:px-8 sm:py-8">
+          <div className="absolute left-0 top-0 h-28 w-28 rounded-full bg-red-100/70 blur-3xl" />
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl text-right">
+              <div className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-white/80 px-3 py-1.5 text-[11px] font-black tracking-[0.16em] text-red-700 shadow-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-red-600" />
+                WIKIHIS CONTRIBUTORS
+              </div>
+              <h1 className="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">المساهمون</h1>
+              <p className="mt-3 max-w-2xl text-sm leading-8 text-slate-600 sm:text-base">
+                مساحة تجمع كتّاب ويكيهيس والناشرين المعتمدين، ويمكنك بعد تسجيل الدخول إرسال مقالك للمراجعة والنشر.
+              </p>
             </div>
-          )}
+
+            {session?.user ? (
+              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-extrabold text-emerald-700">
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m5 12 4 4L19 6" />
+                </svg>
+                مساهم مسجل
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                <Link
+                  href="/auth"
+                  className="inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-white px-4 text-sm font-extrabold text-red-800 shadow-sm transition hover:border-red-300 hover:bg-red-50"
+                >
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m10 17 5-5-5-5" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H3" />
+                  </svg>
+                  تسجيل الدخول
+                </Link>
+                <Link
+                  href="/auth?mode=signup"
+                  className="inline-flex h-10 items-center gap-2 rounded-full bg-[linear-gradient(135deg,#dc2626,#991b1b)] px-4 text-sm font-extrabold text-white shadow-[0_16px_34px_-24px_rgba(185,28,28,0.9)] transition hover:brightness-110"
+                >
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
+                    <circle cx="9.5" cy="7" r="4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 8v6M22 11h-6" />
+                  </svg>
+                  إنشاء حساب
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="mt-6">
