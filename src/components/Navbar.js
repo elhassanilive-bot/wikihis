@@ -747,7 +747,7 @@ function SectionLink({ link, active = false, compact = false, setTriggerRef, onO
         onMouseEnter={!compact && link.groups ? onOpen : undefined}
         onFocus={!compact && link.groups ? onOpen : undefined}
         className={[
-          'group relative inline-flex h-[50px] items-center gap-2 whitespace-nowrap border-b-[3px] px-0 text-[14.5px] font-extrabold leading-none tracking-tight transition',
+          'group relative inline-flex h-[50px] items-center gap-1.5 whitespace-nowrap border-b-[3px] px-0 text-[14.5px] font-extrabold leading-none tracking-tight transition',
           active
             ? 'border-[var(--gold-700)] text-slate-950'
             : 'border-transparent text-slate-900 hover:border-slate-300 hover:text-[var(--gold-800)]',
@@ -763,7 +763,7 @@ function SectionLink({ link, active = false, compact = false, setTriggerRef, onO
         >
           <SectionIcon label={link.label} />
         </span>
-        <span className="inline-flex h-[18px] items-center leading-none translate-y-[2px]">
+        <span className="inline-flex h-[18px] items-center leading-none translate-y-[3px]">
           {link.label}
         </span>
         {!compact && link.groups ? (
