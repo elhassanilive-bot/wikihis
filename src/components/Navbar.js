@@ -472,22 +472,35 @@ export default function Navbar() {
             <Link href="/" className="text-sm font-black text-slate-900">
               WIKIHIS
             </Link>
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen((current) => !current)}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold text-slate-800 transition hover:border-red-200 hover:text-red-700"
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-nav-panel"
-            >
-              <span>{mobileMenuOpen ? 'إغلاق' : 'القائمة'}</span>
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-                {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 12h16M4 17h16" />
-                )}
-              </svg>
-            </button>
+            <div className="flex items-center gap-5">
+              <Link
+                href="/search"
+                aria-label="البحث"
+                title="البحث"
+                className="inline-flex h-10 w-10 items-center justify-center text-slate-950 transition hover:text-red-700"
+              >
+                <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m20 20-3.5-3.5" />
+                </svg>
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen((current) => !current)}
+                className="inline-flex h-10 w-10 items-center justify-center text-slate-950 transition hover:text-red-700"
+                aria-label={mobileMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-nav-panel"
+              >
+                <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.9" aria-hidden="true">
+                  {mobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div className="category-nav-scroll hidden overflow-x-auto border-t border-slate-100 md:block">
@@ -511,13 +524,12 @@ export default function Navbar() {
                   href="/search"
                   aria-label="البحث"
                   title="البحث"
-                  className="inline-flex h-8 items-center gap-1.5 px-1 text-[13px] font-bold text-slate-900 transition hover:text-[var(--gold-700)]"
+                  className="inline-flex h-9 w-9 items-center justify-center text-slate-950 transition hover:text-[var(--gold-700)]"
                 >
-                  <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" className="h-[21px] w-[21px]" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <circle cx="11" cy="11" r="7" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="m20 20-3.5-3.5" />
                   </svg>
-                  <span>البحث</span>
                 </Link>
                 {authUser ? (
                   <Link
