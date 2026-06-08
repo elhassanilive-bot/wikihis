@@ -738,7 +738,7 @@ function SectionLink({ link, active = false, compact = false, setTriggerRef, onO
         onMouseEnter={!compact && link.groups ? onOpen : undefined}
         onFocus={!compact && link.groups ? onOpen : undefined}
         className={[
-          'group inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 text-[13px] font-bold shadow-sm transition',
+          'group inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 text-[13px] font-bold leading-none shadow-sm transition',
           active
             ? 'border-[var(--gold-700)] bg-[var(--gold-700)] text-white shadow-[0_12px_26px_-22px_rgba(122,86,11,0.9)]'
             : 'border-slate-200 bg-white/90 text-slate-700 hover:border-amber-200 hover:bg-amber-50 hover:text-[var(--gold-800)]',
@@ -754,7 +754,9 @@ function SectionLink({ link, active = false, compact = false, setTriggerRef, onO
         >
           <SectionIcon label={link.label} />
         </span>
-        <span>{link.label}</span>
+        <span className={compact ? 'inline-flex h-4 items-center leading-none translate-y-[1px]' : 'inline-flex h-4 items-center leading-none'}>
+          {link.label}
+        </span>
         {!compact && link.groups ? (
           <svg viewBox="0 0 24 24" className={active ? 'h-3 w-3 text-white/80' : 'h-3 w-3 text-slate-400 transition group-hover:text-[var(--gold-700)]'} fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" />
