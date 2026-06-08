@@ -591,11 +591,20 @@ export default function AccountSettingsShell() {
         <div className="rounded-[2rem] border border-slate-200 bg-white p-8 text-right shadow-[0_25px_60px_-45px_rgba(15,23,42,0.35)]">
           <h1 className="text-3xl font-black text-slate-950">الدخول إلى الحساب مطلوب</h1>
           <p className="mt-4 text-base leading-8 text-slate-600">سجل الدخول أولًا حتى تتمكن من إدارة بريدك الإلكتروني وكلمة المرور والاسم والصورة الشخصية.</p>
-          <div className="mt-6 flex flex-wrap justify-end gap-3">
-            <Link href="/auth" className="wikihis-red-primary rounded-full border px-5 py-3 text-sm font-bold transition">
+          <div className="mt-6 flex flex-wrap justify-end gap-6">
+            <Link href="/auth" className="inline-flex items-center gap-2 text-sm font-extrabold text-red-700 transition hover:text-red-900">
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="m10 17 5-5-5-5" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H3" />
+              </svg>
               تسجيل الدخول
             </Link>
-            <Link href="/" className="rounded-full border border-slate-200 px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700">
+            <Link href="/" className="inline-flex items-center gap-2 text-sm font-extrabold text-slate-700 transition hover:text-red-700">
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 11.5 12 4l9 7.5" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 10.5V20h14v-9.5" />
+              </svg>
               العودة للرئيسية
             </Link>
           </div>

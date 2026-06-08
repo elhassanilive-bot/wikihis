@@ -548,7 +548,7 @@ export default function ContributorHub({ contributors = [], categoryTree = [] })
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pt-4 sm:pt-6">
       <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_30px_80px_-55px_rgba(15,23,42,0.45)]">
         <div className="relative border-b border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#fff7f7_55%,#fff8e8_100%)] px-5 py-7 sm:px-8 sm:py-8">
           <div className="absolute left-0 top-0 h-28 w-28 rounded-full bg-red-100/70 blur-3xl" />
@@ -572,10 +572,10 @@ export default function ContributorHub({ contributors = [], categoryTree = [] })
                 مساهم مسجل
               </div>
             ) : (
-              <div className="flex flex-wrap gap-2 sm:gap-3">
+              <div className="flex flex-wrap gap-6">
                 <Link
                   href="/auth"
-                  className="inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-white px-4 text-sm font-extrabold text-red-800 shadow-sm transition hover:border-red-300 hover:bg-red-50"
+                  className="inline-flex items-center gap-2 text-sm font-extrabold text-red-800 transition hover:text-red-950"
                 >
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
@@ -586,7 +586,7 @@ export default function ContributorHub({ contributors = [], categoryTree = [] })
                 </Link>
                 <Link
                   href="/auth?mode=signup"
-                  className="inline-flex h-10 items-center gap-2 rounded-full bg-[linear-gradient(135deg,#dc2626,#991b1b)] px-4 text-sm font-extrabold text-white shadow-[0_16px_34px_-24px_rgba(185,28,28,0.9)] transition hover:brightness-110"
+                  className="inline-flex items-center gap-2 text-sm font-extrabold text-red-700 transition hover:text-red-900"
                 >
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
