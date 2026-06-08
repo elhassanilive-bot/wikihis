@@ -472,7 +472,31 @@ export default function Navbar() {
             <Link href="/" className="text-sm font-black text-slate-900">
               WIKIHIS
             </Link>
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-3">
+              <Link
+                href="/contributors"
+                aria-label="المساهمون"
+                title="المساهمون"
+                className="inline-flex h-10 w-10 items-center justify-center text-slate-950 transition hover:text-red-700"
+              >
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </Link>
+              <Link
+                href="/account"
+                aria-label="حسابي"
+                title="حسابي"
+                className="inline-flex h-10 w-10 items-center justify-center text-slate-950 transition hover:text-red-700"
+              >
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20 21a8 8 0 0 0-16 0" />
+                </svg>
+              </Link>
               <Link
                 href="/search"
                 aria-label="البحث"
@@ -600,33 +624,6 @@ export default function Navbar() {
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           <div className="space-y-3 p-3 pb-24">
-          <div className="grid grid-cols-2 gap-2">
-            <Link
-              href="/contributors"
-              onClick={() => setMobileMenuOpen(false)}
-              className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-800"
-            >
-              المساهمون
-            </Link>
-            {authUser ? (
-              <Link
-                href="/account"
-                onClick={() => setMobileMenuOpen(false)}
-                className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-800"
-              >
-                حسابي
-              </Link>
-            ) : (
-              <Link
-                href="/auth"
-                onClick={() => setMobileMenuOpen(false)}
-                className="wikihis-red-secondary inline-flex items-center justify-center rounded-xl border px-3 py-2 text-sm font-bold transition"
-              >
-                تسجيل الدخول
-              </Link>
-            )}
-          </div>
-
           {sectionLinks.map((link) => {
             const expanded = mobileExpandedSection === link.label;
             return (
@@ -759,7 +756,7 @@ function SectionLink({ link, active = false, compact = false, setTriggerRef, onO
       >
         <span
           className={[
-            'hidden h-[18px] w-[18px] items-center justify-center leading-none transition lg:inline-flex',
+            'inline-flex h-[18px] w-[18px] items-center justify-center leading-none transition',
             active ? 'text-[var(--gold-700)]' : 'text-slate-500 group-hover:text-[var(--gold-700)]',
           ].join(' ')}
           aria-hidden="true"
