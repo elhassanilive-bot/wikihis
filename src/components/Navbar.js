@@ -490,8 +490,8 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="category-nav-scroll hidden overflow-x-auto md:block">
-            <div className="flex min-h-[52px] min-w-max items-center justify-between gap-2 px-3 py-1.5 sm:px-0">
+          <div className="category-nav-scroll hidden overflow-x-auto border-t border-slate-100 md:block">
+            <div className="flex min-h-[54px] min-w-max items-center justify-between gap-7 px-3 sm:px-0">
               <div className="flex shrink-0 items-center gap-2">
                 <Link
                   href="/contributors"
@@ -565,8 +565,8 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="category-nav-scroll overflow-x-auto border-t border-slate-100 px-3 pb-2 md:hidden">
-            <div className="flex min-h-[52px] min-w-max items-center gap-2">
+          <div className="category-nav-scroll overflow-x-auto border-y border-slate-200 bg-white md:hidden">
+            <div className="flex min-h-[54px] min-w-max items-center gap-8 px-4">
               {sectionLinks.map((link) => (
                 <SectionLink
                   key={`mobile-chip-${link.label}`}
@@ -738,23 +738,23 @@ function SectionLink({ link, active = false, compact = false, setTriggerRef, onO
         onMouseEnter={!compact && link.groups ? onOpen : undefined}
         onFocus={!compact && link.groups ? onOpen : undefined}
         className={[
-          'group inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 text-[13px] font-bold leading-none shadow-sm transition',
+          'group relative inline-flex h-[54px] items-center gap-1.5 whitespace-nowrap border-b-[3px] px-0 text-[17px] font-black leading-none tracking-tight transition',
           active
-            ? 'border-[var(--gold-700)] bg-[var(--gold-700)] text-white shadow-[0_12px_26px_-22px_rgba(122,86,11,0.9)]'
-            : 'border-slate-200 bg-white/90 text-slate-700 hover:border-amber-200 hover:bg-amber-50 hover:text-[var(--gold-800)]',
-          compact ? 'h-8 px-2.5 text-[12.5px]' : '',
+            ? 'border-[var(--gold-700)] text-slate-950'
+            : 'border-transparent text-slate-900 hover:border-slate-300 hover:text-[var(--gold-800)]',
+          compact ? 'text-[16px]' : '',
         ].join(' ')}
       >
         <span
           className={[
-            'inline-flex h-4 w-4 items-center justify-center leading-none transition',
-            active ? 'text-white' : 'text-slate-500 group-hover:text-[var(--gold-700)]',
+            'hidden h-4 w-4 items-center justify-center leading-none transition lg:inline-flex',
+            active ? 'text-[var(--gold-700)]' : 'text-slate-500 group-hover:text-[var(--gold-700)]',
           ].join(' ')}
           aria-hidden="true"
         >
           <SectionIcon label={link.label} />
         </span>
-        <span className={compact ? 'inline-flex h-4 items-center leading-none translate-y-[1px]' : 'inline-flex h-4 items-center leading-none'}>
+        <span className="inline-flex h-5 items-center leading-none">
           {link.label}
         </span>
         {!compact && link.groups ? (
