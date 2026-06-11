@@ -11,8 +11,12 @@ export function getCategoryHref(category) {
 
 export function resolveCategoryFromSlug(categories, slug) {
   const normalizedSlug = String(slug || "").trim();
+  const decodedSlug = decodeURIComponent(normalizedSlug);
+  const readableCategory = decodedSlug.replace(/-+/g, " ").trim();
+
   return (
-    (categories || []).find((category) => getCategorySlug(category) === normalizedSlug) ||
+    (categories || []).find((category) => getCategorySlug(category) === normalizedSlug || getCategorySlug(category) === decodedSlug) ||
+    readableCategory ||
     ""
   );
 }

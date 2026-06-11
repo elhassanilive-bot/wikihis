@@ -139,7 +139,8 @@ export async function listPopularPosts({ limit = 6, category = null } = {}) {
 
   if (normalizedCategory) {
     const escapedCategory = normalizedCategory.replaceAll('"', '\\"');
-    query = query.or(`category.eq."${escapedCategory}",category_parent.eq."${escapedCategory}"`);
+    const escapedCategorySlug = createSlugCandidate(normalizedCategory).replaceAll('"', '\\"');
+    query = query.or(`category.eq."${escapedCategory}",category_parent.eq."${escapedCategory}",category_slug.eq."${escapedCategorySlug}"`);
   }
 
   const { data, error } = await query;
@@ -277,15 +278,21 @@ export async function listPostCategories() {
 
   const { data, error } = await supabase
     .from(BLOG_PUBLIC_TABLE)
-    .select("category")
+    .select("category,category_parent,category_slug")
     .eq("status", "published")
-    .not("category", "is", null)
     .order("published_at", { ascending: false, nullsFirst: false })
     .limit(500);
 
   if (error) return { categories: [], error: formatSupabaseError(error) };
 
-  const categories = [...new Set((data || []).map((row) => String(row.category || "").trim()).filter(Boolean))];
+  const categories = [
+    ...new Set(
+      (data || [])
+        .flatMap((row) => [row.category, row.category_parent])
+        .map((category) => String(category || "").trim())
+        .filter(Boolean)
+    ),
+  ];
   return { categories, error: null };
 }
 
