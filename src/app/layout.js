@@ -83,7 +83,7 @@ export default function RootLayout({ children }) {
         />
         <PwaRegistration />
         <Navbar />
-        <main className="min-h-screen pt-16">{children}</main>
+        <main className="min-h-screen pt-[108px] md:pt-16">{children}</main>
         <AppFooter />
       </body>
     </html>
