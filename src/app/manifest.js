@@ -15,17 +15,17 @@ export default function manifest() {
     dir: "rtl",
     icons: [
       {
-        src: "/icon.png?v=20260603a",
+        src: "/icon.png?v=20260702a",
         sizes: "192x192",
         type: "image/png",
       },
       {
-        src: "/icon.png?v=20260603a",
+        src: "/icon.png?v=20260702a",
         sizes: "512x512",
         type: "image/png",
       },
       {
-        src: "/apple-touch-icon.png?v=20260603a",
+        src: "/apple-touch-icon.png?v=20260702a",
         sizes: "180x180",
         type: "image/png",
       },
