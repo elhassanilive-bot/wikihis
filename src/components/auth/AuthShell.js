@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 function AuthTabButton({ active, onClick, children }) {
@@ -266,8 +265,8 @@ export default function AuthShell({ initialMode = "signin" }) {
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1fr] lg:gap-16">
         <aside className="order-2 text-right lg:order-1">
           <div className="flex items-center gap-3">
-            <div className="relative h-20 w-20 shrink-0">
-              <Image src="/icon.png?v=20260702e" alt="Wikihat" fill sizes="80px" className="object-contain" priority />
+            <div className="h-20 w-20 shrink-0">
+              <img src="/auth-icon.png?v=20260702f" alt="Wikihat" className="h-full w-full object-contain" />
             </div>
             <div>
               <div className="text-xs font-black tracking-[0.18em] text-red-700">WIKIHAT</div>

@@ -1,8 +1,9 @@
-﻿const CACHE_NAME = "wikihat-pwa-v6";
+﻿const CACHE_NAME = "wikihat-pwa-v7";
 const OFFLINE_FALLBACK_URL = "/";
 const PRECACHE_URLS = [
   "/",
   "/icon.png",
+  "/auth-icon.png",
   "/apple-touch-icon.png",
   "/manifest.webmanifest",
 ];
@@ -70,6 +71,8 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
+
 
 
 
