@@ -74,7 +74,7 @@ function ContributorSpotlightCard({ contributor, compact = false }) {
               </div>
               <div className="min-w-0">
                 <div className={`truncate font-black text-slate-950 ${compact ? "text-lg" : "text-xl"}`}>{contributor.displayName}</div>
-                <div className="mt-1 text-sm text-slate-600">ناشر معتمد في ويكيهيس</div>
+                <div className="mt-1 text-sm text-slate-600">ناشر معتمد في ويكيهات</div>
               </div>
             </div>
 

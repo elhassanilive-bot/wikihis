@@ -1,4 +1,4 @@
-﻿-- Wikihes unified SQL stack (PRODUCTION SAFE)
+﻿-- Wikihat unified SQL stack (PRODUCTION SAFE)
 -- Generated automatically to run all blog SQL files in safe order
 -- Excludes blog_temp_publishing.sql (DEV ONLY permissive policies)
 -- Date: 2026-04-06

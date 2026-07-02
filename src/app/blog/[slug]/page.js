@@ -288,7 +288,7 @@ function EditorialTrustBox({ post }) {
 
   return (
     <div className="border border-red-100 bg-white p-6 text-right shadow-[0_20px_55px_-45px_rgba(127,29,29,0.35)]">
-      <div className="text-xs font-extrabold tracking-[0.18em] text-red-700">ثقة ويكيهيس</div>
+      <div className="text-xs font-extrabold tracking-[0.18em] text-red-700">ثقة ويكيهات</div>
       <h2 className="mt-2 text-xl font-black text-slate-950">شفافية تحريرية</h2>
       <div className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
         <p>نراجع المقالات قبل نشرها، ونوضح تاريخ النشر والتحديث ومصدر الكاتب عندما يكون متاحاً.</p>
@@ -431,7 +431,7 @@ export default async function BlogPostPage({ params }) {
             <aside className="border border-slate-200 bg-[#fafafa] p-4 text-right">
               <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
-                  <div className="text-[11px] font-extrabold tracking-[0.2em] text-red-700">WIKIHIS</div>
+                  <div className="text-[11px] font-extrabold tracking-[0.2em] text-red-700">WIKIHAT</div>
                   <div className="mt-1 text-xl font-black text-slate-950">مقترحات سريعة</div>
                 </div>
                 <span className="h-6 w-1 bg-red-700" />

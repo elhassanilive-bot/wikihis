@@ -632,7 +632,7 @@ export default function AccountSettingsShell() {
           </div>
 
           <div className="mt-6">
-            <div className="text-xs font-extrabold tracking-[0.2em] text-red-700">WIKIHIS ACCOUNT</div>
+            <div className="text-xs font-extrabold tracking-[0.2em] text-red-700">WIKIHAT ACCOUNT</div>
             <h1 className="mt-3 text-2xl font-black text-slate-950">{profile.displayName || "حساب المستخدم"}</h1>
             <p className="mt-2 text-sm leading-7 text-slate-600">{profile.email || session.user.email}</p>
           </div>

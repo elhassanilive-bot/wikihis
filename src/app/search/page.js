@@ -36,7 +36,7 @@ export default async function SearchPage({ searchParams }) {
     <section className="bg-white px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="text-xs font-black tracking-[0.2em] text-red-700">بحث ويكيهيس</div>
+          <div className="text-xs font-black tracking-[0.2em] text-red-700">بحث ويكيهات</div>
           <h1 className="mt-3 text-4xl font-black text-slate-950">ابحث في المقالات</h1>
           <p className="mt-4 text-base leading-8 text-slate-600">
             اكتب كلمة أو عبارة وستظهر اقتراحات تلقائية من المقالات المنشورة.

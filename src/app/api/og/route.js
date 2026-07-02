@@ -51,7 +51,7 @@ export async function GET(request) {
               و
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <div style={{ fontSize: 30, fontWeight: 900, letterSpacing: 7, color: "#7f1d1d" }}>WIKIHIS</div>
+              <div style={{ fontSize: 30, fontWeight: 900, letterSpacing: 7, color: "#7f1d1d" }}>WIKIHAT</div>
               <div style={{ marginTop: 6, fontSize: 24, color: "#334155" }}>{site.name}</div>
             </div>
           </div>
@@ -95,7 +95,7 @@ export async function GET(request) {
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", color: "#475569" }}>
           <div style={{ fontSize: 26, fontWeight: 700 }}>{site.description}</div>
-          <div style={{ fontSize: 28, fontWeight: 900, color: "#7f1d1d" }}>wikihis.vercel.app</div>
+          <div style={{ fontSize: 28, fontWeight: 900, color: "#7f1d1d" }}>wikihat.vercel.app</div>
         </div>
       </div>
     ),

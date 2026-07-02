@@ -5,7 +5,7 @@
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr]">
             <div className="text-right">
-              <p className="text-sm font-extrabold tracking-[0.28em] text-red-700">WIKIHIS LEGAL</p>
+              <p className="text-sm font-extrabold tracking-[0.28em] text-red-700">WIKIHAT LEGAL</p>
               <h1 className="mt-4 text-4xl font-black leading-[1.45] text-slate-950 sm:text-5xl">{page.title}</h1>
               <p className="mt-4 text-sm font-semibold text-slate-500">{page.updated}</p>
               <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{page.intro}</p>

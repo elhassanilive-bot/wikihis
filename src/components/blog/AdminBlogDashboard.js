@@ -342,7 +342,7 @@ export default function AdminBlogDashboard({
       { label: "الوصف غير مكرر داخل الموقع", passed: !duplicateExcerpt },
       { label: "المقال لا يقل عن 300 كلمة", passed: contentWords >= 300 },
       { label: "يحتوي على عناوين فرعية H2/H3", passed: hasHeadings },
-      { label: "يحتوي على روابط داخلية لمقالات ويكيهيس", passed: hasInternalLinks },
+      { label: "يحتوي على روابط داخلية لمقالات ويكيهات", passed: hasInternalLinks },
     ];
   }, [form.content, form.excerpt, form.id, form.title, posts]);
   const internalLinkSuggestions = useMemo(() => {

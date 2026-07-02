@@ -10,8 +10,8 @@ import { estimateReadingTime, formatArabicDate } from "@/lib/blog/render";
 export const revalidate = 60;
 
 export const metadata = {
-  title: "ويكيهيس | Wikihis",
-  description: "ويكيهيس هي جريدة إلكترونية عربية متعددة التخصصات تقدم المقالات والأخبار والتحليلات، وتتيح للمساهمين نشر مقالاتهم في مجالات متنوعة.",
+  title: "ويكيهات | Wikihat",
+  description: "ويكيهات هي جريدة إلكترونية عربية متعددة التخصصات تقدم المقالات والأخبار والتحليلات، وتتيح للمساهمين نشر مقالاتهم في مجالات متنوعة.",
   alternates: { canonical: "/" },
 };
 
@@ -842,7 +842,7 @@ export default async function HomePage({ searchParams }) {
           ) : (
             <div className="overflow-hidden border border-white/10">
               <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 text-white">
-                <h2 className="text-right text-xl font-black">ويكيهيس</h2>
+                <h2 className="text-right text-xl font-black">ويكيهات</h2>
                 <div className="mx-4 hidden min-w-0 flex-1 lg:block">
                   <NewsTickerClient />
                 </div>

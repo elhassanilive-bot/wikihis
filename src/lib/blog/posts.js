@@ -22,7 +22,7 @@ function formatSupabaseError(error) {
     return "Vercel ما زال يرسل NEXT_PUBLIC_SUPABASE_DB_SCHEMA=shima. احذفه أو غيّره إلى public من Environment Variables ثم أعد النشر.";
   }
   if (PROJECT_KEY_COLUMN_MISSING_RE.test(message)) {
-    return "جدول blog_posts في Supabase قديم ولا يحتوي project_key. شغّل supabase/004_wikihes_project_isolation.sql أو استخدم قاعدة بيانات المشروع الجديدة.";
+    return "جدول blog_posts في Supabase قديم ولا يحتوي project_key. شغّل supabase/004_wikihat_project_isolation.sql أو استخدم قاعدة بيانات المشروع الجديدة.";
   }
   if (/permission denied for table\s+blog_posts/i.test(message)) {
     return "صلاحية النشر مرفوضة. أضف SUPABASE_SERVICE_ROLE_KEY في .env.local ثم أعد تشغيل السيرفر.";

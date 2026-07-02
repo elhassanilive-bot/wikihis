@@ -4,13 +4,13 @@ import { site } from '@/config/site';
 const exploreLinks = [
   { href: '/', label: 'الرئيسية' },
   { href: '/sections', label: 'أقسام الموقع' },
-  { href: '/features', label: 'كيف يعمل ويكيهيس' },
+  { href: '/features', label: 'كيف يعمل ويكيهات' },
   { href: '/contributors', label: 'المساهمون' },
   { href: '/faq', label: 'مركز المساعدة' },
 ];
 
 const newsroomLinks = [
-  { href: '/about', label: 'عن ويكيهيس' },
+  { href: '/about', label: 'عن ويكيهات' },
   { href: '/editorial-policy', label: 'السياسة التحريرية' },
   { href: '/corrections-policy', label: 'سياسة التصحيحات' },
   { href: '/contribute', label: 'النشر كمساهم' },

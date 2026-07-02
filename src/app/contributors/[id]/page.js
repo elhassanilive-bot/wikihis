@@ -58,7 +58,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: contributor.displayName,
-    description: `صفحة ${contributor.displayName} مع المقالات المنشورة في ويكيهيس.`,
+    description: `صفحة ${contributor.displayName} مع المقالات المنشورة في ويكيهات.`,
     alternates: { canonical: `/contributors/${contributor.id}` },
     openGraph: {
       title: contributor.displayName,
@@ -119,7 +119,7 @@ export default async function ContributorProfilePage({ params }) {
           <div className="flex flex-col items-end gap-6 text-right text-white">
             <ContributorAvatar contributor={contributor} />
             <div>
-              <div className="text-xs font-extrabold tracking-[0.22em] text-red-300">WIKIHIS WRITER</div>
+              <div className="text-xs font-extrabold tracking-[0.22em] text-red-300">WIKIHAT WRITER</div>
               <h1 className="mt-3 text-4xl font-black">{contributor.displayName}</h1>
               <div className="mt-4 flex flex-wrap justify-end gap-3 text-sm text-white/80">
                 <span>{contributor.postsCount} مقال منشور</span>

@@ -3,8 +3,8 @@
 export const revalidate = 60;
 
 export const metadata = {
-  title: "مدونة ويكيهيس",
-  description: "أرشيف مقالات ويكيهيس متاح من الصفحة الرئيسية مع أحدث المقالات والتصنيفات.",
+  title: "مدونة ويكيهات",
+  description: "أرشيف مقالات ويكيهات متاح من الصفحة الرئيسية مع أحدث المقالات والتصنيفات.",
   alternates: { canonical: "/" },
 };
 

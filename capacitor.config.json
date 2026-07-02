@@ -1,10 +1,10 @@
 ﻿{
-  "appId": "com.wikihis.app",
-  "appName": "Wikihis",
+  "appId": "com.wikihat.app",
+  "appName": "Wikihat",
   "webDir": "public",
   "bundledWebRuntime": false,
   "server": {
-    "url": "https://wikihes.vercel.app",
+    "url": "https://wikihat.vercel.app",
     "cleartext": false
   }
 }

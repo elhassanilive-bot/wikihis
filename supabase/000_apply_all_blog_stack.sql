@@ -1,4 +1,4 @@
-﻿-- Wikihes unified SQL stack
+﻿-- Wikihat unified SQL stack
 -- Generated automatically to run all blog SQL files in safe order
 -- NOTE: blog_temp_publishing.sql is DEV ONLY and permissive
 -- Date: 2026-04-06

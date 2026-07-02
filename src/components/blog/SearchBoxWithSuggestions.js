@@ -115,7 +115,7 @@ export default function SearchBoxWithSuggestions({ initialQuery = "" }) {
         ) : null}
       </div>
 
-      <button className="wikihis-red-primary min-h-13 rounded-full border px-7 text-sm font-black">
+      <button className="wikihat-red-primary min-h-13 rounded-full border px-7 text-sm font-black">
         بحث
       </button>
     </form>

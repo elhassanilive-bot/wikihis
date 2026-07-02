@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import wikihisIcon from "../../../assets/wikihis.png";
+import wikihatIcon from "../../../assets/wikihat.png";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 function AuthTabButton({ active, onClick, children }) {
@@ -13,7 +13,7 @@ function AuthTabButton({ active, onClick, children }) {
       className={[
         "relative rounded-full px-3 py-2 text-xs font-black transition sm:px-4 sm:text-sm",
         active
-          ? "wikihis-red-primary"
+          ? "wikihat-red-primary"
           : "text-slate-500 hover:bg-red-50 hover:text-red-700",
       ].join(" ")}
     >
@@ -268,11 +268,11 @@ export default function AuthShell({ initialMode = "signin" }) {
         <aside className="order-2 text-right lg:order-1">
           <div className="flex items-center gap-3">
             <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-red-50 p-1.5">
-              <Image src={wikihisIcon} alt="Wikihis" fill sizes="48px" className="object-contain p-1" />
+              <Image src={wikihatIcon} alt="Wikihat" fill sizes="48px" className="object-contain p-1" />
             </div>
             <div>
-              <div className="text-xs font-black tracking-[0.18em] text-red-700">WIKIHIS</div>
-              <h1 className="mt-1 text-2xl font-black text-slate-950">تواصل وتفاعل مع Wikihis</h1>
+              <div className="text-xs font-black tracking-[0.18em] text-red-700">WIKIHAT</div>
+              <h1 className="mt-1 text-2xl font-black text-slate-950">تواصل وتفاعل مع Wikihat</h1>
             </div>
           </div>
           <p className="mt-4 max-w-xl text-sm leading-7 text-slate-500">
@@ -284,7 +284,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               ["حساب واحد", "ادخل مرة واحدة واستعمل الحساب للتعليق والحفظ وإدارة نشاطك."],
               ["محتوى مخصص", "احفظ المقالات المهمة وارجع إليها من صفحة الحساب في أي وقت."],
               ["التعليق على المقالات", "شارك رأيك بوضوح وتابع تفاعلاتك داخل المقالات."],
-              ["نشر كمساهم", "أنشئ مقالاتك وأرسلها للمراجعة لتظهر في Wikihis."],
+              ["نشر كمساهم", "أنشئ مقالاتك وأرسلها للمراجعة لتظهر في Wikihat."],
               ["استعادة سهلة", "أعد تعيين كلمة المرور عبر بريدك الإلكتروني عند الحاجة."],
             ].map(([title, description]) => (
               <div key={title} className="flex items-start gap-4">
@@ -304,7 +304,7 @@ export default function AuthShell({ initialMode = "signin" }) {
 
         <div className="order-1 mx-auto w-full max-w-[430px] text-right lg:order-2">
           <div className="mb-7">
-            <div className="text-xs font-black tracking-[0.2em] text-red-700">حساب WIKIHIS</div>
+            <div className="text-xs font-black tracking-[0.2em] text-red-700">حساب WIKIHAT</div>
             <h2 className="mt-3 text-3xl font-black leading-tight text-slate-950 sm:text-4xl">{pageTitle}</h2>
             <p className="mt-3 text-sm leading-7 text-slate-500">
               املأ البيانات بالأسفل للمتابعة. لا توجد أزرار تواصل اجتماعي، فقط بريدك وكلمة المرور.
@@ -427,7 +427,7 @@ export default function AuthShell({ initialMode = "signin" }) {
               <button
                 type="submit"
                 disabled={pending || (mode === "reset" && !recoveryReady)}
-                className="wikihis-red-primary group mt-2 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full border px-5 py-2.5 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-70 sm:min-h-14 sm:px-6 sm:py-3"
+                className="wikihat-red-primary group mt-2 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full border px-5 py-2.5 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-70 sm:min-h-14 sm:px-6 sm:py-3"
               >
                 <span>{pending ? "جارٍ التنفيذ..." : pageTitle}</span>
                 <svg viewBox="0 0 24 24" className="h-4 w-4 transition group-hover:-translate-x-1" fill="none" stroke="currentColor" strokeWidth="2">

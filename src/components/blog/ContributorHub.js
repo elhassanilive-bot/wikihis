@@ -16,7 +16,7 @@ const BLOG_MEDIA_BUCKET =
     ? "blog-media"
     : process.env.NEXT_PUBLIC_SUPABASE_BLOG_BUCKET || "blog-media";
 const POSTS_PER_PAGE = 10;
-const DRAFT_STORAGE_PREFIX = "WIKIHIS:contrib_draft:";
+const DRAFT_STORAGE_PREFIX = "WIKIHAT:contrib_draft:";
 const CONTRIBUTOR_PRIMARY_CATEGORIES = [
   "الصحة واللياقة",
   "الأخبار",
@@ -556,11 +556,11 @@ export default function ContributorHub({ contributors = [], categoryTree = [] })
             <div className="max-w-3xl text-right">
               <div className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-white/80 px-3 py-1.5 text-[11px] font-black tracking-[0.16em] text-red-700 shadow-sm">
                 <span className="h-1.5 w-1.5 rounded-full bg-red-600" />
-                WIKIHIS CONTRIBUTORS
+                WIKIHAT CONTRIBUTORS
               </div>
               <h1 className="mt-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">المساهمون</h1>
               <p className="mt-3 max-w-2xl text-sm leading-8 text-slate-600 sm:text-base">
-                مساحة تجمع كتّاب ويكيهيس والناشرين المعتمدين، ويمكنك بعد تسجيل الدخول إرسال مقالك للمراجعة والنشر.
+                مساحة تجمع كتّاب ويكيهات والناشرين المعتمدين، ويمكنك بعد تسجيل الدخول إرسال مقالك للمراجعة والنشر.
               </p>
             </div>
 

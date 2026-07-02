@@ -11,7 +11,7 @@ function isRunningInApp() {
   const ua = (navigator.userAgent || "").toLowerCase();
 
   // Android WebView marker used by packaged apps (Capacitor/Cordova/TWA wrappers).
-  if (ua.includes("; wv)") || ua.includes("wikihisapp")) {
+  if (ua.includes("; wv)") || ua.includes("wikiatapp")) {
     return true;
   }
 

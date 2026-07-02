@@ -1,4 +1,4 @@
-﻿-- Unified SQL for WikihisWeb in isolated schema shima
+﻿-- Unified SQL for WikihatWeb in isolated schema shima
 -- Generated from existing blog SQL files and namespaced to avoid conflicts.
 -- DEV-only temp publishing file intentionally excluded.
 
