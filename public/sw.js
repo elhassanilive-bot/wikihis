@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = "wikihat-pwa-v4";
+﻿const CACHE_NAME = "wikihat-pwa-v6";
 const OFFLINE_FALLBACK_URL = "/";
 const PRECACHE_URLS = [
   "/",
@@ -70,6 +70,8 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
+
 
 
 
