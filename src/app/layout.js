@@ -20,12 +20,12 @@ export const metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico?v=20260702b", type: "image/x-icon", sizes: "32x32" },
-      { url: "/icon.png?v=20260702b", type: "image/png", sizes: "192x192" },
-      { url: "/icon.png?v=20260702b", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.ico?v=20260702c", type: "image/x-icon", sizes: "128x128" },
+      { url: "/icon.png?v=20260702c", type: "image/png", sizes: "2048x2048" },
+      { url: "/icon.png?v=20260702c", type: "image/png", sizes: "2048x2048" },
     ],
-    apple: [{ url: "/apple-touch-icon.png?v=20260702b", sizes: "180x180", type: "image/png" }],
-    shortcut: ["/favicon.ico?v=20260702b"],
+    apple: [{ url: "/apple-touch-icon.png?v=20260702c", sizes: "720x720", type: "image/png" }],
+    shortcut: ["/favicon.ico?v=20260702c"],
   },
   alternates: {
     canonical: "/",
