@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useMemo, useState } from 'react';
 import { getPopularHelpSuggestions } from '@/content/helpCenterData';
@@ -55,7 +55,7 @@ export default function FaqAccordion({ sections }) {
       <section className="rounded-[2rem] border border-black/10 bg-white p-6 shadow-sm sm:p-8">
         <div className="mx-auto max-w-3xl space-y-5 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.4em] text-black/40">ابحث في كل الأقسام</p>
-          <h2 className="text-3xl font-black text-black sm:text-4xl">بحث شامل في أسئلة دريبدو</h2>
+          <h2 className="text-3xl font-black text-black sm:text-4xl">بحث شامل في أسئلة Wikihat</h2>
           <p className="text-base leading-8 text-black/65">
             اكتب أي كلمة مثل: الرسائل، حذف الحساب، المنشورات، الفيديوهات، المجتمعات، الوظائف، أو الأعطال التقنية،
             وسيتم عرض الأسئلة الأقرب لما تبحث عنه مع اقتراحات ذكية جاهزة.

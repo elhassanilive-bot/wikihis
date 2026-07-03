@@ -58,11 +58,11 @@ export async function generateMetadata({ params }) {
 
   return {
     title: contributor.displayName,
-    description: `صفحة ${contributor.displayName} مع المقالات المنشورة في ويكيهات.`,
+    description: `صفحة ${contributor.displayName} مع المقالات المنشورة في Wikihat.`,
     alternates: { canonical: `/contributors/${contributor.id}` },
     openGraph: {
       title: contributor.displayName,
-      description: `مقالات ${contributor.displayName} المنشورة في ${site.name}.`,
+      description: `مقالات ${contributor.displayName} المنشورة في Wikihat.`,
       url: `/contributors/${contributor.id}`,
       images: contributor.avatarUrl ? [{ url: contributor.avatarUrl }] : undefined,
     },
@@ -101,8 +101,8 @@ export default async function ContributorProfilePage({ params }) {
     url: `${site.url}/contributors/${contributor.id}`,
     worksFor: {
       "@type": "Organization",
-      name: site.name,
-      alternateName: site.nameEn,
+      name: site.officialName,
+      alternateName: site.brandKeywords,
       url: site.url,
     },
     mainEntityOfPage: `${site.url}/contributors/${contributor.id}`,

@@ -1,8 +1,8 @@
 ﻿import ComplaintsForm from './ComplaintsForm';
 
 export const metadata = {
-  title: 'شكاوى وبلاغات | دريبدو',
-  description: 'أرسل بلاغاً عن محتوى مخالف أو مشكلة تقنية، ويصلك رد فريق دريبدو بعد المراجعة.',
+  title: 'شكاوى وبلاغات | Wikihat',
+  description: 'أرسل بلاغاً عن محتوى مخالف أو مشكلة تقنية، ويصلك رد فريق Wikihat بعد المراجعة.',
   alternates: { canonical: '/complaints' },
 };
 
@@ -15,7 +15,7 @@ export default function ComplaintsPage() {
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white">شكاوى وبلاغات</h1>
           <p className="max-w-3xl text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
             هذه الصفحة مخصصة لتلقي البلاغات المنظمة المتعلقة بالمحتوى المخالف، انتحال الهوية، الرسائل المزعجة،
-            المشكلات التقنية، أو أي حالة تستدعي مراجعة إشرافية من فريق دريبدو.
+            المشكلات التقنية، أو أي حالة تستدعي مراجعة إشرافية من فريق Wikihat.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-black/10 bg-[#faf8f6] px-4 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-black/75 dark:border-red-600/40 dark:bg-red-900/40">
@@ -32,4 +32,5 @@ export default function ComplaintsPage() {
     </div>
   );
 }
+
 

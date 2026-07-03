@@ -282,7 +282,7 @@ export default function ComplaintsForm() {
               type="text"
               value={form.target}
               onChange={handleChange('target')}
-              placeholder="https://dribdo.com/post/..."
+              placeholder="https://wikihat.com/post/..."
               className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition focus:border-red-500 dark:bg-gray-900 dark:border-gray-800 ${
                 errors.target ? 'border-red-400' : 'border-gray-200'
               }`}
@@ -345,15 +345,15 @@ export default function ComplaintsForm() {
             معلومات إضافية
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-300 mt-3">
-            استخدم هذا النموذج للإبلاغ عن محتوى مخالف، إساءة استخدام، انتحال شخصية، مشاكل تقنية مؤثرة، أو أي تصرف يخلّ بسياسات دريبدو.
+            استخدم هذا النموذج للإبلاغ عن محتوى مخالف، إساءة استخدام، انتحال شخصية، مشاكل تقنية مؤثرة، أو أي تصرف يخلّ بسياسات Wikihat.
             كل بلاغ تتم مراجعته بحسب نوعه ودرجة خطورته.
           </p>
         </div>
         <div className="space-y-3 text-sm">
           <p className="flex items-center gap-2">
             <Icon name="mail" className="h-5 w-5 text-black" />
-            <a href="mailto:support@dribdo.com" className="font-semibold text-black hover:underline">
-              support@dribdo.com
+            <a href="mailto:support@wikihat.com" className="font-semibold text-black hover:underline">
+              support@wikihat.com
             </a>
           </p>
           <p className="flex items-center gap-2">
@@ -366,4 +366,5 @@ export default function ComplaintsForm() {
     </div>
   );
 }
+
 

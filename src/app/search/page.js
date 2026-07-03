@@ -1,15 +1,16 @@
 import PostGridCard from "@/components/blog/PostGridCard";
 import SearchBoxWithSuggestions from "@/components/blog/SearchBoxWithSuggestions";
-import { site } from "@/config/site";
 import { listPostsDetailed } from "@/lib/blog/posts";
+import { buildBreadcrumbJsonLd, buildJsonLdGraph, buildMetadata } from "@/lib/seo";
 
 const POSTS_PER_PAGE = 12;
 
-export const metadata = {
-  title: `البحث | ${site.name}`,
-  description: `ابحث في مقالات ${site.name} حسب العنوان أو المحتوى أو التصنيف.`,
-  alternates: { canonical: "/search" },
-};
+export const metadata = buildMetadata({
+  title: "البحث",
+  description: "ابحث في مقالات Wikihat حسب العنوان أو المحتوى أو التصنيف، مع اقتراحات فورية للمقالات المنشورة.",
+  path: "/search",
+  keywords: ["بحث Wikihat", "البحث في ويكيهات", "مقالات Wikihat"],
+});
 
 function normalizePage(value) {
   const page = Number.parseInt(String(value || "1"), 10);
@@ -32,11 +33,19 @@ export default async function SearchPage({ searchParams }) {
     ? await listPostsDetailed({ limit: POSTS_PER_PAGE, page: currentPage, search: query })
     : { posts: [], totalPages: 0, totalCount: 0, error: null };
 
+  const jsonLd = buildJsonLdGraph([
+    buildBreadcrumbJsonLd([
+      { name: "الرئيسية", url: "/" },
+      { name: "البحث", url: "/search" },
+    ]),
+  ]);
+
   return (
     <section className="bg-white px-4 py-10 sm:px-6 lg:px-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="text-xs font-black tracking-[0.2em] text-red-700">بحث ويكيهات</div>
+          <div className="text-xs font-black tracking-[0.2em] text-red-700">بحث Wikihat</div>
           <h1 className="mt-3 text-4xl font-black text-slate-950">ابحث في المقالات</h1>
           <p className="mt-4 text-base leading-8 text-slate-600">
             اكتب كلمة أو عبارة وستظهر اقتراحات تلقائية من المقالات المنشورة.
@@ -65,7 +74,7 @@ export default async function SearchPage({ searchParams }) {
 
         {query && !result.posts.length && !result.error ? (
           <div className="mt-8 border border-slate-200 bg-slate-50 p-8 text-center text-slate-600">
-            لا توجد نتائج مطابقة. جرّب كلمة أخرى أو تصنيفاً مختلفاً.
+            لا توجد نتائج مطابقة. جرّب كلمة أخرى أو تصنيفًا مختلفًا.
           </div>
         ) : null}
 

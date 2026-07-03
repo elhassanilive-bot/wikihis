@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
@@ -911,7 +911,7 @@ export default function AdminBlogDashboard({
               value={form.tagsInput}
               onChange={(event) => updateField("tagsInput", event.target.value)}
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-orange-300 focus:bg-white"
-              placeholder="تحليلات، Dribdo، مجتمع، تحديثات"
+              placeholder="تحليلات، Wikihat، مجتمع، تحديثات"
             />
           </label>
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { EditorContent, NodeViewWrapper, ReactNodeViewRenderer, useEditor } from "@tiptap/react";
@@ -1426,7 +1426,7 @@ export default function RichTextEditorField({
                   type: "textarea",
                   rows: 10,
                   dir: "ltr",
-                  placeholder: "console.log('Hello Dribdo');",
+                  placeholder: "console.log('Hello Wikihat');",
                 },
               ],
               onSubmit: async (values) => {

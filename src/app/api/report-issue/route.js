@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+﻿import nodemailer from 'nodemailer';
 import { NextResponse } from 'next/server';
 
 const RATE_LIMIT_WINDOW_MS = 90 * 1000;
@@ -118,8 +118,8 @@ export async function POST(request) {
   try {
     const currentTransporter = getTransporter();
     await currentTransporter.sendMail({
-      from: process.env.EMAIL_FROM ?? 'Dribdo <no-reply@dribdo.com>',
-      to: process.env.CONTACT_RECIPIENT ?? 'support@dribdo.com',
+      from: process.env.EMAIL_FROM ?? 'Wikihat <no-reply@wikihat.com>',
+      to: process.env.CONTACT_RECIPIENT ?? 'support@wikihat.com',
       replyTo: payload.email,
       subject: `بلاغ تقني جديد - ${payload.issueArea}`,
       text: buildMessage(payload),

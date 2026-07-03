@@ -171,7 +171,7 @@ export async function listPostsForSitemap({ limit = 5000 } = {}) {
   const safeLimit = Math.max(1, Math.min(Number(limit) || 5000, 5000));
   const { data, error } = await supabase
     .from(BLOG_PUBLIC_TABLE)
-    .select("slug,updated_at,published_at,created_at,category,category_parent")
+    .select("slug,updated_at,published_at,created_at,category,category_parent,tags")
     .eq("status", "published")
     .order("published_at", { ascending: false, nullsFirst: false })
     .limit(safeLimit);
@@ -227,6 +227,49 @@ export async function listPostsDetailed({ limit = 20, page = 1, category = null,
 
   const totalCount = count || 0;
 
+  return {
+    posts: (data || []).map(normalizePost),
+    error: null,
+    totalCount,
+    totalPages: totalCount > 0 ? Math.ceil(totalCount / safeLimit) : 0,
+    currentPage: safePage,
+  };
+}
+
+export async function listPostsByTag({ tag = "", limit = 20, page = 1 } = {}) {
+  const normalizedTag = String(tag || "").replace(/-+/g, " ").trim();
+  if (!normalizedTag || !isSupabaseConfigured()) {
+    return { posts: [], error: null, totalCount: 0, totalPages: 0, currentPage: 1 };
+  }
+
+  const supabase = await getSupabaseClient();
+  if (!supabase) return { posts: [], error: null, totalCount: 0, totalPages: 0, currentPage: 1 };
+
+  const safeLimit = Math.max(1, Number(limit) || 20);
+  const safePage = Math.max(1, Number(page) || 1);
+  const from = (safePage - 1) * safeLimit;
+  const to = from + safeLimit - 1;
+
+  const { data, error, count } = await supabase
+    .from(BLOG_PUBLIC_TABLE)
+    .select(POST_LIST_COLUMNS, { count: "exact" })
+    .eq("status", "published")
+    .contains("tags", [normalizedTag])
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) {
+    return {
+      posts: [],
+      error: formatSupabaseError(error),
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: safePage,
+    };
+  }
+
+  const totalCount = count || 0;
   return {
     posts: (data || []).map(normalizePost),
     error: null,

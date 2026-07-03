@@ -4,7 +4,7 @@
     titleEn: "Frequently Asked Questions",
     updated: "آخر تحديث: 17 مارس 2026",
     arText: `
-1) كيف أبدأ استخدام دريبدو؟
+1) كيف أبدأ استخدام Wikihat؟
 قم بإنشاء حساب، حدِّث ملفك الشخصي، وابدأ بمشاركة منشور أو قصة أو فيديو لتكون حاضرًا في الخلاصة.
 
 2) كيف أحمي حسابي؟
@@ -20,7 +20,7 @@
 انطلق إلى الإعدادات، واختر الجمهور الافتراضي لكل نوع من المنشورات، وراقب القوائم المحظورة والمُتبعين.
     `,
     enText: `
-1) How do I start with Dribdo?
+1) How do I start with Wikihat?
 Create an account, complete your profile, and publish a post, story, or short video to appear in the feed.
 
 2) How can I lock down my account?
@@ -46,7 +46,7 @@ Use the Audience controls inside Settings to limit posts, stories, and highlight
 نرشّح لك تحديث التطبيق دوريًا واستخدام متصفح موثوق عند فتح الروابط الخارجية.
     `,
     enText: `
-We protect Dribdo with encrypted transport, anomaly detection, and a strict abuse-review workflow.
+We protect Wikihat with encrypted transport, anomaly detection, and a strict abuse-review workflow.
 Logs are retained only as long as needed for support, investigations, or legal compliance, and we notify you when security changes occur.
 Keep your app updated and avoid sharing credentials or suspicious links to stay safe.
     `,
@@ -82,4 +82,5 @@ We treat reports confidentially and respond with follow-up notes when possible.
     `,
   },
 };
+
 

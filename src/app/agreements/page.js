@@ -1,8 +1,8 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 
 export const metadata = {
-  title: 'الاتفاقيات والسياسات | دريبدو',
-  description: 'كل الاتفاقيات والسياسات التي تحكم استخدام منصة دريبدو، بدءاً من الاستخدام والمحتوى وصولاً إلى الخصوصية والأمان.',
+  title: 'الاتفاقيات والسياسات | Wikihat',
+  description: 'كل الاتفاقيات والسياسات التي تحكم استخدام منصة Wikihat، بدءاً من الاستخدام والمحتوى وصولاً إلى الخصوصية والأمان.',
 };
 
 const lastUpdated = new Intl.DateTimeFormat('ar-MA', { dateStyle: 'long' }).format(new Date());
@@ -116,23 +116,23 @@ export default function AgreementsPage() {
             <Icon name="document" className="h-10 w-10 text-red-600" />
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.4em] text-red-600">الاتفاقيات والسياسات</p>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">كل ما تحتاج معرفته قبل استخدام دريبدو</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">كل ما تحتاج معرفته قبل استخدام Wikihat</h1>
             </div>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">آخر تحديث: {lastUpdated}</p>
           <p className="max-w-3xl text-base leading-relaxed text-gray-700 dark:text-gray-300">
-            هذه الصفحة تجمع جميع الاتفاقيات والسياسات التي تحكم استخدام منصة دريبدو. الهدف منها هو توضيح القواعد العامة التي يعتمد
+            هذه الصفحة تجمع جميع الاتفاقيات والسياسات التي تحكم استخدام منصة Wikihat. الهدف منها هو توضيح القواعد العامة التي يعتمد
             عليها النظام لضمان تجربة مستقرة، آمنة، وعادلة لجميع المستخدمين.
           </p>
           <p className="max-w-3xl text-base leading-relaxed text-gray-700 dark:text-gray-300">
-            دريبدو ليس مجرد تطبيق، بل نظام متكامل فيه تفاعل، محتوى، وبيانات، لذلك تم وضع هذه السياسات لتنظيم كل هذه الجوانب بشكل واضح.
+            Wikihat ليس مجرد تطبيق، بل نظام متكامل فيه تفاعل، محتوى، وبيانات، لذلك تم وضع هذه السياسات لتنظيم كل هذه الجوانب بشكل واضح.
           </p>
         </header>
 
         <div className="flex flex-col gap-6">
           <Section number="1." title="نظرة عامة">
             <p className="text-gray-700 dark:text-gray-300">
-              ملفات الاتفاقيات والسياسات تجمع المتطلبات القانونية والتنظيمية للتعامل مع المحتوى والاقتصاد الرقمي لدريبدو.
+              ملفات الاتفاقيات والسياسات تجمع المتطلبات القانونية والتنظيمية للتعامل مع المحتوى والاقتصاد الرقمي لWikihat.
             </p>
           </Section>
 
@@ -179,7 +179,7 @@ export default function AgreementsPage() {
           <Section number="4." title="سياسة النشر">
             <BulletList
               items={[
-                'تم تصميم نظام النشر في دريبدو ليكون مرن: يمكنك نشر صور، فيديوهات، GIF، واستطلاعات',
+                'تم تصميم نظام النشر في Wikihat ليكون مرن: يمكنك نشر صور، فيديوهات، GIF، واستطلاعات',
                 'يمكنك الإشارة إلى المستخدمين أو إضافة موقع',
                 'يمكنك تمييز المنشورات (ذكاء اصطناعي / محتوى حساس)',
               ]}
@@ -219,7 +219,7 @@ export default function AgreementsPage() {
             </SubSection>
             <SubSection label="6.3" title="إدارة الحساب">
               <BulletList
-                items={['يحق لدريبدو تعليق الحساب', 'حذفه', 'تقييد بعض الميزات']}
+                items={['يحق لWikihat تعليق الحساب', 'حذفه', 'تقييد بعض الميزات']}
               />
             </SubSection>
           </Section>
@@ -290,7 +290,7 @@ export default function AgreementsPage() {
           <Section number="13." title="سياسة التحديثات">
             <BulletList
               items={[
-                'دريبدو قد يضيف أو يغير ميزات في أي وقت',
+                'Wikihat قد يضيف أو يغير ميزات في أي وقت',
                 'يتم تحديث السياسات حسب الحاجة',
                 'استمرار الاستخدام يعني الموافقة',
               ]}
@@ -316,7 +316,7 @@ export default function AgreementsPage() {
             <BulletList
               items={[
                 'المستخدم مسؤول عن المحتوى الذي ينشره',
-                'دريبدو غير مسؤول عن تصرفات المستخدمين',
+                'Wikihat غير مسؤول عن تصرفات المستخدمين',
                 'أي مخالفة قد تعرض المستخدم للمساءلة القانونية',
               ]}
             />
@@ -324,13 +324,13 @@ export default function AgreementsPage() {
 
           <Section number="17." title="إنهاء الخدمة">
             <BulletList
-              items={['يمكن للمستخدم حذف حسابه', 'لدريبدو إيقاف الحساب المخالف']}
+              items={['يمكن للمستخدم حذف حسابه', 'لWikihat إيقاف الحساب المخالف']}
             />
           </Section>
 
           <Section number="18." title="التوافق مع القوانين">
             <BulletList
-              items={['دريبدو يعمل على احترام القوانين العامة', 'حماية المستخدمين', 'توفير بيئة آمنة']}
+              items={['Wikihat يعمل على احترام القوانين العامة', 'حماية المستخدمين', 'توفير بيئة آمنة']}
             />
           </Section>
 
@@ -345,8 +345,8 @@ export default function AgreementsPage() {
             <div className="space-y-3 text-gray-700 dark:text-gray-300">
               <div className="flex items-center gap-3">
                 <Icon name="mail" className="h-6 w-6 text-red-600" />
-                <a className="font-semibold text-red-600 hover:underline" href="mailto:support@dribdo.com">
-                  support@dribdo.com
+                <a className="font-semibold text-red-600 hover:underline" href="mailto:support@wikihat.com">
+                  support@wikihat.com
                 </a>
               </div>
               <div className="flex items-center gap-3">

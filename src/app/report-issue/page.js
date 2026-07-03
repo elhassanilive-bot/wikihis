@@ -1,9 +1,9 @@
-import ReportIssueForm from './ReportIssueForm';
+﻿import ReportIssueForm from './ReportIssueForm';
 import { issueFaq } from './issueFaq';
 
 export const metadata = {
-  title: 'الإبلاغ عن شيء لا يعمل | دريبدو',
-  description: 'أرسل بلاغًا تقنيًا احترافيًا عن زر أو صفحة أو ميزة لا تعمل داخل دريبدو مع خطوات إعادة المشكلة ومرفقات توضيحية.',
+  title: 'الإبلاغ عن شيء لا يعمل | Wikihat',
+  description: 'أرسل بلاغًا تقنيًا احترافيًا عن زر أو صفحة أو ميزة لا تعمل داخل Wikihat مع خطوات إعادة المشكلة ومرفقات توضيحية.',
   alternates: { canonical: '/report-issue' },
 };
 

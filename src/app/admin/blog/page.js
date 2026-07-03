@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+﻿import { revalidatePath } from "next/cache";
 import AdminBlogDashboard from "@/components/blog/AdminBlogDashboard";
 import MemberArticlesModerationPanel from "@/components/blog/MemberArticlesModerationPanel";
 import { createPost, deletePost, deletePosts, isBlogPublishingEnabled, listPostsForAdmin, updatePost } from "@/lib/blog/posts";
@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/client";
 
 export const metadata = {
   title: "لوحة المدونة",
-  description: "نشر وإدارة مقالات دريبدو.",
+  description: "نشر وإدارة مقالات Wikihat.",
   robots: { index: false, follow: false },
   alternates: { canonical: "/admin/blog" },
 };

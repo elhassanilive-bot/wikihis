@@ -3,19 +3,23 @@ import Navbar from "@/components/Navbar";
 import AppFooter from "@/components/AppFooter";
 import PwaRegistration from "@/components/PwaRegistration";
 import { site } from "@/config/site";
+import { buildJsonLdGraph, buildMetadata } from "@/lib/seo";
 
 export const metadata = {
-  metadataBase: new URL(site.url),
-  applicationName: site.nameEn,
+  ...buildMetadata({
+    title: `${site.officialName} | ويكيهات`,
+    description: site.description,
+    path: "/",
+    keywords: site.brandKeywords,
+  }),
   manifest: "/manifest.webmanifest",
   title: {
-    default: `${site.name} | ${site.nameEn}`,
-    template: `%s | ${site.name}`,
+    default: `${site.officialName} | ويكيهات`,
+    template: `%s | ${site.officialName}`,
   },
-  description: site.description,
   appleWebApp: {
     capable: true,
-    title: site.nameEn,
+    title: site.officialName,
     statusBarStyle: "default",
   },
   icons: {
@@ -27,52 +31,15 @@ export const metadata = {
     apple: [{ url: "/apple-touch-icon.png?v=20260702e", sizes: "512x512", type: "image/png" }],
     shortcut: ["/favicon.ico?v=20260702e"],
   },
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    siteName: site.nameEn,
-    title: `${site.name} | ${site.nameEn}`,
-    description: site.description,
-    url: "/",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${site.name} | ${site.nameEn}`,
-    description: site.description,
-  },
 };
 
 export const viewport = {
-  themeColor: "#b91c1c",
+  themeColor: site.themeColor,
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": `${site.url}/#organization`,
-        name: site.name,
-        alternateName: site.nameEn,
-        url: site.url,
-        logo: `${site.url}/icon.png`,
-        email: site.supportEmail,
-      },
-      {
-        "@type": "WebSite",
-        "@id": `${site.url}/#website`,
-        name: site.name,
-        alternateName: site.nameEn,
-        url: site.url,
-        description: site.description,
-        inLanguage: "ar",
-        publisher: { "@id": `${site.url}/#organization` },
-      },
-    ],
-  };
+  const jsonLd = buildJsonLdGraph();
 
   return (
     <html lang="ar" dir="rtl">

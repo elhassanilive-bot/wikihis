@@ -1,4 +1,4 @@
-import PolicyIcon from './PolicyIcon';
+﻿import PolicyIcon from './PolicyIcon';
 
 function SectionCard({ section }) {
   return (
@@ -69,7 +69,7 @@ export default function PolicyArticle({ icon, eyebrow, title, description, highl
               <h2 className="text-xl font-bold text-black">مبادئ التطبيق في هذا القسم</h2>
             </div>
             <div className="space-y-3 text-sm leading-7 text-black/70">
-              <p>نعتمد في دريبدو على وضوح القواعد قبل تفعيل الميزات، حتى يعرف المستخدم ما هو المسموح وما هو غير المسموح.</p>
+              <p>نعتمد في Wikihat على وضوح القواعد قبل تفعيل الميزات، حتى يعرف المستخدم ما هو المسموح وما هو غير المسموح.</p>
               <p>كل سياسات الخدمات هنا مرتبطة بحماية المجتمع، تقليل إساءة الاستخدام، ومساعدة الأفراد والجهات على استخدام الأدوات المتخصصة بثقة أكبر.</p>
               <p>عند وجود بلاغ أو نزاع أو طلب توضيح، نراجع الحالة وفق البيانات المتوفرة وسجل الاستخدام والسياسات المرتبطة بهذه الصفحة.</p>
             </div>

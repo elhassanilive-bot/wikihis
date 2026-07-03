@@ -6,14 +6,17 @@ import HomeTabsPanel from "@/components/blog/HomeTabsPanel";
 import PostCardBookmarkButton from "@/components/blog/PostCardBookmarkButton";
 import { listContributorsPublic, listPostCategories, listPostsDetailed } from "@/lib/blog/posts";
 import { estimateReadingTime, formatArabicDate } from "@/lib/blog/render";
+import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 60;
 
-export const metadata = {
-  title: "ويكيهات | Wikihat",
-  description: "ويكيهات هي جريدة إلكترونية عربية متعددة التخصصات تقدم المقالات والأخبار والتحليلات، وتتيح للمساهمين نشر مقالاتهم في مجالات متنوعة.",
-  alternates: { canonical: "/" },
-};
+export const metadata = buildMetadata({
+  title: "Wikihat | ويكيهات",
+  description:
+    "Wikihat هو موقع عربي متعدد التخصصات للمقالات والأخبار والشروحات، ويُعرف أيضًا باسم ويكيهات وWiki Hat وويكي هات وقبعة الويكي.",
+  path: "/",
+  keywords: ["Wikihat", "Wiki Hat", "WikiHat", "ويكيهات", "ويكي هات", "قبعة الويكي"],
+});
 
 const POSTS_PER_PAGE = 15;
 const SUBCATEGORY_SECTION_COUNT = 4;

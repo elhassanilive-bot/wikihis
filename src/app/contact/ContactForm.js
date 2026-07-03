@@ -237,8 +237,8 @@ export default function ContactForm() {
             <Icon name="mail" className="h-5 w-5 text-black" />
             <div>
               <p className="text-sm font-semibold">البريد الإلكتروني</p>
-              <a className="text-sm text-black/75 hover:underline" href="mailto:support@dribdo.com">
-                support@dribdo.com
+              <a className="text-sm text-black/75 hover:underline" href="mailto:support@wikihat.com">
+                support@wikihat.com
               </a>
             </div>
           </div>

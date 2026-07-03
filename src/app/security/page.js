@@ -1,6 +1,6 @@
-export const metadata = {
-  title: 'أمان البيانات | دريبدو',
-  description: 'كيف يؤمن دريبدو بيانات المستخدمين من الحسابات حتى الحوادث الأمنية عبر بنية موثوقة ومراقبة مستمرة.',
+﻿export const metadata = {
+  title: 'أمان البيانات | Wikihat',
+  description: 'كيف يؤمن Wikihat بيانات المستخدمين من الحسابات حتى الحوادث الأمنية عبر بنية موثوقة ومراقبة مستمرة.',
 };
 
 const lastUpdated = new Intl.DateTimeFormat('ar-MA', { dateStyle: 'long' }).format(new Date());
@@ -120,12 +120,12 @@ export default function SecurityPage() {
             <Icon name="shield" className="h-10 w-10 text-red-600" />
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.4em] text-red-600">أمان البيانات</p>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">مقاربة دريبدو الشاملة لحماية البيانات</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">مقاربة Wikihat الشاملة لحماية البيانات</h1>
             </div>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">آخر تحديث: {lastUpdated}</p>
           <p className="max-w-3xl text-base leading-relaxed text-gray-700 dark:text-gray-300">
-            في دريبدو، أمان البيانات ليس ميزة إضافية، بل جزء أساسي من تصميم النظام. من أول مرحلة في بناء المنصة تتبعنا مقاربة تقلل المخاطر، تعزل البيانات، وتضبط الوصول.
+            في Wikihat، أمان البيانات ليس ميزة إضافية، بل جزء أساسي من تصميم النظام. من أول مرحلة في بناء المنصة تتبعنا مقاربة تقلل المخاطر، تعزل البيانات، وتضبط الوصول.
           </p>
           <p className="max-w-3xl text-base leading-relaxed text-gray-700 dark:text-gray-300">
             هذه الصفحة تشرح كيف يتم تأمين بيانات المستخدمين على مستوى البنية التقنية والتشغيل اليومي.
@@ -135,11 +135,11 @@ export default function SecurityPage() {
         <div className="flex flex-col gap-6">
           <Section number="1." title="مقدمة">
             <p>
-              في دريبدو، أمان البيانات هو جزء أساسي من تصميم النظام وليس ميزة اختيارية. تم اعتماد مقاربة تعتمد على تقليل المخاطر، عزل البيانات، والتحكم في الوصول.
+              في Wikihat، أمان البيانات هو جزء أساسي من تصميم النظام وليس ميزة اختيارية. تم اعتماد مقاربة تعتمد على تقليل المخاطر، عزل البيانات، والتحكم في الوصول.
             </p>
           </Section>
 
-          <Section number="2." title="فلسفة الأمان في دريبدو">
+          <Section number="2." title="فلسفة الأمان في Wikihat">
             <BulletList
               items={[
                 'تقليل البيانات الحساسة قدر الإمكان',
@@ -338,7 +338,7 @@ export default function SecurityPage() {
           <Section number="17." title="التوافق مع السياسات">
             <BulletList
               items={[
-                'نظام الأمان في دريبدو يعمل بالتكامل مع سياسة الخصوصية',
+                'نظام الأمان في Wikihat يعمل بالتكامل مع سياسة الخصوصية',
                 'الشروط والأحكام',
                 'سياسات الاستخدام',
               ]}
@@ -355,8 +355,8 @@ export default function SecurityPage() {
             <div className="space-y-3 text-gray-700 dark:text-gray-300">
               <div className="flex items-center gap-3">
                 <Icon name="mail" className="h-6 w-6 text-red-600" />
-                <a className="font-semibold text-red-600 hover:underline" href="mailto:support@dribdo.com">
-                  support@dribdo.com
+                <a className="font-semibold text-red-600 hover:underline" href="mailto:support@wikihat.com">
+                  support@wikihat.com
                 </a>
               </div>
               <div className="flex items-center gap-3">

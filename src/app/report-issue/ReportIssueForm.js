@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 
@@ -197,7 +197,7 @@ export default function ReportIssueForm() {
             </select>
           </Field>
           <Field label="رابط الصفحة أو المسار">
-            <input type="text" value={form.pageUrl} onChange={handleChange('pageUrl')} placeholder="https://dribdo.com/..." className={inputClass()} />
+            <input type="text" value={form.pageUrl} onChange={handleChange('pageUrl')} placeholder="https://wikihat.com/..." className={inputClass()} />
           </Field>
         </div>
 
@@ -255,7 +255,7 @@ export default function ReportIssueForm() {
         </div>
 
         <div className="space-y-3">
-          <InfoCard icon="mail" title="البريد الداعم" value="support@dribdo.com" href="mailto:support@dribdo.com" />
+          <InfoCard icon="mail" title="البريد الداعم" value="support@wikihat.com" href="mailto:support@wikihat.com" />
           <InfoCard icon="monitor" title="نوع البلاغات" value="أزرار لا تعمل، صفحات متوقفة، أخطاء النشر، مشاكل الوسائط" />
         </div>
       </aside>

@@ -7,6 +7,7 @@ import ArticleComments from "@/components/blog/ArticleComments";
 import ArticleEngagementBar from "@/components/blog/ArticleEngagementBar";
 import NewsletterSignup from "@/components/blog/NewsletterSignup";
 import { site } from "@/config/site";
+import { absoluteUrl, buildBreadcrumbJsonLd, buildJsonLdGraph, buildMetadata, cleanText, truncateText } from "@/lib/seo";
 
 export const revalidate = 60;
 
@@ -78,70 +79,46 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const ogImage = `${site.url}/api/og?title=${encodeURIComponent(post.title)}&category=${encodeURIComponent(post.category || "مقال")}`;
+  const ogImage = `/api/og?title=${encodeURIComponent(post.title)}&category=${encodeURIComponent(post.category || "مقال")}`;
+  const description = truncateText(post.excerpt || post.content || site.description, 170);
 
-  return {
+  return buildMetadata({
     title: post.title,
-    description: post.excerpt,
-    alternates: { canonical: `/blog/${post.slug}` },
-    openGraph: {
-      type: "article",
-      title: post.title,
-      description: post.excerpt,
-      url: `/blog/${post.slug}`,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }],
-      publishedTime: post.publishedAt || post.createdAt,
-      modifiedTime: post.updatedAt || post.publishedAt || post.createdAt,
-      authors: post.authorDisplayName ? [post.authorDisplayName] : [site.name],
-      section: post.category || undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.excerpt,
-      images: [ogImage],
-    },
-  };
+    description,
+    path: `/blog/${post.slug}`,
+    type: "article",
+    image: post.coverImageUrl || ogImage,
+    imageAlt: post.title,
+    keywords: [post.category, post.categoryParent, ...(Array.isArray(post.tags) ? post.tags : [])],
+    authors: post.authorDisplayName ? [post.authorDisplayName] : [site.officialName],
+    section: post.category || undefined,
+    category: post.category || "Article",
+    publishedTime: post.publishedAt || post.createdAt,
+    modifiedTime: post.updatedAt || post.publishedAt || post.createdAt,
+  });
 }
 
 function buildPostJsonLd({ post, plainText, readingTime }) {
-  const postUrl = `${site.url}/blog/${post.slug}`;
-  const image = post.coverImageUrl || `${site.url}/icon.png`;
+  const postUrl = absoluteUrl(`/blog/${post.slug}`);
+  const image = post.coverImageUrl ? absoluteUrl(post.coverImageUrl) : absoluteUrl("/icon.png");
+  const categoryUrl = post.category ? `/?category=${encodeURIComponent(post.category)}` : "/";
 
-  return {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${postUrl}#breadcrumb`,
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "الرئيسية",
-            item: site.url,
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: post.category || "المقالات",
-            item: `${site.url}/?category=${encodeURIComponent(post.category || "المقالات")}`,
-          },
-          {
-            "@type": "ListItem",
-            position: 3,
-            name: post.title,
-            item: postUrl,
-          },
-        ],
-      },
+  return buildJsonLdGraph([
+      buildBreadcrumbJsonLd([
+        { name: "الرئيسية", url: "/" },
+        { name: post.category || "المقالات", url: categoryUrl },
+        { name: post.title, url: `/blog/${post.slug}` },
+      ]),
       {
         "@type": "Article",
         "@id": `${postUrl}#article`,
         mainEntityOfPage: postUrl,
         headline: post.title,
-        description: post.excerpt,
-        image,
+        description: truncateText(post.excerpt || plainText || site.description, 170),
+        image: {
+          "@type": "ImageObject",
+          url: image,
+        },
         inLanguage: "ar",
         articleSection: post.category || undefined,
         keywords: Array.isArray(post.tags) ? post.tags.join(", ") : undefined,
@@ -151,20 +128,15 @@ function buildPostJsonLd({ post, plainText, readingTime }) {
         dateModified: post.updatedAt || post.publishedAt || post.createdAt,
         author: {
           "@type": "Person",
-          name: post.authorDisplayName || site.name,
+          name: post.authorDisplayName || site.officialName,
         },
         publisher: {
           "@type": "Organization",
-          name: site.name,
-          alternateName: site.nameEn,
-          logo: {
-            "@type": "ImageObject",
-            url: `${site.url}/icon.png`,
-          },
+          "@id": `${site.url}/#organization`,
+          name: site.officialName,
         },
       },
-    ],
-  };
+    ]);
 }
 
 function NotFoundState({ error }) {

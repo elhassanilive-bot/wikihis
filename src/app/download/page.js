@@ -1,9 +1,9 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { downloadContent } from '@/content/download';
 
 export const metadata = {
-  title: 'تنزيل دريبدو',
-  description: 'نزّل تطبيق دريبدو على Google Play أو App Store أو عبر APK Release من الصفحة الرسمية للتنزيل.',
+  title: 'تنزيل Wikihat',
+  description: 'نزّل تطبيق Wikihat على Google Play أو App Store أو عبر APK Release من الصفحة الرسمية للتنزيل.',
   alternates: { canonical: '/download' },
 };
 
@@ -64,9 +64,9 @@ export default function DownloadPage() {
           <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="space-y-6 text-right">
               <p className="text-sm font-semibold uppercase tracking-[0.45em] text-black/35">الصفحة الرسمية للتنزيل</p>
-              <h1 className="text-5xl font-black leading-tight text-black sm:text-6xl">ابدأ تنزيل دريبدو على جهازك بالطريقة التي تناسبك</h1>
+              <h1 className="text-5xl font-black leading-tight text-black sm:text-6xl">ابدأ تنزيل Wikihat على جهازك بالطريقة التي تناسبك</h1>
               <p className="max-w-2xl text-lg leading-8 text-black/65">
-                مرحبًا بك في صفحة تنزيل دريبدو. هنا ستجد النسخ الرسمية المتاحة للتطبيق على Google Play وApp Store ونسخة
+                مرحبًا بك في صفحة تنزيل Wikihat. هنا ستجد النسخ الرسمية المتاحة للتطبيق على Google Play وApp Store ونسخة
                 `APK Release` المباشرة، مع شرح مبسط لكل خيار حتى يختار المستخدم المسار الأنسب له بسهولة.
               </p>
 
@@ -191,7 +191,7 @@ export default function DownloadPage() {
 
             <div className="rounded-[2rem] border border-black/10 bg-[#faf8f6] p-8">
               <p className="text-sm font-semibold uppercase tracking-[0.4em] text-black/35">ماذا بعد التنزيل؟</p>
-              <h2 className="mt-4 text-3xl font-black text-black">ابدأ تجربتك الأولى داخل دريبدو</h2>
+              <h2 className="mt-4 text-3xl font-black text-black">ابدأ تجربتك الأولى داخل Wikihat</h2>
               <p className="mt-4 leading-8 text-black/65">
                 بعد التثبيت، يمكنك إنشاء الحساب، إعداد ملفك الشخصي، متابعة الأشخاص، النشر، استكشاف الفيديوهات،
                 الدخول إلى المجتمعات والمساحات، والاستفادة من الأقسام الإضافية مثل السوق والوظائف والمذكرات.

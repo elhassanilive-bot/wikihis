@@ -2,7 +2,7 @@
 
 export const metadata = {
   title: "لوحة الأدمن",
-  description: "لوحة إدارة موقع دريبدو.",
+  description: "لوحة إدارة موقع Wikihat.",
   robots: { index: false, follow: false },
   alternates: { canonical: "/admin" },
 };
@@ -60,4 +60,5 @@ export default function AdminHome() {
     </div>
   );
 }
+
 

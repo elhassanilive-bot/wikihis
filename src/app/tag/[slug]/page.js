@@ -1,12 +1,15 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import PostGridCard from "@/components/blog/PostGridCard";
 import { site } from "@/config/site";
-import { listPostCategories, listPostsDetailed } from "@/lib/blog/posts";
-import { resolveCategoryFromSlug } from "@/lib/blog/categoryRoutes";
+import { createSlugCandidate } from "@/lib/blog/slug";
+import { listPostsByTag } from "@/lib/blog/posts";
 import { buildBreadcrumbJsonLd, buildJsonLdGraph, buildMetadata } from "@/lib/seo";
 
 const POSTS_PER_PAGE = 15;
+
+function decodeTag(slug) {
+  return decodeURIComponent(String(slug || "")).replace(/-+/g, " ").trim();
+}
 
 function normalizePage(value) {
   const page = Number.parseInt(String(value || "1"), 10);
@@ -14,57 +17,53 @@ function normalizePage(value) {
 }
 
 function buildPageHref(slug, page) {
-  return page > 1 ? `/category/${encodeURIComponent(slug)}?page=${page}` : `/category/${encodeURIComponent(slug)}`;
+  return page > 1 ? `/tag/${encodeURIComponent(slug)}?page=${page}` : `/tag/${encodeURIComponent(slug)}`;
 }
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const { categories } = await listPostCategories();
-  const category = resolveCategoryFromSlug(categories, resolvedParams.slug);
+  const tag = decodeTag(resolvedParams.slug);
 
-  if (!category) {
+  if (!tag) {
     return buildMetadata({
-      title: "تصنيف غير موجود",
-      path: `/category/${resolvedParams.slug || ""}`,
+      title: "وسم غير موجود",
+      path: `/tag/${resolvedParams.slug || ""}`,
       robots: { index: false, follow: false },
     });
   }
 
   return buildMetadata({
-    title: category,
-    description: `أحدث مقالات ${category} في Wikihat، مع محتوى عربي متجدد ومقالات من مساهمين في مجالات متعددة.`,
-    path: `/category/${resolvedParams.slug}`,
-    keywords: [category, `مقالات ${category}`, `أخبار ${category}`],
-    section: category,
+    title: `وسم ${tag}`,
+    description: `أحدث مقالات Wikihat المرتبطة بوسم ${tag}، مع محتوى عربي متجدد وروابط لموضوعات مشابهة.`,
+    path: `/tag/${createSlugCandidate(tag)}`,
+    keywords: [tag, `مقالات ${tag}`, `وسم ${tag}`],
+    section: tag,
   });
 }
 
-export default async function CategoryPage({ params, searchParams }) {
+export default async function TagPage({ params, searchParams }) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
-  const { categories } = await listPostCategories();
-  const category = resolveCategoryFromSlug(categories, resolvedParams.slug);
-
-  if (!category) notFound();
-
+  const tag = decodeTag(resolvedParams.slug);
   const currentPage = normalizePage(resolvedSearchParams?.page);
-  const { posts, totalPages, totalCount, error } = await listPostsDetailed({
+  const { posts, totalPages, totalCount, error } = await listPostsByTag({
+    tag,
     limit: POSTS_PER_PAGE,
     page: currentPage,
-    category,
   });
 
   const jsonLd = buildJsonLdGraph([
     buildBreadcrumbJsonLd([
       { name: "الرئيسية", url: "/" },
-      { name: category, url: `/category/${resolvedParams.slug}` },
+      { name: "الوسوم", url: "/search" },
+      { name: tag || "وسم", url: `/tag/${resolvedParams.slug}` },
     ]),
     {
       "@type": "CollectionPage",
-      "@id": `${site.url}/category/${resolvedParams.slug}#collection`,
-      name: category,
-      description: `أحدث مقالات ${category} في Wikihat.`,
-      url: `${site.url}/category/${resolvedParams.slug}`,
+      "@id": `${site.url}/tag/${resolvedParams.slug}#collection`,
+      name: `وسم ${tag}`,
+      description: `مقالات Wikihat المرتبطة بوسم ${tag}.`,
+      url: `${site.url}/tag/${resolvedParams.slug}`,
       inLanguage: site.language,
       isPartOf: { "@id": `${site.url}/#website` },
     },
@@ -77,21 +76,19 @@ export default async function CategoryPage({ params, searchParams }) {
         <nav className="text-sm font-semibold text-slate-500" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-red-700">الرئيسية</Link>
           <span className="mx-2">/</span>
-          <span>{category}</span>
+          <span>وسم {tag}</span>
         </nav>
 
         <div className="mt-7 border-b border-slate-200 pb-6 text-right">
-          <div className="text-xs font-black tracking-[0.2em] text-red-700">تصنيف</div>
-          <h1 className="mt-3 text-4xl font-black text-slate-950">{category}</h1>
+          <div className="text-xs font-black tracking-[0.2em] text-red-700">WIKIHAT TAG</div>
+          <h1 className="mt-3 text-4xl font-black text-slate-950">وسم {tag}</h1>
           <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">
-            اقرأ أحدث المقالات المنشورة ضمن تصنيف {category} في Wikihat.
+            اقرأ أحدث المقالات المنشورة في Wikihat والمرتبطة بهذا الوسم.
           </p>
           <div className="mt-4 text-sm font-bold text-slate-500">{totalCount || 0} مقال</div>
         </div>
 
-        {error ? (
-          <div className="mt-8 border border-red-200 bg-red-50 p-5 text-right text-sm text-red-900">{error}</div>
-        ) : null}
+        {error ? <div className="mt-8 border border-red-200 bg-red-50 p-5 text-right text-sm text-red-900">{error}</div> : null}
 
         {posts.length ? (
           <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -101,7 +98,7 @@ export default async function CategoryPage({ params, searchParams }) {
           </div>
         ) : (
           <div className="mt-8 border border-slate-200 bg-slate-50 p-8 text-center text-slate-600">
-            لا توجد مقالات منشورة في هذا التصنيف حاليًا.
+            لا توجد مقالات منشورة تحت هذا الوسم حاليًا.
           </div>
         )}
 

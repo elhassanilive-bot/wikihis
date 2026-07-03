@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -109,7 +109,7 @@ export default function SearchBoxWithSuggestions({ initialQuery = "" }) {
               href={`/search?q=${encodeURIComponent(trimmedQuery)}`}
               className="block bg-slate-50 px-5 py-3 text-center text-sm font-black text-red-700 transition hover:bg-red-50"
             >
-              عرض كل النتائج عن "{trimmedQuery}"
+              عرض كل النتائج عن {trimmedQuery}
             </Link>
           </div>
         ) : null}
