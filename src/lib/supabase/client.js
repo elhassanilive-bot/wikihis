@@ -25,9 +25,9 @@ export async function getSupabaseClient() {
   if (cachedClient) return cachedClient;
   if (!isSupabaseConfigured()) return null;
 
-  const { createClient } = await import("@supabase/supabase-js");
+  const { createBrowserClient } = await import("@supabase/ssr");
 
-  cachedClient = createClient(getSupabaseUrl(), getSupabaseAnonKey(), {
+  cachedClient = createBrowserClient(getSupabaseUrl(), getSupabaseAnonKey(), {
     db: { schema: getSupabaseSchema() },
   });
 
