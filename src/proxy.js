@@ -42,7 +42,3 @@ export async function proxy(req) {
 
   return res;
 }
-
-export const config = {
-  matcher: ["/admin/:path*"],
-};
