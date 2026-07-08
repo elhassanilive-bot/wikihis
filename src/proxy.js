@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
+import { isAllowedAdminEmail } from "@/config/adminAccess";
 
 export async function proxy(req) {
   const res = NextResponse.next();
@@ -33,9 +34,8 @@ export async function proxy(req) {
       return NextResponse.redirect(url);
     }
 
-    const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map(s => s.trim()).filter(Boolean);
-    if (adminEmails.length > 0 && !adminEmails.includes(session.user.email)) {
-      url.pathname = "/";
+    if (!isAllowedAdminEmail(session.user.email)) {
+      url.pathname = "/forbidden";
       return NextResponse.redirect(url);
     }
   }

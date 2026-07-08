@@ -4,6 +4,7 @@ import MemberArticlesModerationPanel from "@/components/blog/MemberArticlesModer
 import { createPost, deletePost, deletePosts, isBlogPublishingEnabled, listPostsForAdmin, updatePost } from "@/lib/blog/posts";
 import { BLOG_CATEGORY_TREE } from "@/lib/blog/categories";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { getAdminUserOrRedirect, isCurrentUserAdmin } from "@/lib/adminAuth";
 
 export const metadata = {
   title: "لوحة المدونة",
@@ -99,6 +100,10 @@ export default async function AdminBlogPage() {
   async function savePostAction(formData) {
     "use server";
 
+    if (!(await isCurrentUserAdmin())) {
+      return { ok: false, error: "غير مصرح لك بتنفيذ هذا الإجراء." };
+    }
+
     const tokenError = validateAdminToken(formData.get("adminToken"));
     if (tokenError) {
       return { ok: false, error: tokenError };
@@ -135,6 +140,10 @@ export default async function AdminBlogPage() {
   async function deletePostAction(payload) {
     "use server";
 
+    if (!(await isCurrentUserAdmin())) {
+      return { ok: false, error: "غير مصرح لك بتنفيذ هذا الإجراء." };
+    }
+
     const tokenError = validateAdminToken(payload?.adminToken);
     if (tokenError) {
       return { ok: false, error: tokenError };
@@ -154,6 +163,10 @@ export default async function AdminBlogPage() {
   async function bulkDeletePostsAction(payload) {
     "use server";
 
+    if (!(await isCurrentUserAdmin())) {
+      return { ok: false, error: "غير مصرح لك بتنفيذ هذا الإجراء." };
+    }
+
     const tokenError = validateAdminToken(payload?.adminToken);
     if (tokenError) {
       return { ok: false, error: tokenError };
@@ -169,6 +182,8 @@ export default async function AdminBlogPage() {
 
     return result;
   }
+
+  await getAdminUserOrRedirect();
 
   const publishingEnabled = isBlogPublishingEnabled();
   const requiresToken = Boolean(process.env.BLOG_ADMIN_TOKEN);
