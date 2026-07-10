@@ -207,6 +207,31 @@ function InfoBox({ label, value }) {
   );
 }
 
+function ContributorInfoBox({ post }) {
+  if (!post.authorUserId) return null;
+
+  return (
+    <Link
+      href={`/contributors/${post.authorUserId}`}
+      className="flex items-center gap-3 border border-slate-200 bg-slate-50 px-4 py-4 text-right transition hover:border-red-200 hover:bg-red-50/40"
+    >
+      <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-white">
+        {post.authorAvatarUrl ? (
+          <BlogImage src={post.authorAvatarUrl} alt={post.authorDisplayName || "مساهم"} fill sizes="48px" className="h-full w-full object-cover" />
+        ) : (
+          <span className="flex h-full w-full items-center justify-center text-lg font-black text-slate-500">
+            {String(post.authorDisplayName || "م").trim().charAt(0)}
+          </span>
+        )}
+      </span>
+      <span>
+        <span className="block text-xs font-semibold text-slate-500">المساهم</span>
+        <span className="mt-1 block text-lg font-black text-slate-950">{post.authorDisplayName || "مساهم"}</span>
+      </span>
+    </Link>
+  );
+}
+
 function RelatedCard({ post }) {
   return (
     <article className="border border-slate-200 bg-white">
@@ -440,6 +465,7 @@ export default async function BlogPostPage({ params }) {
                 <InfoBox label="التصنيف" value={post.category || "عام"} />
                 <InfoBox label="تاريخ النشر" value={formatArabicDate(post.publishedAt || post.createdAt)} />
                 <InfoBox label="وقت القراءة" value={`${readingTime} دقائق`} />
+                <ContributorInfoBox post={post} />
               </div>
             </div>
 

@@ -741,7 +741,7 @@ export async function reviewMemberPost({ id, decision, reviewNote = "" }) {
 
 export async function getContributorPublicProfile(authorUserId, { limit = 24 } = {}) {
   if (!isSupabaseConfigured()) {
-    return { contributor: null, posts: [], error: "Supabase غير مُعد" };
+    return { contributor: null, posts: [], error: "Supabase غير معد" };
   }
 
   const supabase = await getSupabaseClient();
@@ -754,9 +754,9 @@ export async function getContributorPublicProfile(authorUserId, { limit = 24 } =
     return { contributor: null, posts: [], error: null };
   }
 
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from(BLOG_PUBLIC_TABLE)
-    .select(POST_LIST_COLUMNS)
+    .select(POST_LIST_COLUMNS + ",view_count", { count: "exact" })
     .eq("status", "published")
     .eq("author_user_id", normalizedAuthorId)
     .order("published_at", { ascending: false, nullsFirst: false })
@@ -767,16 +767,56 @@ export async function getContributorPublicProfile(authorUserId, { limit = 24 } =
     return { contributor: null, posts: [], error: formatSupabaseError(error) };
   }
 
-  const posts = (data || []).map(normalizePost);
+  const posts = (data || []).map(normalizePost).filter(Boolean);
   if (!posts.length) {
     return { contributor: null, posts: [], error: null };
   }
+
+  let statsRows = data || [];
+  if ((Number(count) || 0) > statsRows.length) {
+    const statsResult = await supabase
+      .from(BLOG_PUBLIC_TABLE)
+      .select("id,view_count,published_at,created_at")
+      .eq("status", "published")
+      .eq("author_user_id", normalizedAuthorId)
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(500);
+
+    if (!statsResult.error && Array.isArray(statsResult.data)) {
+      statsRows = statsResult.data;
+    }
+  }
+
+  const postIds = statsRows.map((row) => row.id).filter(Boolean);
+  const totalViews = statsRows.reduce((sum, row) => sum + (Number(row.view_count) || 0), 0);
+
+  async function countRelatedRows(tableName) {
+    if (!postIds.length) return 0;
+
+    const { count: relatedCount, error: relatedError } = await supabase
+      .from(tableName)
+      .select("id", { count: "exact", head: true })
+      .in("post_id", postIds);
+
+    if (relatedError) return 0;
+    return Number(relatedCount) || 0;
+  }
+
+  const [reactionsCount, commentsCount] = await Promise.all([
+    countRelatedRows("blog_post_reactions"),
+    countRelatedRows("blog_comments"),
+  ]);
 
   const contributor = {
     id: normalizedAuthorId,
     displayName: posts[0].authorDisplayName || "مساهم",
     avatarUrl: posts[0].authorAvatarUrl || "",
-    postsCount: posts.length,
+    postsCount: Number(count) || posts.length,
+    totalViews,
+    reactionsCount,
+    commentsCount,
+    interactionsCount: totalViews + reactionsCount + commentsCount,
     lastPublishedAt: posts[0].publishedAt || posts[0].createdAt || null,
   };
 

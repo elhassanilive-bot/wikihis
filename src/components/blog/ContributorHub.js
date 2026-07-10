@@ -407,9 +407,10 @@ export default function ContributorHub({ contributors = [], categoryTree = [] })
   async function uploadCoverFile(file) {
     const supabase = await getSupabaseClient();
     if (!supabase) throw new Error("ربط Supabase غير متاح.");
+    if (!session?.user?.id) throw new Error("يجب تسجيل الدخول قبل رفع صورة الغلاف.");
 
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
-    const path = `covers/${Date.now()}-${safeName}`;
+    const path = `member-covers/${session.user.id}/${Date.now()}-${safeName}`;
     const { error: uploadError } = await supabase.storage.from(BLOG_MEDIA_BUCKET).upload(path, file, {
       cacheControl: "3600",
       upsert: true,
