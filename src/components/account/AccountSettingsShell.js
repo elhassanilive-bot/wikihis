@@ -74,6 +74,34 @@ function LevelPill({ label = "جديد" }) {
   return <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-black ${toneMap[label] || toneMap.جديد}`}>{label}</span>;
 }
 
+function normalizeLevelLabel(label) {
+  const value = String(label || "").trim();
+  const map = {
+    "Ø¨Ø§Ø±Ø²": "بارز",
+    "Ù…ØªÙˆØ³Ø·": "متوسط",
+    "Ù…Ø¨ØªØ¯Ø¦": "مبتدئ",
+    "Ø¬Ø¯ÙŠØ¯": "جديد",
+  };
+
+  return map[value] || value || "جديد";
+}
+
+function getLevelFromXp(xp) {
+  const value = Number(xp) || 0;
+  if (value >= 1000) return "بارز";
+  if (value >= 500) return "متوسط";
+  if (value >= 200) return "مبتدئ";
+  return "جديد";
+}
+
+function getRankFromPublished(count) {
+  const value = Number(count) || 0;
+  if (value >= 11) return "بارز";
+  if (value >= 6) return "متوسط";
+  if (value >= 3) return "مبتدئ";
+  return "جديد";
+}
+
 export default function AccountSettingsShell() {
   const fileInputRef = useRef(null);
   const [session, setSession] = useState(null);
@@ -137,32 +165,131 @@ export default function AccountSettingsShell() {
     setMemberPostsPage(safePage);
   }
 
-  async function loadDashboardStats() {
+  async function getActiveUserId(overrideUserId = null) {
     const supabase = await getSupabaseClient();
-    if (!supabase || !session?.user) return;
+    if (!supabase) return null;
+    if (overrideUserId) return overrideUserId;
+    if (session?.user?.id) return session.user.id;
+
+    const {
+      data: { session: currentSession },
+    } = await supabase.auth.getSession();
+
+    if (currentSession) setSession(currentSession);
+    return currentSession?.user?.id || null;
+  }
+
+  async function countRows(tableName, buildQuery) {
+    const supabase = await getSupabaseClient();
+    if (!supabase) return 0;
+
+    try {
+      let query = supabase.from(tableName).select("id", { count: "exact", head: true });
+      query = buildQuery ? buildQuery(query) : query;
+      const { count, error: countError } = await query;
+      if (countError) return 0;
+      return Number(count) || 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  async function loadDashboardStats(overrideUserId = null) {
+    const supabase = await getSupabaseClient();
+    const userId = await getActiveUserId(overrideUserId);
+    if (!supabase || !userId) return;
 
     const { data, error: statsError } = await supabase.rpc("get_my_dashboard_stats");
-    if (statsError) return;
+    if (!statsError) {
+      const row = Array.isArray(data) ? data[0] : data;
+      if (row) {
+        setDashboardStats(row);
+        return;
+      }
+    }
 
-    // RPC returns a single row in an array in JS client.
-    const row = Array.isArray(data) ? data[0] : data;
-    setDashboardStats(row || null);
+    const { data: postRows } = await supabase
+      .from("blog_posts")
+      .select("id,status,view_count")
+      .eq("author_user_id", userId)
+      .limit(1000);
+
+    const posts = Array.isArray(postRows) ? postRows : [];
+    const postIds = posts.map((post) => post.id).filter(Boolean);
+
+    const publishedCount = posts.filter((post) => post.status === "published").length;
+    const pendingCount = posts.filter((post) => post.status === "pending").length;
+    const rejectedCount = posts.filter((post) => post.status === "rejected").length;
+    const totalViews = posts.reduce((sum, post) => sum + (Number(post.view_count) || 0), 0);
+
+    const totalLikes = postIds.length
+      ? await countRows("blog_post_reactions", (query) => query.in("post_id", postIds).eq("reaction_type", "like"))
+      : 0;
+    const totalCommentsReceived = postIds.length
+      ? await countRows("blog_comments", (query) => query.in("post_id", postIds).eq("status", "published"))
+      : 0;
+    const myCommentsCount = await countRows("blog_comments", (query) => query.eq("user_id", userId).eq("status", "published"));
+    const myBookmarksCount = await countRows("blog_post_bookmarks", (query) => query.eq("user_id", userId));
+
+    setDashboardStats({
+      published_count: publishedCount,
+      pending_count: pendingCount,
+      rejected_count: rejectedCount,
+      total_views: totalViews,
+      total_likes: totalLikes,
+      total_comments_received: totalCommentsReceived,
+      my_comments_count: myCommentsCount,
+      my_bookmarks_count: myBookmarksCount,
+    });
   }
 
-  async function loadGamification() {
+  async function loadGamification(overrideUserId = null) {
     const supabase = await getSupabaseClient();
-    if (!supabase || !session?.user) return;
+    const userId = await getActiveUserId(overrideUserId);
+    if (!supabase || !userId) return;
 
     const { data, error: gamificationError } = await supabase.rpc("get_my_gamification_summary");
-    if (gamificationError) return;
+    if (!gamificationError) {
+      const row = Array.isArray(data) ? data[0] : data;
+      if (row) {
+        setGamification({
+          ...row,
+          level_label: normalizeLevelLabel(row.level_label),
+          rank_label: normalizeLevelLabel(row.rank_label),
+        });
+        return;
+      }
+    }
 
-    const row = Array.isArray(data) ? data[0] : data;
-    setGamification(row || null);
+    const { data: profileRow } = await supabase.from("user_profiles").select("total_xp").eq("id", userId).maybeSingle();
+    const totalXp = Number(profileRow?.total_xp) || 0;
+    const publishedPosts = await countRows("blog_posts", (query) => query.eq("author_user_id", userId).eq("status", "published"));
+
+    const now = new Date();
+    const day = now.getUTCDay();
+    const diffToMonday = day === 0 ? 6 : day - 1;
+    const weekStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - diffToMonday));
+
+    const weeklyProgress = await countRows("blog_posts", (query) =>
+      query.eq("author_user_id", userId).eq("status", "published").gte("published_at", weekStart.toISOString())
+    );
+
+    setGamification({
+      total_xp: totalXp,
+      level_label: getLevelFromXp(totalXp),
+      rank_label: getRankFromPublished(publishedPosts),
+      published_posts: publishedPosts,
+      weekly_goal: 5,
+      weekly_progress: weeklyProgress,
+      weekly_reward_xp: 50,
+      weekly_claimed: false,
+    });
   }
 
-  async function loadNotifications(page = 1) {
+  async function loadNotifications(page = 1, overrideUserId = null) {
     const supabase = await getSupabaseClient();
-    if (!supabase || !session?.user) return;
+    const userId = await getActiveUserId(overrideUserId);
+    if (!supabase || !userId) return;
 
     const safePage = Math.max(1, Number(page) || 1);
     const from = (safePage - 1) * POSTS_PER_PAGE;
@@ -171,11 +298,16 @@ export default function AccountSettingsShell() {
     const { data, error: notificationsError, count } = await supabase
       .from("user_notifications")
       .select("id, type, title, body, data, is_read, created_at", { count: "exact" })
-      .eq("user_id", session.user.id)
+      .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (notificationsError) return;
+    if (notificationsError) {
+      setNotifications([]);
+      setNotificationsTotalCount(0);
+      setNotificationsPage(safePage);
+      return;
+    }
     setNotifications(data || []);
     setNotificationsTotalCount(typeof count === "number" ? count : (data || []).length);
     setNotificationsPage(safePage);
@@ -194,7 +326,7 @@ export default function AccountSettingsShell() {
     if (!supabase || !session?.user) return;
 
     await supabase.from("user_notifications").update({ is_read: true }).eq("user_id", session.user.id).eq("is_read", false);
-    await loadNotifications(notificationsPage);
+    await loadNotifications(notificationsPage, session.user.id);
   }
 
   async function claimWeeklyReward() {
@@ -209,9 +341,9 @@ export default function AccountSettingsShell() {
       if (claimError) throw claimError;
       const row = Array.isArray(data) ? data[0] : data;
       setMessage(row?.message || "تم تحديث المكافأة.");
-      await loadGamification();
-      await loadDashboardStats();
-      await loadNotifications(1);
+      await loadGamification(session.user.id);
+      await loadDashboardStats(session.user.id);
+      await loadNotifications(1, session.user.id);
     } catch (claimError) {
       setError(claimError instanceof Error ? claimError.message : "تعذر استلام المكافأة.");
     } finally {
@@ -219,9 +351,10 @@ export default function AccountSettingsShell() {
     }
   }
 
-  async function loadMyComments(page = 1) {
+  async function loadMyComments(page = 1, overrideUserId = null) {
     const supabase = await getSupabaseClient();
-    if (!supabase || !session?.user) return;
+    const userId = await getActiveUserId(overrideUserId);
+    if (!supabase || !userId) return;
 
     const safePage = Math.max(1, Number(page) || 1);
     const from = (safePage - 1) * POSTS_PER_PAGE;
@@ -230,11 +363,16 @@ export default function AccountSettingsShell() {
     const { data, error: commentsError, count } = await supabase
       .from("blog_comments")
       .select("id, content, created_at, post_id, parent_comment_id, blog_posts(title, slug)", { count: "exact" })
-      .eq("user_id", session.user.id)
+      .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (commentsError) return;
+    if (commentsError) {
+      setMyComments([]);
+      setMyCommentsTotalCount(0);
+      setMyCommentsPage(safePage);
+      return;
+    }
     setMyComments(data || []);
     setMyCommentsTotalCount(typeof count === "number" ? count : (data || []).length);
     setMyCommentsPage(safePage);
@@ -278,8 +416,8 @@ export default function AccountSettingsShell() {
       const { error: deleteError } = await supabase.from("blog_comments").delete().eq("id", commentId).eq("user_id", session.user.id);
       if (deleteError) throw deleteError;
       setMessage("تم حذف التعليق.");
-      await loadMyComments(myCommentsPage);
-      await loadDashboardStats();
+      await loadMyComments(myCommentsPage, session.user.id);
+      await loadDashboardStats(session.user.id);
     } catch (deleteError) {
       setError(deleteError instanceof Error ? deleteError.message : "تعذر حذف التعليق.");
     } finally {
@@ -311,8 +449,8 @@ export default function AccountSettingsShell() {
       setEditingCommentId(null);
       setCommentDraft("");
       setMessage("تم تعديل التعليق.");
-      await loadMyComments(myCommentsPage);
-      await loadDashboardStats();
+      await loadMyComments(myCommentsPage, session.user.id);
+      await loadDashboardStats(session.user.id);
     } catch (updateError) {
       setError(updateError instanceof Error ? updateError.message : "تعذر تعديل التعليق.");
     } finally {
@@ -377,7 +515,7 @@ export default function AccountSettingsShell() {
       if (deleteError) throw deleteError;
       setMessage("تم إزالة المقال من القراءة لاحقا.");
       await loadBookmarks(bookmarksPage);
-      await loadDashboardStats();
+      await loadDashboardStats(session.user.id);
     } catch (deleteError) {
       setError(deleteError instanceof Error ? deleteError.message : "تعذر إزالة الحفظ.");
     } finally {
@@ -437,11 +575,11 @@ export default function AccountSettingsShell() {
       });
       setNextEmail(data?.email || currentSession.user.email || "");
       await loadMemberPosts(currentSession.user.id, 1);
-      await loadDashboardStats();
-      await loadGamification();
-      await loadMyComments(1);
+      await loadDashboardStats(currentSession.user.id);
+      await loadGamification(currentSession.user.id);
+      await loadMyComments(1, currentSession.user.id);
       await loadBookmarks(1, currentSession.user.id);
-      await loadNotifications(1);
+      await loadNotifications(1, currentSession.user.id);
     }
 
     load();
@@ -668,7 +806,7 @@ export default function AccountSettingsShell() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={loadDashboardStats}
+                onClick={() => loadDashboardStats(session?.user?.id)}
                 disabled={pending}
                 className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
@@ -697,8 +835,8 @@ export default function AccountSettingsShell() {
               <button
                 type="button"
                 onClick={async () => {
-                  await loadGamification();
-                  await loadNotifications(1);
+                  await loadGamification(session?.user?.id);
+                  await loadNotifications(1, session?.user?.id);
                 }}
                 disabled={pending}
                 className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
@@ -812,7 +950,7 @@ export default function AccountSettingsShell() {
                   <div className="mt-4 flex items-center justify-between gap-3 rounded-[1.25rem] border border-slate-200 bg-white px-4 py-3">
                     <button
                       type="button"
-                      onClick={() => loadNotifications(Math.max(1, notificationsPage - 1))}
+                      onClick={() => loadNotifications(Math.max(1, notificationsPage - 1), session?.user?.id)}
                       disabled={pending || notificationsPage <= 1}
                       className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
@@ -823,7 +961,7 @@ export default function AccountSettingsShell() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => loadNotifications(Math.min(notificationsTotalPages, notificationsPage + 1))}
+                      onClick={() => loadNotifications(Math.min(notificationsTotalPages, notificationsPage + 1), session?.user?.id)}
                       disabled={pending || notificationsPage >= notificationsTotalPages}
                       className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
@@ -839,7 +977,7 @@ export default function AccountSettingsShell() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={() => loadMyComments(1)}
+                onClick={() => loadMyComments(1, session?.user?.id)}
                 disabled={pending}
                 className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
@@ -991,7 +1129,7 @@ export default function AccountSettingsShell() {
                 <div className="mt-6 flex items-center justify-between gap-3 rounded-[1.25rem] border border-slate-200 bg-white px-4 py-3">
                   <button
                     type="button"
-                    onClick={() => loadMyComments(Math.max(1, myCommentsPage - 1))}
+                    onClick={() => loadMyComments(Math.max(1, myCommentsPage - 1), session?.user?.id)}
                     disabled={pending || myCommentsPage <= 1}
                     className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                   >
@@ -1002,7 +1140,7 @@ export default function AccountSettingsShell() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => loadMyComments(Math.min(myCommentsTotalPages, myCommentsPage + 1))}
+                    onClick={() => loadMyComments(Math.min(myCommentsTotalPages, myCommentsPage + 1), session?.user?.id)}
                     disabled={pending || myCommentsPage >= myCommentsTotalPages}
                     className="rounded-full border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-red-200 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                   >

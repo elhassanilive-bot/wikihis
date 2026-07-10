@@ -6,6 +6,27 @@ import { useRouter } from "next/navigation";
 import { formatArabicDate } from "@/lib/blog/render";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
+const STATUS_LABELS = {
+  pending: "بانتظار المراجعة",
+  published: "منشور",
+  rejected: "مرفوض",
+};
+
+function normalizePost(row) {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt,
+    status: row.status,
+    createdAt: row.created_at,
+    publishedAt: row.published_at,
+    reviewedAt: row.reviewed_at,
+    authorDisplayName: row.author_display_name,
+    reviewNote: row.review_note,
+  };
+}
+
 function ModerationBadge({ status }) {
   const toneMap = {
     pending: "border-amber-200 bg-amber-50 text-amber-700",
@@ -13,7 +34,24 @@ function ModerationBadge({ status }) {
     rejected: "border-rose-200 bg-rose-50 text-rose-700",
   };
 
-  return <span className={`rounded-full border px-3 py-1 text-xs font-bold ${toneMap[status] || "border-slate-200 bg-slate-50 text-slate-700"}`}>{status}</span>;
+  return (
+    <span className={`rounded-full border px-3 py-1 text-xs font-bold ${toneMap[status] || "border-slate-200 bg-slate-50 text-slate-700"}`}>
+      {STATUS_LABELS[status] || status}
+    </span>
+  );
+}
+
+function ReviewStateNote({ status, reviewedAt }) {
+  if (status === "pending") return null;
+
+  const label = status === "published" ? "تم قبول هذا المقال ونشره." : "تم رفض هذا المقال وإبعاده عن النشر العام.";
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-right text-sm font-semibold text-slate-600">
+      {label}
+      {reviewedAt ? <span className="block pt-1 text-xs font-medium text-slate-400">آخر مراجعة: {formatArabicDate(reviewedAt)}</span> : null}
+    </div>
+  );
 }
 
 export default function MemberArticlesModerationPanel() {
@@ -44,14 +82,14 @@ export default function MemberArticlesModerationPanel() {
       setSessionReady(true);
 
       if (!session?.user) {
-        setFlash("سجل الدخول بحساب الأدمن أولًا حتى تظهر مقالات الأعضاء المرسلة للمراجعة.");
+        setFlash("سجل الدخول بحساب الأدمن أولاً حتى تظهر مقالات الأعضاء المرسلة للمراجعة.");
         setPosts([]);
         return;
       }
 
       const { data, error } = await supabase
         .from("blog_posts")
-        .select("id, slug, title, excerpt, status, created_at, published_at, author_display_name, review_note")
+        .select("id, slug, title, excerpt, status, created_at, published_at, reviewed_at, author_display_name, review_note")
         .not("author_user_id", "is", null)
         .order("created_at", { ascending: false });
 
@@ -63,7 +101,7 @@ export default function MemberArticlesModerationPanel() {
         return;
       }
 
-      setPosts(data || []);
+      setPosts((data || []).map(normalizePost));
     }
 
     loadMemberPosts();
@@ -80,10 +118,11 @@ export default function MemberArticlesModerationPanel() {
           return;
         }
 
+        const reviewedAt = new Date().toISOString();
         const payload = {
           status: decision === "approve" ? "published" : "rejected",
-          reviewed_at: new Date().toISOString(),
-          published_at: decision === "approve" ? new Date().toISOString() : null,
+          reviewed_at: reviewedAt,
+          published_at: decision === "approve" ? reviewedAt : null,
         };
 
         const { error } = await supabase.from("blog_posts").update(payload).eq("id", id);
@@ -99,7 +138,8 @@ export default function MemberArticlesModerationPanel() {
               ? {
                   ...post,
                   status: payload.status,
-                  published_at: payload.published_at,
+                  reviewedAt: payload.reviewed_at,
+                  publishedAt: payload.published_at,
                 }
               : post
           )
@@ -151,7 +191,7 @@ export default function MemberArticlesModerationPanel() {
                   {post.reviewNote ? <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">{post.reviewNote}</div> : null}
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {post.status === "published" ? (
                     <Link
                       href={`/blog/${post.slug}`}
@@ -160,22 +200,29 @@ export default function MemberArticlesModerationPanel() {
                       عرض
                     </Link>
                   ) : null}
-                  <button
-                    type="button"
-                    onClick={() => reviewPost(post.id, "approve")}
-                    disabled={isPending}
-                    className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
-                  >
-                    قبول
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => reviewPost(post.id, "reject")}
-                    disabled={isPending}
-                    className="rounded-2xl border border-rose-200 bg-white px-4 py-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70"
-                  >
-                    رفض
-                  </button>
+
+                  {post.status === "pending" ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => reviewPost(post.id, "approve")}
+                        disabled={isPending}
+                        className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
+                      >
+                        قبول
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => reviewPost(post.id, "reject")}
+                        disabled={isPending}
+                        className="rounded-2xl border border-rose-200 bg-white px-4 py-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70"
+                      >
+                        رفض
+                      </button>
+                    </>
+                  ) : (
+                    <ReviewStateNote status={post.status} reviewedAt={post.reviewedAt} />
+                  )}
                 </div>
               </div>
             </article>

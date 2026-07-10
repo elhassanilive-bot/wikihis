@@ -67,12 +67,12 @@ function ContributorSpotlightCard({ contributor, compact = false }) {
         <div className="flex items-start justify-start gap-4">
           <ContributorAvatar contributor={contributor} size={compact ? 54 : 62} />
           <div className="min-w-0 flex-1 text-right">
-            <div className="flex flex-col items-start gap-1 text-right">
+            <div className="flex w-full flex-col items-end gap-1 text-right">
               <div dir="rtl" className="text-sm font-semibold text-slate-500">
                 {formatArabicDate(contributor.lastPublishedAt)}
               </div>
-              <div className="min-w-0">
-                <div className={`truncate text-left font-black text-slate-950 transition group-hover:text-red-700 ${compact ? "text-lg" : "text-xl"}`}>
+              <div className="min-w-0 max-w-full text-right">
+                <div className={`truncate text-right font-black text-slate-950 transition group-hover:text-red-700 ${compact ? "text-lg" : "text-xl"}`}>
                   {contributor.displayName}
                 </div>
                 <div className="mt-1 text-sm text-slate-600">ناشر معتمد في ويكيهات</div>
