@@ -246,6 +246,64 @@ after insert on public.blog_post_reactions
 for each row
 execute function public.handle_blog_post_like_notify_author();
 
+-- Backfill badge data for posts that existed before this hardening migration.
+with author_xp as (
+  select
+    author_user_id,
+    (
+      count(*) filter (where status::text = 'published') * 80
+      + count(*) filter (where status::text = 'rejected') * 10
+    )::int as earned_xp
+  from public.blog_posts
+  where author_user_id is not null
+    and status::text in ('published', 'rejected')
+  group by author_user_id
+)
+insert into public.user_profiles (id, total_xp)
+select author_user_id, greatest(0, earned_xp)
+from author_xp
+where earned_xp > 0
+on conflict (id) do update
+set total_xp = greatest(coalesce(public.user_profiles.total_xp, 0), excluded.total_xp);
+
+insert into public.user_notifications (user_id, type, title, body, data, created_at)
+select
+  posts.author_user_id,
+  'post_approved',
+  'تم قبول مقالك ونشره',
+  coalesce(posts.title, ''),
+  jsonb_build_object('post_id', posts.id, 'post_slug', posts.slug),
+  coalesce(posts.published_at, posts.updated_at, posts.created_at, now())
+from public.blog_posts posts
+where posts.author_user_id is not null
+  and posts.status::text = 'published'
+  and not exists (
+    select 1
+    from public.user_notifications existing
+    where existing.user_id = posts.author_user_id
+      and existing.type = 'post_approved'
+      and existing.data->>'post_id' = posts.id::text
+  );
+
+insert into public.user_notifications (user_id, type, title, body, data, created_at)
+select
+  posts.author_user_id,
+  'post_rejected',
+  'تم رفض مقالك',
+  coalesce(nullif(trim(posts.review_note), ''), 'يمكنك تعديل المقال وإعادة إرساله للمراجعة.'),
+  jsonb_build_object('post_id', posts.id, 'post_slug', posts.slug),
+  coalesce(posts.updated_at, posts.created_at, now())
+from public.blog_posts posts
+where posts.author_user_id is not null
+  and posts.status::text = 'rejected'
+  and not exists (
+    select 1
+    from public.user_notifications existing
+    where existing.user_id = posts.author_user_id
+      and existing.type = 'post_rejected'
+      and existing.data->>'post_id' = posts.id::text
+  );
+
 create table if not exists public.weekly_challenges (
   id uuid primary key default gen_random_uuid(),
   week_start date not null unique,

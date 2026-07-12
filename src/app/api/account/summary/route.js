@@ -30,9 +30,20 @@ function rankFromPublished(count) {
   return "جديد";
 }
 
+function currentUtcWeekStart() {
+  const now = new Date();
+  const day = now.getUTCDay();
+  const diffToMonday = day === 0 ? 6 : day - 1;
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - diffToMonday));
+}
+
+function dateOnly(date) {
+  return date.toISOString().slice(0, 10);
+}
+
 async function countRows(client, tableName, buildQuery) {
   try {
-    let query = client.from(tableName).select("id", { count: "exact", head: true });
+    let query = client.from(tableName).select("*", { count: "exact", head: true });
     query = buildQuery ? buildQuery(query) : query;
     const { count, error } = await query;
     if (error) return 0;
@@ -46,6 +57,47 @@ async function listRows(query) {
   const { data, error, count } = await query;
   if (error) return { rows: [], totalCount: 0, error: error.message };
   return { rows: data || [], totalCount: typeof count === "number" ? count : (data || []).length, error: null };
+}
+
+async function getCurrentChallenge(client, weekStartDate, canWrite) {
+  const fallback = {
+    id: null,
+    week_start: weekStartDate,
+    goal_published_posts: 5,
+    reward_xp: 150,
+  };
+
+  try {
+    if (canWrite) {
+      const { data, error } = await client
+        .from("weekly_challenges")
+        .upsert(
+          {
+            week_start: weekStartDate,
+            goal_published_posts: 5,
+            reward_xp: 150,
+            title: "تحدي الأسبوع",
+            description: "انشر 5 مقالات مقبولة هذا الأسبوع لتحصل على مكافأة خبرة.",
+          },
+          { onConflict: "week_start" }
+        )
+        .select("id, week_start, goal_published_posts, reward_xp")
+        .single();
+      if (!error && data) return data;
+    }
+
+    const { data, error } = await client
+      .from("weekly_challenges")
+      .select("id, week_start, goal_published_posts, reward_xp")
+      .eq("week_start", weekStartDate)
+      .maybeSingle();
+
+    if (!error && data) return data;
+  } catch {
+    return fallback;
+  }
+
+  return fallback;
 }
 
 export async function GET(request) {
@@ -112,24 +164,34 @@ export async function GET(request) {
     my_bookmarks_count: myBookmarksCount,
   };
 
-  const now = new Date();
-  const day = now.getUTCDay();
-  const diffToMonday = day === 0 ? 6 : day - 1;
-  const weekStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - diffToMonday));
+  const weekStart = currentUtcWeekStart();
+  const weekEnd = new Date(weekStart);
+  weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
+  const challenge = await getCurrentChallenge(client, dateOnly(weekStart), Boolean(adminClient));
   const weeklyProgress = authoredPosts.filter((post) => {
     if (post.status !== "published" || !post.published_at) return false;
-    return new Date(post.published_at).getTime() >= weekStart.getTime();
+    const publishedAt = new Date(post.published_at).getTime();
+    return publishedAt >= weekStart.getTime() && publishedAt < weekEnd.getTime();
   }).length;
-  const totalXp = Number(profile?.total_xp) || 0;
+  const storedXp = Number(profile?.total_xp) || 0;
+  const earnedPostXp = publishedCount * 80 + rejectedCount * 10;
+  const totalXp = Math.max(storedXp, earnedPostXp);
+  const weeklyClaimed = challenge.id
+    ? Boolean(
+        await countRows(client, "weekly_challenge_claims", (query) =>
+          query.eq("challenge_id", challenge.id).eq("user_id", userId)
+        )
+      )
+    : false;
   const gamification = {
     total_xp: totalXp,
     level_label: levelFromXp(totalXp),
     rank_label: rankFromPublished(publishedCount),
     published_posts: publishedCount,
-    weekly_goal: 5,
+    weekly_goal: Number(challenge.goal_published_posts) || 5,
     weekly_progress: weeklyProgress,
-    weekly_reward_xp: 150,
-    weekly_claimed: false,
+    weekly_reward_xp: Number(challenge.reward_xp) || 150,
+    weekly_claimed: weeklyClaimed,
   };
 
   const memberPostsQuery = client
