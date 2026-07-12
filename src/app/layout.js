@@ -23,6 +23,9 @@ export const metadata = {
     title: site.officialName,
     statusBarStyle: "default",
   },
+  other: {
+    "google-adsense-account": "ca-pub-2700475642561219",
+  },
   icons: {
     icon: [
       { url: "/favicon.ico?v=20260702e", type: "image/x-icon", sizes: "256x256" },
