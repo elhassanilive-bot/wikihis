@@ -101,10 +101,21 @@ export default function ArticleEngagementBar({ postId, slug }) {
       const supabase = await getSupabaseClient();
       if (!supabase) return;
       await supabase.rpc("increment_post_view", { post_slug: slug });
+
+      const {
+        data: { session: currentSession },
+      } = await supabase.auth.getSession();
+
+      if (currentSession?.user?.id && postId) {
+        await supabase.from("blog_post_views").insert({
+          post_id: postId,
+          user_id: currentSession.user.id,
+        });
+      }
     }
 
     track();
-  }, [canUse, slug]);
+  }, [canUse, postId, slug]);
 
   useEffect(() => {
     if (!canUse) return;

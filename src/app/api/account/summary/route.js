@@ -81,7 +81,14 @@ export async function GET(request) {
   const pendingCount = authoredPosts.filter((post) => post.status === "pending").length;
   const rejectedCount = authoredPosts.filter((post) => post.status === "rejected").length;
 
-  const [totalLikes, totalCommentsReceived, myCommentsCount, myBookmarksCount] = await Promise.all([
+  const [
+    receivedLikesCount,
+    receivedCommentsCount,
+    myCommentsCount,
+    myBookmarksCount,
+    myLikesCount,
+    myViewEventsCount,
+  ] = await Promise.all([
     authoredPostIds.length
       ? countRows(client, "blog_post_reactions", (query) => query.in("post_id", authoredPostIds).eq("reaction_type", "like"))
       : 0,
@@ -90,15 +97,17 @@ export async function GET(request) {
       : 0,
     countRows(client, "blog_comments", (query) => query.eq("user_id", userId).eq("status", "published")),
     countRows(client, "blog_post_bookmarks", (query) => query.eq("user_id", userId)),
+    countRows(client, "blog_post_reactions", (query) => query.eq("user_id", userId).eq("reaction_type", "like")),
+    countRows(client, "blog_post_views", (query) => query.eq("user_id", userId)),
   ]);
 
   const stats = {
     published_count: publishedCount,
     pending_count: pendingCount,
     rejected_count: rejectedCount,
-    total_views: sumViews(authoredPosts),
-    total_likes: totalLikes,
-    total_comments_received: totalCommentsReceived,
+    total_views: sumViews(authoredPosts) + myViewEventsCount,
+    total_likes: receivedLikesCount + myLikesCount,
+    total_comments_received: receivedCommentsCount + myCommentsCount,
     my_comments_count: myCommentsCount,
     my_bookmarks_count: myBookmarksCount,
   };

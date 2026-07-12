@@ -448,6 +448,50 @@ begin
 end;
 $$;
 
+-- Track authenticated article views so account analytics can show real activity.
+create table if not exists public.blog_post_views (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.blog_posts (id) on delete cascade,
+  user_id uuid references auth.users (id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists blog_post_views_user_id_idx
+  on public.blog_post_views (user_id, created_at desc);
+
+create index if not exists blog_post_views_post_id_idx
+  on public.blog_post_views (post_id, created_at desc);
+
+alter table public.blog_post_views enable row level security;
+
+drop policy if exists blog_post_views_insert_own on public.blog_post_views;
+create policy blog_post_views_insert_own
+on public.blog_post_views
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+drop policy if exists blog_post_views_select_own on public.blog_post_views;
+create policy blog_post_views_select_own
+on public.blog_post_views
+for select
+to authenticated
+using (auth.uid() = user_id);
+
+create or replace function public.increment_post_view(post_slug text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.blog_posts
+  set view_count = coalesce(view_count, 0) + 1
+  where slug = post_slug
+    and status::text = 'published';
+end;
+$$;
+
 create or replace function public.get_my_dashboard_stats()
 returns table (
   published_count bigint,
@@ -482,6 +526,12 @@ as $$
     join my_posts p on p.id = r.post_id
     where r.reaction_type = 'like'
   ),
+  my_likes as (
+    select count(*)::bigint as my_likes_count
+    from public.blog_post_reactions
+    where user_id = auth.uid()
+      and reaction_type = 'like'
+  ),
   comments_received as (
     select count(*)::bigint as total_comments_received
     from public.blog_comments c
@@ -498,29 +548,38 @@ as $$
     select count(*)::bigint as my_bookmarks_count
     from public.blog_post_bookmarks
     where user_id = auth.uid()
+  ),
+  my_view_events as (
+    select count(*)::bigint as my_view_events_count
+    from public.blog_post_views
+    where user_id = auth.uid()
   )
   select
     coalesce(pc.published_count, 0)::bigint,
     coalesce(pc.pending_count, 0)::bigint,
     coalesce(pc.rejected_count, 0)::bigint,
-    coalesce(pc.total_views, 0)::bigint,
-    coalesce(l.total_likes, 0)::bigint,
-    coalesce(cr.total_comments_received, 0)::bigint,
+    (coalesce(pc.total_views, 0) + coalesce(mv.my_view_events_count, 0))::bigint,
+    (coalesce(l.total_likes, 0) + coalesce(ml.my_likes_count, 0))::bigint,
+    (coalesce(cr.total_comments_received, 0) + coalesce(mc.my_comments_count, 0))::bigint,
     coalesce(mc.my_comments_count, 0)::bigint,
     coalesce(mb.my_bookmarks_count, 0)::bigint
   from my_post_counts pc
   cross join likes l
+  cross join my_likes ml
   cross join comments_received cr
   cross join my_comments mc
-  cross join my_bookmarks mb;
+  cross join my_bookmarks mb
+  cross join my_view_events mv;
 $$;
 
 revoke all on function public.ensure_current_weekly_challenge() from public;
 revoke all on function public.get_my_gamification_summary() from public;
 revoke all on function public.claim_weekly_challenge_reward() from public;
 revoke all on function public.get_my_dashboard_stats() from public;
+revoke all on function public.increment_post_view(text) from public;
 
 grant execute on function public.ensure_current_weekly_challenge() to authenticated;
 grant execute on function public.get_my_gamification_summary() to authenticated;
 grant execute on function public.claim_weekly_challenge_reward() to authenticated;
 grant execute on function public.get_my_dashboard_stats() to authenticated;
+grant execute on function public.increment_post_view(text) to anon, authenticated;
