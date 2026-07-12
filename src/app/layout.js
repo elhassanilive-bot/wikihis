@@ -2,6 +2,7 @@
 import Navbar from "@/components/Navbar";
 import AppFooter from "@/components/AppFooter";
 import PwaRegistration from "@/components/PwaRegistration";
+import Script from "next/script";
 import { site } from "@/config/site";
 import { buildJsonLdGraph, buildMetadata } from "@/lib/seo";
 
@@ -43,6 +44,11 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="ar" dir="rtl">
+      <Script
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2700475642561219"
+        strategy="beforeInteractive"
+        crossOrigin="anonymous"
+      />
       <body className="min-h-screen bg-background text-foreground font-sans">
         <script
           type="application/ld+json"
