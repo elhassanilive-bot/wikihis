@@ -86,22 +86,6 @@ function normalizeLevelLabel(label) {
   return map[value] || value || "جديد";
 }
 
-function getLevelFromXp(xp) {
-  const value = Number(xp) || 0;
-  if (value >= 1000) return "بارز";
-  if (value >= 500) return "متوسط";
-  if (value >= 200) return "مبتدئ";
-  return "جديد";
-}
-
-function getRankFromPublished(count) {
-  const value = Number(count) || 0;
-  if (value >= 11) return "بارز";
-  if (value >= 6) return "متوسط";
-  if (value >= 3) return "مبتدئ";
-  return "جديد";
-}
-
 export default function AccountSettingsShell() {
   const fileInputRef = useRef(null);
   const [session, setSession] = useState(null);
@@ -140,177 +124,118 @@ export default function AccountSettingsShell() {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
 
-  async function loadMemberPosts(currentUserId, page = 1) {
-    const supabase = await getSupabaseClient();
-    if (!supabase || !currentUserId) return;
+  async function fetchAccountSummary({
+    postsPage = memberPostsPage,
+    notificationsPage: nextNotificationsPage = notificationsPage,
+    commentsPage = myCommentsPage,
+    bookmarksPage: nextBookmarksPage = bookmarksPage,
+    bookmarkFolder = bookmarkFolderFilter,
+  } = {}) {
+    const params = new URLSearchParams({
+      postsPage: String(Math.max(1, Number(postsPage) || 1)),
+      notificationsPage: String(Math.max(1, Number(nextNotificationsPage) || 1)),
+      commentsPage: String(Math.max(1, Number(commentsPage) || 1)),
+      bookmarksPage: String(Math.max(1, Number(nextBookmarksPage) || 1)),
+    });
 
-    const safePage = Math.max(1, Number(page) || 1);
-    const from = (safePage - 1) * POSTS_PER_PAGE;
-    const to = from + POSTS_PER_PAGE - 1;
+    const folder = String(bookmarkFolder || "").trim();
+    if (folder) params.set("bookmarkFolder", folder);
 
-    const { data, error: memberPostsError, count } = await supabase
-      .from("blog_posts")
-      .select("id, slug, title, excerpt, status, created_at, review_note", { count: "exact" })
-      .eq("author_user_id", currentUserId)
-      .order("created_at", { ascending: false })
-      .range(from, to);
+    const response = await fetch(`/api/account/summary?${params.toString()}`, {
+      cache: "no-store",
+      credentials: "include",
+    });
 
-    if (memberPostsError) {
-      setError(memberPostsError.message);
-      return;
+    if (!response.ok) {
+      throw new Error(response.status === 401 ? "يجب تسجيل الدخول لعرض بيانات الحساب." : "تعذر تحميل بيانات الحساب.");
     }
 
-    setMemberPosts(data || []);
-    setMemberPostsTotalCount(typeof count === "number" ? count : (data || []).length);
-    setMemberPostsPage(safePage);
+    return response.json();
   }
 
-  async function getActiveUserId(overrideUserId = null) {
-    const supabase = await getSupabaseClient();
-    if (!supabase) return null;
-    if (overrideUserId) return overrideUserId;
-    if (session?.user?.id) return session.user.id;
+  function applyAccountSummary(summary) {
+    if (!summary) return;
 
-    const {
-      data: { session: currentSession },
-    } = await supabase.auth.getSession();
+    if (summary.profile) {
+      setProfile((current) => ({
+        displayName: summary.profile.displayName || current.displayName,
+        email: summary.profile.email || current.email,
+        avatarUrl: summary.profile.avatarUrl || current.avatarUrl,
+      }));
+      if (summary.profile.email) setNextEmail(summary.profile.email);
+    }
 
-    if (currentSession) setSession(currentSession);
-    return currentSession?.user?.id || null;
+    if (summary.stats) setDashboardStats(summary.stats);
+    if (summary.gamification) {
+      setGamification({
+        ...summary.gamification,
+        level_label: normalizeLevelLabel(summary.gamification.level_label),
+        rank_label: normalizeLevelLabel(summary.gamification.rank_label),
+      });
+    }
+
+    if (summary.memberPosts) {
+      setMemberPosts(summary.memberPosts.rows || []);
+      setMemberPostsTotalCount(Number(summary.memberPosts.totalCount) || 0);
+      setMemberPostsPage(Number(summary.memberPosts.page) || 1);
+    }
+
+    if (summary.notifications) {
+      setNotifications(summary.notifications.rows || []);
+      setNotificationsTotalCount(Number(summary.notifications.totalCount) || 0);
+      setNotificationsPage(Number(summary.notifications.page) || 1);
+    }
+
+    if (summary.comments) {
+      setMyComments(summary.comments.rows || []);
+      setMyCommentsTotalCount(Number(summary.comments.totalCount) || 0);
+      setMyCommentsPage(Number(summary.comments.page) || 1);
+    }
+
+    if (summary.bookmarks) {
+      setBookmarks(summary.bookmarks.rows || []);
+      setBookmarksTotalCount(Number(summary.bookmarks.totalCount) || 0);
+      setBookmarksPage(Number(summary.bookmarks.page) || 1);
+      setBookmarkFolders(summary.bookmarks.folders || []);
+    }
   }
 
-  async function countRows(tableName, buildQuery) {
-    const supabase = await getSupabaseClient();
-    if (!supabase) return 0;
+  async function reloadAccountSummary(options = {}) {
+    const summary = await fetchAccountSummary(options);
+    applyAccountSummary(summary);
+    return summary;
+  }
 
+  async function loadMemberPosts(currentUserId, page = 1) {
     try {
-      let query = supabase.from(tableName).select("id", { count: "exact", head: true });
-      query = buildQuery ? buildQuery(query) : query;
-      const { count, error: countError } = await query;
-      if (countError) return 0;
-      return Number(count) || 0;
-    } catch {
-      return 0;
+      await reloadAccountSummary({ postsPage: page });
+    } catch (summaryError) {
+      setError(summaryError instanceof Error ? summaryError.message : "تعذر تحميل مقالات الحساب.");
     }
   }
 
   async function loadDashboardStats(overrideUserId = null) {
-    const supabase = await getSupabaseClient();
-    const userId = await getActiveUserId(overrideUserId);
-    if (!supabase || !userId) return;
-
-    const { data, error: statsError } = await supabase.rpc("get_my_dashboard_stats");
-    if (!statsError) {
-      const row = Array.isArray(data) ? data[0] : data;
-      if (row) {
-        setDashboardStats(row);
-        return;
-      }
+    try {
+      await reloadAccountSummary();
+    } catch (summaryError) {
+      setError(summaryError instanceof Error ? summaryError.message : "تعذر تحميل الإحصائيات.");
     }
-
-    const { data: postRows } = await supabase
-      .from("blog_posts")
-      .select("id,status,view_count")
-      .eq("author_user_id", userId)
-      .limit(1000);
-
-    const posts = Array.isArray(postRows) ? postRows : [];
-    const postIds = posts.map((post) => post.id).filter(Boolean);
-
-    const publishedCount = posts.filter((post) => post.status === "published").length;
-    const pendingCount = posts.filter((post) => post.status === "pending").length;
-    const rejectedCount = posts.filter((post) => post.status === "rejected").length;
-    const totalViews = posts.reduce((sum, post) => sum + (Number(post.view_count) || 0), 0);
-
-    const totalLikes = postIds.length
-      ? await countRows("blog_post_reactions", (query) => query.in("post_id", postIds).eq("reaction_type", "like"))
-      : 0;
-    const totalCommentsReceived = postIds.length
-      ? await countRows("blog_comments", (query) => query.in("post_id", postIds).eq("status", "published"))
-      : 0;
-    const myCommentsCount = await countRows("blog_comments", (query) => query.eq("user_id", userId).eq("status", "published"));
-    const myBookmarksCount = await countRows("blog_post_bookmarks", (query) => query.eq("user_id", userId));
-
-    setDashboardStats({
-      published_count: publishedCount,
-      pending_count: pendingCount,
-      rejected_count: rejectedCount,
-      total_views: totalViews,
-      total_likes: totalLikes,
-      total_comments_received: totalCommentsReceived,
-      my_comments_count: myCommentsCount,
-      my_bookmarks_count: myBookmarksCount,
-    });
   }
 
   async function loadGamification(overrideUserId = null) {
-    const supabase = await getSupabaseClient();
-    const userId = await getActiveUserId(overrideUserId);
-    if (!supabase || !userId) return;
-
-    const { data, error: gamificationError } = await supabase.rpc("get_my_gamification_summary");
-    if (!gamificationError) {
-      const row = Array.isArray(data) ? data[0] : data;
-      if (row) {
-        setGamification({
-          ...row,
-          level_label: normalizeLevelLabel(row.level_label),
-          rank_label: normalizeLevelLabel(row.rank_label),
-        });
-        return;
-      }
+    try {
+      await reloadAccountSummary();
+    } catch (summaryError) {
+      setError(summaryError instanceof Error ? summaryError.message : "تعذر تحميل الشارات.");
     }
-
-    const { data: profileRow } = await supabase.from("user_profiles").select("total_xp").eq("id", userId).maybeSingle();
-    const totalXp = Number(profileRow?.total_xp) || 0;
-    const publishedPosts = await countRows("blog_posts", (query) => query.eq("author_user_id", userId).eq("status", "published"));
-
-    const now = new Date();
-    const day = now.getUTCDay();
-    const diffToMonday = day === 0 ? 6 : day - 1;
-    const weekStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - diffToMonday));
-
-    const weeklyProgress = await countRows("blog_posts", (query) =>
-      query.eq("author_user_id", userId).eq("status", "published").gte("published_at", weekStart.toISOString())
-    );
-
-    setGamification({
-      total_xp: totalXp,
-      level_label: getLevelFromXp(totalXp),
-      rank_label: getRankFromPublished(publishedPosts),
-      published_posts: publishedPosts,
-      weekly_goal: 5,
-      weekly_progress: weeklyProgress,
-      weekly_reward_xp: 50,
-      weekly_claimed: false,
-    });
   }
 
   async function loadNotifications(page = 1, overrideUserId = null) {
-    const supabase = await getSupabaseClient();
-    const userId = await getActiveUserId(overrideUserId);
-    if (!supabase || !userId) return;
-
-    const safePage = Math.max(1, Number(page) || 1);
-    const from = (safePage - 1) * POSTS_PER_PAGE;
-    const to = from + POSTS_PER_PAGE - 1;
-
-    const { data, error: notificationsError, count } = await supabase
-      .from("user_notifications")
-      .select("id, type, title, body, data, is_read, created_at", { count: "exact" })
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .range(from, to);
-
-    if (notificationsError) {
-      setNotifications([]);
-      setNotificationsTotalCount(0);
-      setNotificationsPage(safePage);
-      return;
+    try {
+      await reloadAccountSummary({ notificationsPage: page });
+    } catch (summaryError) {
+      setError(summaryError instanceof Error ? summaryError.message : "تعذر تحميل الإشعارات.");
     }
-    setNotifications(data || []);
-    setNotificationsTotalCount(typeof count === "number" ? count : (data || []).length);
-    setNotificationsPage(safePage);
   }
 
   async function markNotificationRead(notificationId) {
@@ -352,30 +277,11 @@ export default function AccountSettingsShell() {
   }
 
   async function loadMyComments(page = 1, overrideUserId = null) {
-    const supabase = await getSupabaseClient();
-    const userId = await getActiveUserId(overrideUserId);
-    if (!supabase || !userId) return;
-
-    const safePage = Math.max(1, Number(page) || 1);
-    const from = (safePage - 1) * POSTS_PER_PAGE;
-    const to = from + POSTS_PER_PAGE - 1;
-
-    const { data, error: commentsError, count } = await supabase
-      .from("blog_comments")
-      .select("id, content, created_at, post_id, parent_comment_id, blog_posts(title, slug)", { count: "exact" })
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .range(from, to);
-
-    if (commentsError) {
-      setMyComments([]);
-      setMyCommentsTotalCount(0);
-      setMyCommentsPage(safePage);
-      return;
+    try {
+      await reloadAccountSummary({ commentsPage: page });
+    } catch (summaryError) {
+      setError(summaryError instanceof Error ? summaryError.message : "تعذر تحميل التعليقات.");
     }
-    setMyComments(data || []);
-    setMyCommentsTotalCount(typeof count === "number" ? count : (data || []).length);
-    setMyCommentsPage(safePage);
   }
 
   async function handleToggleReplies(commentId) {
@@ -459,48 +365,11 @@ export default function AccountSettingsShell() {
   }
 
   async function loadBookmarks(page = 1, overrideUserId = null) {
-    const supabase = await getSupabaseClient();
-    if (!supabase) return;
-
-    // Avoid relying on possibly-stale React state when called right after auth bootstrap.
-    let userId = overrideUserId || session?.user?.id || null;
-    if (!userId) {
-      const {
-        data: { session: currentSession },
-      } = await supabase.auth.getSession();
-      setSession(currentSession);
-      userId = currentSession?.user?.id || null;
+    try {
+      await reloadAccountSummary({ bookmarksPage: page, bookmarkFolder: bookmarkFolderFilter });
+    } catch (summaryError) {
+      setError(summaryError instanceof Error ? summaryError.message : "تعذر تحميل المحفوظات.");
     }
-    if (!userId) return;
-
-    const safePage = Math.max(1, Number(page) || 1);
-    const from = (safePage - 1) * POSTS_PER_PAGE;
-    const to = from + POSTS_PER_PAGE - 1;
-
-    let query = supabase
-      .from("blog_post_bookmarks")
-      .select("id, folder, created_at, post_id, blog_posts(id, slug, title, excerpt, cover_image_url, category)", { count: "exact" })
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false });
-
-    const filterFolder = String(bookmarkFolderFilter || "").trim();
-    if (filterFolder) query = query.eq("folder", filterFolder);
-
-    const { data, error: bookmarksError, count } = await query.range(from, to);
-    if (bookmarksError) return;
-
-    setBookmarks(data || []);
-    setBookmarksTotalCount(typeof count === "number" ? count : (data || []).length);
-    setBookmarksPage(safePage);
-
-    const { data: folderRows } = await supabase
-      .from("blog_post_bookmarks")
-      .select("folder")
-      .eq("user_id", userId)
-      .order("folder", { ascending: true });
-
-    const folders = Array.from(new Set((folderRows || []).map((row) => String(row.folder || "").trim()).filter(Boolean)));
-    setBookmarkFolders(folders);
   }
 
   async function handleBookmarkDelete(bookmarkId) {
@@ -574,12 +443,13 @@ export default function AccountSettingsShell() {
         avatarUrl: data?.avatar_url || "",
       });
       setNextEmail(data?.email || currentSession.user.email || "");
-      await loadMemberPosts(currentSession.user.id, 1);
-      await loadDashboardStats(currentSession.user.id);
-      await loadGamification(currentSession.user.id);
-      await loadMyComments(1, currentSession.user.id);
-      await loadBookmarks(1, currentSession.user.id);
-      await loadNotifications(1, currentSession.user.id);
+      await reloadAccountSummary({
+        postsPage: 1,
+        notificationsPage: 1,
+        commentsPage: 1,
+        bookmarksPage: 1,
+        bookmarkFolder: "",
+      });
     }
 
     load();
