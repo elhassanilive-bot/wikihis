@@ -893,6 +893,17 @@ export default function RichTextEditorField({
   const [uploadState, setUploadState] = useState({ kind: "", message: "", error: false });
   const [cropState, setCropState] = useState(null);
   const [modalState, setModalState] = useState(null);
+  const [navbarHeight, setNavbarHeight] = useState(0);
+
+  useEffect(() => {
+    function measureNavbar() {
+      const nav = document.querySelector("nav");
+      setNavbarHeight(nav ? nav.getBoundingClientRect().height : 0);
+    }
+    measureNavbar();
+    window.addEventListener("resize", measureNavbar);
+    return () => window.removeEventListener("resize", measureNavbar);
+  }, []);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -1121,7 +1132,7 @@ export default function RichTextEditorField({
       <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={(event) => handleFileSelection(event, "video")} />
       <input ref={audioInputRef} type="file" accept="audio/*" className="hidden" onChange={(event) => handleFileSelection(event, "audio")} />
 
-      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-slate-300 bg-[#fcfcfc] px-3 py-3 rounded-t-[2rem]">
+      <div className="sticky z-10 flex flex-wrap items-center gap-2 border-b border-slate-300 bg-[#fcfcfc] px-3 py-3 rounded-t-[2rem] shadow-sm" style={{ top: navbarHeight }}>
         <ToolbarSelect
           title="نوع الخط"
           value={currentFontFamily}
