@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { EditorContent, NodeViewWrapper, ReactNodeViewRenderer, useEditor } from "@tiptap/react";
@@ -1083,7 +1083,7 @@ export default function RichTextEditorField({
   const currentFontSize = editor.getAttributes("textStyle").fontSizeClass || "";
 
   return (
-    <div className="overflow-hidden rounded-[2rem] border border-slate-300 bg-[#f6f7f7]">
+    <div className="rounded-[2rem] border border-slate-300 bg-[#f6f7f7]">
       <EditorInputModal modalState={modalState} setModalState={setModalState} />
       <CropImageModal
         cropState={cropState}
@@ -1121,7 +1121,7 @@ export default function RichTextEditorField({
       <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={(event) => handleFileSelection(event, "video")} />
       <input ref={audioInputRef} type="file" accept="audio/*" className="hidden" onChange={(event) => handleFileSelection(event, "audio")} />
 
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-300 bg-[#fcfcfc] px-3 py-3">
+      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-slate-300 bg-[#fcfcfc] px-3 py-3 rounded-t-[2rem]">
         <ToolbarSelect
           title="نوع الخط"
           value={currentFontFamily}
@@ -1464,7 +1464,7 @@ export default function RichTextEditorField({
         </div>
       ) : null}
 
-      <div className="bg-white px-4 py-4 sm:px-5">
+      <div className="overflow-hidden rounded-b-[2rem] bg-white px-4 py-4 sm:px-5">
         <EditorContent editor={editor} />
       </div>
     </div>
