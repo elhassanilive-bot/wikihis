@@ -215,6 +215,39 @@ const ButtonLink = Node.create({
   },
 });
 
+const CalloutBlock = Node.create({
+  name: "calloutBlock",
+  group: "block",
+  atom: true,
+  selectable: true,
+  addAttributes() {
+    return {
+      type:    { default: "info" },
+      title:   { default: "" },
+      content: { default: "" },
+    };
+  },
+  parseHTML() {
+    return [{ tag: "div[data-callout-block]" }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    const icons = { info: "ℹ️", warning: "⚠️", success: "✅", danger: "🚫" };
+    const type    = HTMLAttributes.type    || "info";
+    const icon    = icons[type]            || "ℹ️";
+    const title   = HTMLAttributes.title   || "";
+    const content = HTMLAttributes.content || "";
+    return [
+      "div",
+      { "data-callout-block": "true", "data-type": type, class: "blog-callout" },
+      ["span", { class: "blog-callout-icon" }, icon],
+      ["div", { class: "blog-callout-content" },
+        ...(title ? [["div", { class: "blog-callout-title" }, title]] : []),
+        ["div", {}, content],
+      ],
+    ];
+  },
+});
+
 function IconFrame({ children }) {
   return <span className="flex h-4 w-4 items-center justify-center text-[13px] leading-none text-black">{children}</span>;
 }
@@ -942,6 +975,7 @@ export default function RichTextEditorField({
       VideoBlock,
       EmbedBlock,
       ButtonLink,
+      CalloutBlock,
     ],
     content: value || "<p></p>",
     onUpdate({ editor: currentEditor }) {
@@ -1466,6 +1500,67 @@ export default function RichTextEditorField({
         </ToolbarButton>
         <ToolbarButton title="حذف جدول" onClick={() => editor.chain().focus().deleteTable().run()}>
           <SvgIcon><rect x="4" y="5" width="16" height="14" rx="1.5" /><path d="m8 9 8 8" /><path d="m16 9-8 8" /></SvgIcon>
+        </ToolbarButton>
+        <ToolbarDivider />
+        <ToolbarButton title="ملاحظة (Info)" onClick={() => openInputModal({
+          title: "إضافة ملاحظة",
+          description: "صندوق ملاحظة معلوماتية باللون الأزرق.",
+          fields: [
+            { key: "title", label: "العنوان (اختياري)", type: "text", placeholder: "ملاحظة" },
+            { key: "content", label: "النص", type: "textarea", rows: 3, placeholder: "اكتب الملاحظة هنا..." },
+          ],
+          onSubmit: async (values) => {
+            if (!values.content?.trim()) return { ok: false, error: "النص مطلوب." };
+            editor.chain().focus().insertContent({ type: "calloutBlock", attrs: { type: "info", title: values.title?.trim() || "", content: values.content.trim() } }).run();
+            return { ok: true };
+          },
+        })}>
+          <SvgIcon><circle cx="12" cy="12" r="9" /><path d="M12 8v4" /><circle cx="12" cy="16" r="0.5" fill="currentColor" /></SvgIcon>
+        </ToolbarButton>
+        <ToolbarButton title="تحذير (Warning)" onClick={() => openInputModal({
+          title: "إضافة تحذير",
+          description: "صندوق تحذير باللون الأصفر.",
+          fields: [
+            { key: "title", label: "العنوان (اختياري)", type: "text", placeholder: "تحذير" },
+            { key: "content", label: "النص", type: "textarea", rows: 3, placeholder: "اكتب التحذير هنا..." },
+          ],
+          onSubmit: async (values) => {
+            if (!values.content?.trim()) return { ok: false, error: "النص مطلوب." };
+            editor.chain().focus().insertContent({ type: "calloutBlock", attrs: { type: "warning", title: values.title?.trim() || "", content: values.content.trim() } }).run();
+            return { ok: true };
+          },
+        })}>
+          <SvgIcon><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><path d="M12 9v4" /><circle cx="12" cy="17" r="0.5" fill="currentColor" /></SvgIcon>
+        </ToolbarButton>
+        <ToolbarButton title="نجاح (Success)" onClick={() => openInputModal({
+          title: "إضافة نجاح",
+          description: "صندوق نجاح باللون الأخضر.",
+          fields: [
+            { key: "title", label: "العنوان (اختياري)", type: "text", placeholder: "تم بنجاح" },
+            { key: "content", label: "النص", type: "textarea", rows: 3, placeholder: "اكتب الرسالة هنا..." },
+          ],
+          onSubmit: async (values) => {
+            if (!values.content?.trim()) return { ok: false, error: "النص مطلوب." };
+            editor.chain().focus().insertContent({ type: "calloutBlock", attrs: { type: "success", title: values.title?.trim() || "", content: values.content.trim() } }).run();
+            return { ok: true };
+          },
+        })}>
+          <SvgIcon><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" /></SvgIcon>
+        </ToolbarButton>
+        <ToolbarButton title="خطر (Danger)" onClick={() => openInputModal({
+          title: "إضافة خطر",
+          description: "صندوق خطر باللون الأحمر.",
+          fields: [
+            { key: "title", label: "العنوان (اختياري)", type: "text", placeholder: "تنبيه" },
+            { key: "content", label: "النص", type: "textarea", rows: 3, placeholder: "اكتب التنبيه هنا..." },
+          ],
+          onSubmit: async (values) => {
+            if (!values.content?.trim()) return { ok: false, error: "النص مطلوب." };
+            editor.chain().focus().insertContent({ type: "calloutBlock", attrs: { type: "danger", title: values.title?.trim() || "", content: values.content.trim() } }).run();
+            return { ok: true };
+          },
+        })}>
+          <SvgIcon><circle cx="12" cy="12" r="9" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></SvgIcon>
         </ToolbarButton>
       </div>
 

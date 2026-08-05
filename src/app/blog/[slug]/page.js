@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { getPostBySlugDetailed, listPopularPosts, listPostCategories, listPostsDetailed } from "@/lib/blog/posts";
 import { estimateReadingTime, formatArabicDate } from "@/lib/blog/render";
 import { renderStoredBlogContent } from "@/lib/blog/content";
@@ -6,6 +6,7 @@ import BlogImage from "@/components/blog/BlogImage";
 import ArticleComments from "@/components/blog/ArticleComments";
 import ArticleEngagementBar from "@/components/blog/ArticleEngagementBar";
 import NewsletterSignup from "@/components/blog/NewsletterSignup";
+import BlogLightbox from "@/components/blog/BlogLightbox";
 import { site } from "@/config/site";
 import { absoluteUrl, buildBreadcrumbJsonLd, buildJsonLdGraph, buildMetadata, cleanText, truncateText } from "@/lib/seo";
 
@@ -531,6 +532,7 @@ export default async function BlogPostPage({ params }) {
           </aside>
 
           <article className="border border-slate-200 bg-white px-6 py-8 shadow-[0_25px_60px_-45px_rgba(15,23,42,0.45)] sm:px-8 sm:py-10">
+            <BlogLightbox />
             <div className="blog-prose max-w-none" dangerouslySetInnerHTML={{ __html: htmlWithAnchors }} />
           </article>
         </div>
