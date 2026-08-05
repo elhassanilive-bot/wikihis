@@ -125,13 +125,59 @@ body {
   color: var(--gold-800);
 }
 
-.blog-prose ul,
+/* ── Unordered lists ── */
+.blog-prose ul {
+  list-style-type: disc;
+  padding-inline-start: 1.75rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.blog-prose ul ul {
+  list-style-type: circle;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.blog-prose ul ul ul {
+  list-style-type: square;
+}
+
+/* ── Ordered lists ── */
 .blog-prose ol {
-  padding-inline-start: 1.4rem;
+  list-style-type: decimal;
+  padding-inline-start: 1.75rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  counter-reset: none;
+}
+
+.blog-prose ol ol {
+  list-style-type: lower-alpha;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.blog-prose ol ol ol {
+  list-style-type: lower-roman;
+}
+
+/* ── List items ── */
+.blog-prose li {
+  display: list-item;
+  padding-inline-start: 0.4rem;
+  line-height: 1.85;
 }
 
 .blog-prose li + li {
-  margin-top: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+/* ── Nested list spacing ── */
+.blog-prose li > ul,
+.blog-prose li > ol {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
 }
 
 .blog-prose blockquote {
@@ -357,6 +403,55 @@ body {
   max-width: 100%;
   border-radius: 1.25rem;
   border: 1px solid #e2e8f0;
+}
+
+/* ── Editor: Unordered lists ── */
+.blog-editor-surface ul {
+  list-style-type: disc;
+  padding-inline-start: 1.75rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.blog-editor-surface ul ul {
+  list-style-type: circle;
+}
+
+.blog-editor-surface ul ul ul {
+  list-style-type: square;
+}
+
+/* ── Editor: Ordered lists ── */
+.blog-editor-surface ol {
+  list-style-type: decimal;
+  padding-inline-start: 1.75rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.blog-editor-surface ol ol {
+  list-style-type: lower-alpha;
+}
+
+.blog-editor-surface ol ol ol {
+  list-style-type: lower-roman;
+}
+
+/* ── Editor: List items ── */
+.blog-editor-surface li {
+  display: list-item;
+  padding-inline-start: 0.35rem;
+  line-height: 1.9;
+}
+
+.blog-editor-surface li + li {
+  margin-top: 0.35rem;
+}
+
+.blog-editor-surface li > ul,
+.blog-editor-surface li > ol {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
 }
 
 .blog-editor-image-wrap {
