@@ -1,0 +1,14 @@
+node_modules
+.next
+.vercel
+.qodo
+.agents
+.git
+android
+*.log
+coverage
+tools
+tmp*
+runtime*
+devserver*
+.vercel-deploy*

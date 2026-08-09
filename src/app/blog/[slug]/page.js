@@ -363,7 +363,6 @@ export default async function BlogPostPage({ params }) {
     .filter((item) => item && item.slug !== post.slug)
     .filter((item, index, array) => array.findIndex((entry) => entry.slug === item.slug) === index)
     .slice(0, 4);
-  const compactSuggestions = latestPosts.filter((item) => item && item.slug !== post.slug).slice(0, 3);
   const popularSuggestions = popularPosts.filter((item) => item && item.slug !== post.slug).slice(0, 4);
 
   const html = renderStoredBlogContent(post.content);
@@ -397,8 +396,8 @@ export default async function BlogPostPage({ params }) {
             <span className="line-clamp-1">{post.title}</span>
           </nav>
 
-          <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
-            <div className="text-right">
+          <div className="mt-6 grid items-center gap-8 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-10">
+            <div className="text-right lg:py-4">
               <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-slate-500">
                 <span className="bg-red-700 px-3 py-1 text-white">{post.category || "مقال"}</span>
                 <span>{formatArabicDate(post.publishedAt || post.createdAt)}</span>
@@ -426,25 +425,10 @@ export default async function BlogPostPage({ params }) {
               <ArticleEngagementBar postId={post.id} slug={post.slug} />
             </div>
 
-            <aside className="border border-slate-200 bg-[#fafafa] p-4 text-right">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div>
-                  <div className="text-[11px] font-extrabold tracking-[0.2em] text-red-700">WIKIHAT</div>
-                  <div className="mt-1 text-xl font-black text-slate-950">مقترحات سريعة</div>
-                </div>
-                <span className="h-6 w-1 bg-red-700" />
+            <div className="relative overflow-hidden rounded-md border border-slate-200 bg-slate-100 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.35)]">
+              <div className="relative aspect-[16/9] w-full">
+                <LiveArticleCover post={post} />
               </div>
-              <div className="mt-4 space-y-3">
-                {compactSuggestions.map((suggestedPost) => (
-                  <CompactSuggestedCard key={`compact-${suggestedPost.slug}`} post={suggestedPost} />
-                ))}
-              </div>
-            </aside>
-          </div>
-
-          <div className="relative mt-8 overflow-hidden border border-slate-200 bg-slate-100 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.35)]">
-            <div className="relative h-[14rem] sm:h-[20rem] lg:h-[26rem]">
-              <LiveArticleCover post={post} />
             </div>
           </div>
         </div>
