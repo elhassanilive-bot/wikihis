@@ -436,7 +436,7 @@ export default async function BlogPostPage({ params }) {
 
       <section className="py-10 sm:py-14">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[290px_minmax(0,1fr)] lg:px-8">
-          <aside className="space-y-6">
+          <aside className="space-y-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
             {headings.length ? (
               <div className="border border-slate-200 bg-white p-6 shadow-[0_20px_55px_-45px_rgba(15,23,42,0.45)]">
                 <div className="text-sm font-semibold text-slate-500">فهرس المقال</div>
